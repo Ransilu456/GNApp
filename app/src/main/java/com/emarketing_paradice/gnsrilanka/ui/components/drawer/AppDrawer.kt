@@ -56,7 +56,12 @@ fun AppDrawer(
                         .background(Color.White.copy(alpha = 0.2f)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("GN", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Black)
+                    Icon(
+                        imageVector = androidx.compose.material.icons.Icons.Outlined.AccountCircle,
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp),
+                        tint = Color.White
+                    )
                 }
                 Spacer(Modifier.height(16.dp))
                 Text(
@@ -113,7 +118,7 @@ fun AppDrawer(
         // Footer with Logout
         HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp), color = Color(0xFFF1F5F9))
         NavigationDrawerItem(
-            icon = { Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Logout", tint = Color(0xFFE11D48)) },
+            icon = { Icon(androidx.compose.material.icons.Icons.Outlined.Logout, contentDescription = "Logout", tint = Color(0xFFE11D48)) },
             label = { Text("Logout", color = Color(0xFFE11D48), fontWeight = FontWeight.Bold) },
             selected = false,
             onClick = {

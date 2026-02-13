@@ -65,9 +65,9 @@ fun AppBottomBar(currentRoute: String?, onNavigate: (String) -> Unit) {
                             )
                         },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = Color(0xFF0014A8),
-                            selectedTextColor = Color(0xFF0014A8),
-                            indicatorColor = Color(0xFF0014A8).copy(alpha = 0.1f),
+                            selectedIconColor = Color(0xFF059669),
+                            selectedTextColor = Color(0xFF059669),
+                            indicatorColor = Color(0xFF059669).copy(alpha = 0.1f),
                             unselectedIconColor = Color(0xFF94A3B8),
                             unselectedTextColor = Color(0xFF94A3B8)
                         )

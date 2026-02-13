@@ -18,31 +18,31 @@ sealed class Screen(
     object Home : Screen(
         route = "home",
         title = "Home",
-        icon = Icons.Default.Home
+        icon = Icons.Outlined.Home
     )
 
     object CitizenList : Screen(
         route = "citizen_list",
         title = "Citizens",
-        icon = Icons.Default.Person
+        icon = Icons.Outlined.Groups
     )
 
     object HouseholdList : Screen(
         route = "household_list",
         title = "Houses",
-        icon = Icons.Default.Domain
+        icon = Icons.Outlined.HomeWork
     )
 
     object RequestList : Screen(
         route = "request_list",
         title = "Requests",
-        icon = Icons.Default.Description
+        icon = Icons.Outlined.Article
     )
 
     object Profile : Screen(
         route = "profile",
-        title = "Profile",
-        icon = Icons.Default.AccountCircle
+        title = "System",
+        icon = Icons.Outlined.Settings
     )
 
     // Detail / Form screens (NO bottom bar)

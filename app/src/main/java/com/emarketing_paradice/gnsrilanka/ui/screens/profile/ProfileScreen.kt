@@ -80,9 +80,9 @@ fun ProfileScreen(
                             color = Color.White.copy(alpha = 0.2f)
                     ) {
                         Icon(
-                                Icons.Default.Person,
+                                Icons.Outlined.AccountCircle,
                                 contentDescription = null,
-                                modifier = Modifier.padding(24.dp),
+                                modifier = Modifier.size(48.dp),
                                 tint = Color.White
                         )
                     }
@@ -134,14 +134,14 @@ fun ProfileScreen(
                 SettingsActionItem(
                         title = "Edit Profile Info",
                         subtitle = "Update your personal details",
-                        icon = Icons.Default.Edit,
+                        icon = Icons.Outlined.Edit,
                         onClick = onNavigateToEditProfile
                 )
 
                 SettingsActionItem(
                         title = "Security",
                         subtitle = "Manage password and authentication",
-                        icon = Icons.Default.Lock,
+                        icon = Icons.Outlined.Lock,
                         onClick = {}
                 )
 
@@ -154,7 +154,7 @@ fun ProfileScreen(
                         shape = RoundedCornerShape(16.dp),
                         elevation = ButtonDefaults.buttonElevation(0.dp)
                 ) {
-                    Icon(Icons.Default.Logout, contentDescription = null, tint = Color(0xFFEF4444))
+                    Icon(Icons.Outlined.Logout, contentDescription = null, tint = Color(0xFFEF4444))
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                             "Logout from System",
@@ -227,7 +227,7 @@ fun SettingsActionItem(title: String, subtitle: String, icon: ImageVector, onCli
                 Text(subtitle, fontSize = 12.sp, color = GnTextSecondary)
             }
 
-            Icon(Icons.Default.ChevronRight, contentDescription = null, tint = GnTextSecondary)
+            Icon(Icons.Outlined.ChevronRight, contentDescription = null, tint = GnTextSecondary)
         }
     }
 }
