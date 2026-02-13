@@ -1,177 +1,239 @@
 package com.emarketing_paradice.gnsrilanka.ui.screens.profile
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthViewModel
+import com.emarketing_paradice.gnsrilanka.viewmodel.CitizenViewModel
+
+// --- Theme Colors from premium design ---
+val GnPrimary = Color(0xFF0014A8)
+val GnBackground = Color(0xFFF4F7FE)
+val GnSurface = Color.White
+val GnTextPrimary = Color(0xFF1E293B)
+val GnTextSecondary = Color(0xFF94A3B8)
+val GnAccent = Color(0xFFFFB300)
 
 @Composable
-fun ProfileScreen(authViewModel: AuthViewModel, onLogout: () -> Unit) {
+fun ProfileScreen(
+        authViewModel: AuthViewModel,
+        citizenViewModel: CitizenViewModel,
+        onLogout: () -> Unit,
+        onNavigateToEditProfile: () -> Unit
+) {
     val currentUser by authViewModel.currentUser.collectAsState()
+    val citizenState by citizenViewModel.uiState.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        // Header with gradient and profile picture
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(240.dp)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.primary,
-                            MaterialTheme.colorScheme.primaryContainer
-                        )
-                    )
-                ),
-            contentAlignment = Alignment.Center
+    // Find detailed citizen info for the logged-in user
+    val citizenInfo =
+            remember(currentUser, citizenState.citizens) {
+                citizenState.citizens.find { it.nic == currentUser?.nic }
+            }
+
+    Scaffold(containerColor = GnBackground) { padding ->
+        Column(
+                modifier =
+                        Modifier.padding(padding)
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState())
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Box(
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(CircleShape)
-                        .background(Color.White.copy(alpha = 0.2f))
-                        .padding(8.dp),
-                    contentAlignment = Alignment.Center
+            // Header Section with Gradient
+            Box(
+                    modifier =
+                            Modifier.fillMaxWidth()
+                                    .height(260.dp)
+                                    .clip(
+                                            RoundedCornerShape(
+                                                    bottomStart = 40.dp,
+                                                    bottomEnd = 40.dp
+                                            )
+                                    )
+                                    .background(
+                                            Brush.verticalGradient(
+                                                    colors = listOf(GnPrimary, Color(0xFF000B5E))
+                                            )
+                                    )
+            ) {
+                Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = null,
-                        modifier = Modifier.size(100.dp),
-                        tint = Color.White
+                    // Profile Image Placeholder
+                    Surface(
+                            modifier = Modifier.size(100.dp),
+                            shape = RoundedCornerShape(32.dp),
+                            color = Color.White.copy(alpha = 0.2f)
+                    ) {
+                        Icon(
+                                Icons.Default.Person,
+                                contentDescription = null,
+                                modifier = Modifier.padding(24.dp),
+                                tint = Color.White
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                            text = citizenInfo?.fullName ?: "Officer",
+                            color = Color.White,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold
+                    )
+
+                    Text(
+                            text = "Grama Niladhari Officer",
+                            color = Color.White.copy(alpha = 0.7f),
+                            fontSize = 14.sp
                     )
                 }
-                Spacer(modifier = Modifier.height(12.dp))
+            }
+
+            // Info Section
+            Column(modifier = Modifier.padding(24.dp).offset(y = (-30).dp)) {
+                ProfileDetailCard(
+                        items =
+                                listOf(
+                                        ProfileItem("Full Name", citizenInfo?.fullName ?: "N/A"),
+                                        ProfileItem("NIC Number", currentUser?.nic ?: "N/A"),
+                                        ProfileItem(
+                                                "Date of Birth",
+                                                citizenInfo?.dateOfBirth ?: "N/A"
+                                        ),
+                                        ProfileItem("Gender", citizenInfo?.gender ?: "N/A"),
+                                        ProfileItem("Division", "North Division - Colombo")
+                                )
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
                 Text(
-                    text = currentUser?.nic ?: "Grama Niladhari",
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        color = Color.White,
+                        "Account Settings",
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.1.sp
-                    )
+                        color = GnTextPrimary
                 )
-                Text(
-                    text = "Grama Niladhari Officer",
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        color = Color.White.copy(alpha = 0.8f)
-                    )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                SettingsActionItem(
+                        title = "Edit Profile Info",
+                        subtitle = "Update your personal details",
+                        icon = Icons.Default.Edit,
+                        onClick = onNavigateToEditProfile
                 )
-            }
-        }
 
-        // Profile Info Section
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp, vertical = 32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            ProfileInfoCard(
-                nic = currentUser?.nic ?: "N/A"
-            )
+                SettingsActionItem(
+                        title = "Security",
+                        subtitle = "Manage password and authentication",
+                        icon = Icons.Default.Lock,
+                        onClick = {}
+                )
 
-            Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(24.dp))
 
-            // Logout Button
-            Button(
-                onClick = onLogout,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                    contentColor = MaterialTheme.colorScheme.onErrorContainer
-                ),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
-            ) {
-                Icon(Icons.Default.ExitToApp, contentDescription = "Logout")
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Logout", fontWeight = FontWeight.Bold)
+                Button(
+                        onClick = onLogout,
+                        modifier = Modifier.fillMaxWidth().height(60.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFF1F1)),
+                        shape = RoundedCornerShape(16.dp),
+                        elevation = ButtonDefaults.buttonElevation(0.dp)
+                ) {
+                    Icon(Icons.Default.Logout, contentDescription = null, tint = Color(0xFFEF4444))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                            "Logout from System",
+                            color = Color(0xFFEF4444),
+                            fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(40.dp))
             }
         }
     }
 }
 
 @Composable
-fun ProfileInfoCard(nic: String) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+fun ProfileDetailCard(items: List<ProfileItem>) {
+    Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp),
+            color = GnSurface,
+            shadowElevation = 8.dp
     ) {
-        Column(
-            modifier = Modifier.padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(
-                text = "Profile Details",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            HorizontalDivider()
-            InfoRow(label = "NIC Number", value = nic)
-            InfoRow(label = "Role", value = "Grama Niladhari Officer")
+        Column(modifier = Modifier.padding(24.dp)) {
+            items.forEachIndexed { index, item ->
+                Column {
+                    Text(item.label, color = GnTextSecondary, fontSize = 12.sp)
+                    Text(
+                            item.value,
+                            color = GnTextPrimary,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                    )
+                }
+                if (index < items.size - 1) {
+                    HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 12.dp),
+                            color = Color(0xFFF1F5F9)
+                    )
+                }
+            }
         }
     }
 }
 
+data class ProfileItem(val label: String, val value: String)
+
 @Composable
-fun InfoRow(label: String, value: String) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+fun SettingsActionItem(title: String, subtitle: String, icon: ImageVector, onClick: () -> Unit) {
+    Surface(
+            onClick = onClick,
+            modifier = Modifier.padding(bottom = 12.dp),
+            shape = RoundedCornerShape(20.dp),
+            color = GnSurface
     ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.weight(1f)
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurface
-        )
+        Row(
+                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                    modifier =
+                            Modifier.size(48.dp)
+                                    .background(Color(0xFFF1F5F9), RoundedCornerShape(14.dp)),
+                    contentAlignment = Alignment.Center
+            ) { Icon(icon, contentDescription = null, tint = GnPrimary) }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(title, fontWeight = FontWeight.Bold, color = GnTextPrimary)
+                Text(subtitle, fontSize = 12.sp, color = GnTextSecondary)
+            }
+
+            Icon(Icons.Default.ChevronRight, contentDescription = null, tint = GnTextSecondary)
+        }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProfileScreenPreview() {
+    // Redacted for brevity as it depends on ViewModels
 }

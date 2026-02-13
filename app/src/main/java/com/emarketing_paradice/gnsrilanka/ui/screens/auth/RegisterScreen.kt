@@ -3,12 +3,15 @@ package com.emarketing_paradice.gnsrilanka.ui.screens.auth
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,17 +23,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.emarketing_paradice.gnsrilanka.ui.theme.BlueGradientEnd
+import com.emarketing_paradice.gnsrilanka.ui.theme.BlueGradientStart
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthUiState
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthViewModel
 import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
-    authViewModel: AuthViewModel,
-    onRegisterSuccess: () -> Unit,
-    onNavigateToLogin: () -> Unit
+        authViewModel: AuthViewModel,
+        onRegisterSuccess: () -> Unit,
+        onNavigateToLogin: () -> Unit
 ) {
     val uiState by authViewModel.uiState.collectAsState()
     val focusManager = LocalFocusManager.current
@@ -38,6 +45,8 @@ fun RegisterScreen(
     var nic by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(authViewModel) {
         authViewModel.uiState.collectLatest {
@@ -48,126 +57,223 @@ fun RegisterScreen(
     }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-                            MaterialTheme.colorScheme.background
-                        ),
-                        startY = 0.0f,
-                        endY = 1200.0f
-                    )
-                )
-                .padding(innerPadding)
-                .padding(24.dp)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        Box(
+                modifier =
+                        Modifier.fillMaxSize()
+                                .background(
+                                        Brush.verticalGradient(
+                                                colors = listOf(BlueGradientStart, BlueGradientEnd)
+                                        )
+                                )
+                                .padding(innerPadding)
         ) {
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Text(
-                "Create Your Account",
-                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center
-            )
-            Text(
-                "Begin your journey with the GN App",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(48.dp))
-
-            OutlinedTextField(
-                value = nic,
-                onValueChange = { nic = it },
-                label = { Text("NIC Number") },
-                leadingIcon = { Icon(Icons.Default.Person, null) },
-                isError = uiState is AuthUiState.Error,
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                singleLine = true
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Password") },
-                leadingIcon = { Icon(Icons.Default.Lock, null) },
-                isError = uiState is AuthUiState.Error,
-                visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Next),
-                singleLine = true
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = confirmPassword,
-                onValueChange = { confirmPassword = it },
-                label = { Text("Confirm Password") },
-                leadingIcon = { Icon(Icons.Default.Lock, null) },
-                isError = uiState is AuthUiState.Error,
-                visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
-            )
-
-            if (uiState is AuthUiState.Error) {
-                Text(
-                    text = (uiState as AuthUiState.Error).message,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.padding(top = 16.dp).align(Alignment.Start)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Button(
-                onClick = { 
-                    focusManager.clearFocus()
-                    authViewModel.register(nic, password, confirmPassword)
-                },
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-                enabled = uiState !is AuthUiState.Loading,
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+            Column(
+                    modifier =
+                            Modifier.fillMaxSize()
+                                    .padding(24.dp)
+                                    .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
             ) {
-                if (uiState is AuthUiState.Loading) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
-                } else {
-                    Text("Register", style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
-                }
-            }
+                Spacer(modifier = Modifier.height(32.dp))
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                        "Create Account",
+                        style =
+                                MaterialTheme.typography.headlineLarge.copy(
+                                        fontWeight = FontWeight.Bold
+                                ),
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                )
+                Text(
+                        "Join the GN App today",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.White.copy(alpha = 0.8f),
+                        textAlign = TextAlign.Center
+                )
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Already have an account?", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                TextButton(onClick = onNavigateToLogin) {
-                    Text("Login here", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Card(
+                        shape = RoundedCornerShape(24.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                            modifier = Modifier.padding(24.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        OutlinedTextField(
+                                value = nic,
+                                onValueChange = { nic = it },
+                                label = { Text("NIC Number") },
+                                leadingIcon = { Icon(Icons.Default.Person, null) },
+                                isError = uiState is AuthUiState.Error,
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp),
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                                singleLine = true,
+                                colors =
+                                        OutlinedTextFieldDefaults.colors(
+                                                focusedBorderColor = BlueGradientStart,
+                                                focusedLabelColor = BlueGradientStart
+                                        )
+                        )
+
+                        OutlinedTextField(
+                                value = password,
+                                onValueChange = { password = it },
+                                label = { Text("Password") },
+                                leadingIcon = { Icon(Icons.Default.Lock, null) },
+                                trailingIcon = {
+                                    val image =
+                                            if (passwordVisible) Icons.Filled.Visibility
+                                            else Icons.Filled.VisibilityOff
+
+                                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                        Icon(
+                                                imageVector = image,
+                                                if (passwordVisible) "Hide password"
+                                                else "Show password"
+                                        )
+                                    }
+                                },
+                                isError = uiState is AuthUiState.Error,
+                                visualTransformation =
+                                        if (passwordVisible) VisualTransformation.None
+                                        else PasswordVisualTransformation(),
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp),
+                                keyboardOptions =
+                                        KeyboardOptions(
+                                                keyboardType = KeyboardType.Password,
+                                                imeAction = ImeAction.Next
+                                        ),
+                                singleLine = true,
+                                colors =
+                                        OutlinedTextFieldDefaults.colors(
+                                                focusedBorderColor = BlueGradientStart,
+                                                focusedLabelColor = BlueGradientStart
+                                        )
+                        )
+
+                        OutlinedTextField(
+                                value = confirmPassword,
+                                onValueChange = { confirmPassword = it },
+                                label = { Text("Confirm Password") },
+                                leadingIcon = { Icon(Icons.Default.Lock, null) },
+                                trailingIcon = {
+                                    val image =
+                                            if (confirmPasswordVisible) Icons.Filled.Visibility
+                                            else Icons.Filled.VisibilityOff
+
+                                    IconButton(
+                                            onClick = {
+                                                confirmPasswordVisible = !confirmPasswordVisible
+                                            }
+                                    ) {
+                                        Icon(
+                                                imageVector = image,
+                                                if (confirmPasswordVisible) "Hide password"
+                                                else "Show password"
+                                        )
+                                    }
+                                },
+                                isError = uiState is AuthUiState.Error,
+                                visualTransformation =
+                                        if (confirmPasswordVisible) VisualTransformation.None
+                                        else PasswordVisualTransformation(),
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp),
+                                keyboardOptions =
+                                        KeyboardOptions(
+                                                keyboardType = KeyboardType.Password,
+                                                imeAction = ImeAction.Done
+                                        ),
+                                keyboardActions =
+                                        KeyboardActions(
+                                                onDone = {
+                                                    focusManager.clearFocus()
+                                                    authViewModel.register(
+                                                            nic,
+                                                            password,
+                                                            confirmPassword
+                                                    )
+                                                }
+                                        ),
+                                singleLine = true,
+                                colors =
+                                        OutlinedTextFieldDefaults.colors(
+                                                focusedBorderColor = BlueGradientStart,
+                                                focusedLabelColor = BlueGradientStart
+                                        )
+                        )
+
+                        if (uiState is AuthUiState.Error) {
+                            Text(
+                                    text = (uiState as AuthUiState.Error).message,
+                                    color = MaterialTheme.colorScheme.error,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Button(
+                                onClick = {
+                                    focusManager.clearFocus()
+                                    authViewModel.register(nic, password, confirmPassword)
+                                },
+                                modifier = Modifier.fillMaxWidth().height(56.dp),
+                                shape = RoundedCornerShape(16.dp),
+                                enabled = uiState !is AuthUiState.Loading,
+                                colors =
+                                        ButtonDefaults.buttonColors(
+                                                containerColor = BlueGradientStart
+                                        ),
+                                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+                        ) {
+                            if (uiState is AuthUiState.Loading) {
+                                CircularProgressIndicator(
+                                        modifier = Modifier.size(24.dp),
+                                        color = Color.White
+                                )
+                            } else {
+                                Text(
+                                        "Register",
+                                        style =
+                                                MaterialTheme.typography.titleMedium.copy(
+                                                        fontWeight = FontWeight.Bold
+                                                )
+                                )
+                            }
+                        }
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Already have an account?", color = Color.White.copy(alpha = 0.9f))
+                    TextButton(onClick = onNavigateToLogin) {
+                        Text(
+                                "Login here",
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
             }
-            
-            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 
-    DisposableEffect(Unit) {
-        onDispose {
-            authViewModel.resetState()
-        }
-    }
+    DisposableEffect(Unit) { onDispose { authViewModel.resetState() } }
 }

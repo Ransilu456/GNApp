@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.emarketing_paradice.gnsrilanka.data.model.Household
 import com.emarketing_paradice.gnsrilanka.data.model.Request
+import com.emarketing_paradice.gnsrilanka.data.model.RequestStatus
 import com.emarketing_paradice.gnsrilanka.viewmodel.CitizenFormEvent
 import com.emarketing_paradice.gnsrilanka.viewmodel.CitizenFormState
 
@@ -186,7 +187,7 @@ fun AddRequestModal(
                         issuedDate = System.currentTimeMillis(),
                         issuedByGn = "Admin",
                         description = "",
-                        status = "Pending"
+                        status = RequestStatus.Pending
                     ))
                     onDismiss()
                 },

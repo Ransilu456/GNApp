@@ -1,33 +1,31 @@
 package com.emarketing_paradice.gnsrilanka.ui.screens.request
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.emarketing_paradice.gnsrilanka.ui.theme.AppBackground
+import com.emarketing_paradice.gnsrilanka.ui.theme.BlueGradientStart
+import com.emarketing_paradice.gnsrilanka.ui.theme.GNAppTheme
 import com.emarketing_paradice.gnsrilanka.viewmodel.FormStatus
+import com.emarketing_paradice.gnsrilanka.viewmodel.RequestUiState
 import com.emarketing_paradice.gnsrilanka.viewmodel.RequestViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RequestEditScreen(
-    requestViewModel: RequestViewModel,
-    onRequestUpdated: () -> Unit,
-    onNavigateUp: () -> Unit
+        requestViewModel: RequestViewModel,
+        onRequestUpdated: () -> Unit
 ) {
     val uiState by requestViewModel.uiState.collectAsState()
 
@@ -37,75 +35,110 @@ fun RequestEditScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Edit Request") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        }
-    ) { innerPadding ->
-        Column(
+    RequestEditScreenContent(
+        uiState = uiState,
+        onCitizenNicChanged = requestViewModel::onCitizenNicChanged,
+        onCertificateTypeChanged = requestViewModel::onCertificateTypeChanged,
+        onPurposeChanged = requestViewModel::onPurposeChanged,
+        onSaveRequest = requestViewModel::saveRequest
+    )
+}
+
+@Composable
+fun RequestEditScreenContent(
+    uiState: RequestUiState,
+    onCitizenNicChanged: (String) -> Unit,
+    onCertificateTypeChanged: (String) -> Unit,
+    onPurposeChanged: (String) -> Unit,
+    onSaveRequest: () -> Unit
+) {
+    Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .background(AppBackground)
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            OutlinedTextField(
+    ) {
+        OutlinedTextField(
                 value = uiState.requestId,
-                onValueChange = { /* ID is not editable */ },
+                onValueChange = { /* ID is not editable */},
                 label = { Text("Request ID") },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = false
-            )
+                enabled = false,
+                shape = RoundedCornerShape(12.dp)
+        )
 
-            OutlinedTextField(
+        OutlinedTextField(
                 value = uiState.citizenNic,
-                onValueChange = { requestViewModel.onCitizenNicChanged(it) },
+                onValueChange = onCitizenNicChanged,
                 label = { Text("Citizen NIC") },
                 isError = uiState.citizenNicError != null,
                 supportingText = { uiState.citizenNicError?.let { Text(it) } },
-                modifier = Modifier.fillMaxWidth()
-            )
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+        )
 
-            OutlinedTextField(
+        OutlinedTextField(
                 value = uiState.certificateType,
-                onValueChange = { requestViewModel.onCertificateTypeChanged(it) },
+                onValueChange = onCertificateTypeChanged,
                 label = { Text("Certificate Type") },
                 isError = uiState.certificateTypeError != null,
                 supportingText = { uiState.certificateTypeError?.let { Text(it) } },
-                modifier = Modifier.fillMaxWidth()
-            )
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+        )
 
-            OutlinedTextField(
+        OutlinedTextField(
                 value = uiState.purpose,
-                onValueChange = { requestViewModel.onPurposeChanged(it) },
+                onValueChange = onPurposeChanged,
                 label = { Text("Purpose") },
                 isError = uiState.purposeError != null,
                 supportingText = { uiState.purposeError?.let { Text(it) } },
                 modifier = Modifier.fillMaxWidth(),
-                maxLines = 5
-            )
+                maxLines = 5,
+                shape = RoundedCornerShape(12.dp)
+        )
 
-            Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-            Button(
-                onClick = { requestViewModel.saveRequest() },
+        Button(
+                onClick = onSaveRequest,
                 enabled = uiState.formStatus !is FormStatus.Loading,
-                modifier = Modifier.fillMaxWidth().height(50.dp)
-            ) {
-                if (uiState.formStatus is FormStatus.Loading) {
-                    CircularProgressIndicator()
-                } else {
-                    Text("Save Changes", style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
-                }
+                modifier = Modifier.fillMaxWidth().height(50.dp),
+                shape = RoundedCornerShape(25.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = BlueGradientStart)
+        ) {
+            if (uiState.formStatus is FormStatus.Loading) {
+                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
+            } else {
+                Text(
+                        "Save Changes",
+                        style =
+                                MaterialTheme.typography.bodyLarge.copy(
+                                        fontWeight = FontWeight.Bold
+                                )
+                )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RequestEditScreenPreview() {
+    GNAppTheme {
+        RequestEditScreenContent(
+            uiState = RequestUiState(
+                requestId = "REQ-001",
+                citizenNic = "123456789V",
+                certificateType = "Character Certificate",
+                purpose = "Employment"
+            ),
+            onCitizenNicChanged = {},
+            onCertificateTypeChanged = {},
+            onPurposeChanged = {},
+            onSaveRequest = {}
+        )
     }
 }

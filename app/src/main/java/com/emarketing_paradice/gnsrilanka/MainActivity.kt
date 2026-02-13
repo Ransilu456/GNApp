@@ -22,20 +22,8 @@ class MainActivity : ComponentActivity() {
 
         val repository = FileRepository(applicationContext)
 
-        // Create a single ViewModel factory
-        val viewModelFactory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return when {
-                    modelClass.isAssignableFrom(AuthViewModel::class.java) -> AuthViewModel(repository) as T
-                    modelClass.isAssignableFrom(CitizenViewModel::class.java) -> CitizenViewModel(repository) as T
-                    modelClass.isAssignableFrom(HouseholdViewModel::class.java) -> HouseholdViewModel(repository) as T
-                    modelClass.isAssignableFrom(RequestViewModel::class.java) -> RequestViewModel(repository) as T
-                    else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
-                }
-            }
-        }
+        val viewModelFactory = ViewModelFactory(repository)
 
-        // Instantiate all ViewModels using the factory
         val authViewModel: AuthViewModel by viewModels { viewModelFactory }
         val citizenViewModel: CitizenViewModel by viewModels { viewModelFactory }
         val householdViewModel: HouseholdViewModel by viewModels { viewModelFactory }
@@ -50,6 +38,19 @@ class MainActivity : ComponentActivity() {
                     requestViewModel = requestViewModel
                 )
             }
+        }
+    }
+}
+
+class ViewModelFactory(private val repository: FileRepository) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return when {
+            modelClass.isAssignableFrom(AuthViewModel::class.java) -> AuthViewModel(repository) as T
+            modelClass.isAssignableFrom(CitizenViewModel::class.java) -> CitizenViewModel(repository) as T
+            modelClass.isAssignableFrom(HouseholdViewModel::class.java) -> HouseholdViewModel(repository) as T
+            modelClass.isAssignableFrom(RequestViewModel::class.java) -> RequestViewModel(repository) as T
+            else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }
 }

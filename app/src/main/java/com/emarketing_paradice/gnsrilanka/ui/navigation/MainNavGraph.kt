@@ -15,31 +15,49 @@ import com.emarketing_paradice.gnsrilanka.viewmodel.HouseholdViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.RequestViewModel
 
 fun NavGraphBuilder.mainNavGraph(
-    navController: NavHostController,
-    authViewModel: AuthViewModel,
-    citizenViewModel: CitizenViewModel,
-    householdViewModel: HouseholdViewModel,
-    requestViewModel: RequestViewModel
+        navController: NavHostController,
+        authViewModel: AuthViewModel,
+        citizenViewModel: CitizenViewModel,
+        householdViewModel: HouseholdViewModel,
+        requestViewModel: RequestViewModel,
+        onOpenDrawer: () -> Unit
 ) {
     navigation(startDestination = Screen.Home.route, route = "main_flow") {
         composable(Screen.Home.route) {
             HomeScreen(
-                onNavigateToCitizens = { navController.navigate(Screen.CitizenList.route) },
-                onNavigateToHouseholds = { navController.navigate(Screen.HouseholdList.route) },
-                onNavigateToRequests = { navController.navigate(Screen.RequestList.route) },
-                onNavigateToProfile = { navController.navigate(Screen.Profile.route) }
+                    citizenViewModel = citizenViewModel,
+                    householdViewModel = householdViewModel,
+                    requestViewModel = requestViewModel,
+                    authViewModel = authViewModel,
+                    onNavigateToCitizens = { navController.navigate(Screen.CitizenList.route) },
+                    onNavigateToHouseholds = { navController.navigate(Screen.HouseholdList.route) },
+                    onNavigateToRequests = { navController.navigate(Screen.RequestList.route) },
+                    onNavigateToProfile = { navController.navigate(Screen.Profile.route) },
+                    onOpenDrawer = onOpenDrawer
             )
         }
 
         composable(Screen.Profile.route) {
             ProfileScreen(
-                authViewModel = authViewModel,
-                onLogout = {
-                    authViewModel.logout()
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo("main_flow") { inclusive = true }
+                    authViewModel = authViewModel,
+                    citizenViewModel = citizenViewModel,
+                    onLogout = {
+                        authViewModel.logout()
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo("main_flow") { inclusive = true }
+                        }
+                    },
+                    onNavigateToEditProfile = {
+                        val currentUser = authViewModel.currentUser.value
+                        val citizen =
+                                citizenViewModel.uiState.value.citizens.find {
+                                    it.nic == currentUser?.nic
+                                }
+                        if (citizen != null) {
+                            citizenViewModel.loadCitizenForEdit(citizen)
+                            navController.navigate(Screen.CitizenEdit.route)
+                        }
                     }
-                }
             )
         }
 
@@ -47,34 +65,40 @@ fun NavGraphBuilder.mainNavGraph(
         composable(Screen.CitizenList.route) { backStackEntry ->
             val message = backStackEntry.savedStateHandle.get<String>("userMessage")
             CitizenListScreen(
-                citizenViewModel = citizenViewModel,
-                userMessage = message,
-                onAddCitizen = { navController.navigate(Screen.CitizenAdd.route) },
-                onEditCitizen = { citizen ->
-                    citizenViewModel.loadCitizenForEdit(citizen)
-                    navController.navigate(Screen.CitizenEdit.route)
-                },
-                clearUserMessage = { backStackEntry.savedStateHandle.remove<String>("userMessage") }
+                    citizenViewModel = citizenViewModel,
+                    userMessage = message,
+                    onAddCitizen = { navController.navigate(Screen.CitizenAdd.route) },
+                    onEditCitizen = { citizen ->
+                        citizenViewModel.loadCitizenForEdit(citizen)
+                        navController.navigate(Screen.CitizenEdit.route)
+                    },
+                    clearUserMessage = {
+                        backStackEntry.savedStateHandle.remove<String>("userMessage")
+                    }
             )
         }
         composable(Screen.CitizenAdd.route) {
             CitizenAddScreen(
-                citizenViewModel = citizenViewModel,
-                onCitizenAdded = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set("userMessage", "Citizen added successfully")
-                    navController.popBackStack()
-                },
-                onNavigateUp = { navController.popBackStack() }
+                    citizenViewModel = citizenViewModel,
+                    onCitizenAdded = {
+                        navController.previousBackStackEntry?.savedStateHandle?.set(
+                                "userMessage",
+                                "Citizen added successfully"
+                        )
+                        navController.popBackStack()
+                    }
             )
         }
         composable(Screen.CitizenEdit.route) {
             CitizenEditScreen(
-                citizenViewModel = citizenViewModel,
-                onCitizenUpdated = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set("userMessage", "Citizen updated successfully")
-                    navController.popBackStack()
-                },
-                onNavigateUp = { navController.popBackStack() }
+                    citizenViewModel = citizenViewModel,
+                    onCitizenUpdated = {
+                        navController.previousBackStackEntry?.savedStateHandle?.set(
+                                "userMessage",
+                                "Citizen updated successfully"
+                        )
+                        navController.popBackStack()
+                    }
             )
         }
 
@@ -82,34 +106,40 @@ fun NavGraphBuilder.mainNavGraph(
         composable(Screen.HouseholdList.route) { backStackEntry ->
             val message = backStackEntry.savedStateHandle.get<String>("userMessage")
             HouseholdListScreen(
-                householdViewModel = householdViewModel,
-                userMessage = message,
-                onAddHousehold = { navController.navigate(Screen.HouseholdAdd.route) },
-                onEditHousehold = { household ->
-                    householdViewModel.loadHouseholdForEdit(household)
-                    navController.navigate(Screen.HouseholdEdit.route)
-                },
-                clearUserMessage = { backStackEntry.savedStateHandle.remove<String>("userMessage") }
+                    householdViewModel = householdViewModel,
+                    userMessage = message,
+                    onAddHousehold = { navController.navigate(Screen.HouseholdAdd.route) },
+                    onEditHousehold = { household ->
+                        householdViewModel.loadHouseholdForEdit(household)
+                        navController.navigate(Screen.HouseholdEdit.route)
+                    },
+                    clearUserMessage = {
+                        backStackEntry.savedStateHandle.remove<String>("userMessage")
+                    }
             )
         }
         composable(Screen.HouseholdAdd.route) {
             HouseholdAddScreen(
-                householdViewModel = householdViewModel,
-                onHouseholdAdded = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set("userMessage", "Household added successfully")
-                    navController.popBackStack()
-                },
-                onNavigateUp = { navController.popBackStack() }
+                    householdViewModel = householdViewModel,
+                    onHouseholdAdded = {
+                        navController.previousBackStackEntry?.savedStateHandle?.set(
+                                "userMessage",
+                                "Household added successfully"
+                        )
+                        navController.popBackStack()
+                    }
             )
         }
         composable(Screen.HouseholdEdit.route) {
             HouseholdEditScreen(
-                householdViewModel = householdViewModel,
-                onHouseholdUpdated = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set("userMessage", "Household updated successfully")
-                    navController.popBackStack()
-                },
-                onNavigateUp = { navController.popBackStack() }
+                    householdViewModel = householdViewModel,
+                    onHouseholdUpdated = {
+                        navController.previousBackStackEntry?.savedStateHandle?.set(
+                                "userMessage",
+                                "Household updated successfully"
+                        )
+                        navController.popBackStack()
+                    }
             )
         }
 
@@ -117,34 +147,40 @@ fun NavGraphBuilder.mainNavGraph(
         composable(Screen.RequestList.route) { backStackEntry ->
             val message = backStackEntry.savedStateHandle.get<String>("userMessage")
             RequestListScreen(
-                requestViewModel = requestViewModel,
-                userMessage = message,
-                onAddRequest = { navController.navigate(Screen.RequestAdd.route) },
-                onEditRequest = { request ->
-                    requestViewModel.loadRequestForEdit(request)
-                    navController.navigate(Screen.RequestEdit.route)
-                },
-                clearUserMessage = { backStackEntry.savedStateHandle.remove<String>("userMessage") }
+                    requestViewModel = requestViewModel,
+                    userMessage = message,
+                    onAddRequest = { navController.navigate(Screen.RequestAdd.route) },
+                    onEditRequest = { request ->
+                        requestViewModel.loadRequestForEdit(request)
+                        navController.navigate(Screen.RequestEdit.route)
+                    },
+                    clearUserMessage = {
+                        backStackEntry.savedStateHandle.remove<String>("userMessage")
+                    }
             )
         }
         composable(Screen.RequestAdd.route) {
             RequestAddScreen(
-                requestViewModel = requestViewModel,
-                onRequestAdded = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set("userMessage", "Request added successfully")
-                    navController.popBackStack()
-                },
-                onNavigateUp = { navController.popBackStack() }
+                    requestViewModel = requestViewModel,
+                    onRequestAdded = {
+                        navController.previousBackStackEntry?.savedStateHandle?.set(
+                                "userMessage",
+                                "Request added successfully"
+                        )
+                        navController.popBackStack()
+                    }
             )
         }
         composable(Screen.RequestEdit.route) {
             RequestEditScreen(
-                requestViewModel = requestViewModel,
-                onRequestUpdated = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set("userMessage", "Request updated successfully")
-                    navController.popBackStack()
-                },
-                onNavigateUp = { navController.popBackStack() }
+                    requestViewModel = requestViewModel,
+                    onRequestUpdated = {
+                        navController.previousBackStackEntry?.savedStateHandle?.set(
+                                "userMessage",
+                                "Request updated successfully"
+                        )
+                        navController.popBackStack()
+                    }
             )
         }
     }

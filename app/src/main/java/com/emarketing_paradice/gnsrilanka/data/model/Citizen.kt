@@ -7,6 +7,7 @@ data class Citizen(
     val gender: String,
     val occupation: String,
     val householdId: String,
+    val address: String = "",
     val isAlive: Boolean = true,
     val isActive: Boolean = true
 )

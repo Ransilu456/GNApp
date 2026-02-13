@@ -1,19 +1,20 @@
 package com.emarketing_paradice.gnsrilanka.ui.components.drawer
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.emarketing_paradice.gnsrilanka.ui.navigation.Screen
 
 @Composable
@@ -31,42 +32,78 @@ fun AppDrawer(
         Screen.Profile
     )
 
-    ModalDrawerSheet {
+    ModalDrawerSheet(
+        drawerContainerColor = Color.White,
+        drawerShape = RoundedCornerShape(topEnd = 32.dp, bottomEnd = 32.dp)
+    ) {
         // Header
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.primary)
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .height(200.dp)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color(0xFF0014A8), Color(0xFF000B5E))
+                    )
+                )
+                .padding(24.dp)
         ) {
-            Text(
-                "GN App",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-            Text(
-                "Grama Niladhari Digital Assistant",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
-            )
+            Column(modifier = Modifier.align(Alignment.BottomStart)) {
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(Color.White.copy(alpha = 0.2f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("GN", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Black)
+                }
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    "Digital Assistant",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                Text(
+                    "Grama Niladhari - Sri Lanka",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.6f)
+                )
+            }
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(24.dp))
 
         // Navigation Items
         items.forEach { screen ->
             screen.icon?.let { icon ->
+                val isSelected = currentRoute == screen.route
                 NavigationDrawerItem(
-                    icon = { Icon(icon, contentDescription = screen.title) },
-                    label = { Text(screen.title) },
-                    selected = currentRoute == screen.route,
+                    icon = { 
+                        Icon(
+                            icon, 
+                            contentDescription = screen.title,
+                            tint = if (isSelected) Color(0xFF0014A8) else Color(0xFF94A3B8)
+                        ) 
+                    },
+                    label = { 
+                        Text(
+                            screen.title,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                            color = if (isSelected) Color(0xFF0014A8) else Color(0xFF1E293B)
+                        ) 
+                    },
+                    selected = isSelected,
                     onClick = {
                         onNavigate(screen.route)
                         closeDrawer()
                     },
-                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                    colors = NavigationDrawerItemDefaults.colors(
+                        selectedContainerColor = Color(0xFF0014A8).copy(alpha = 0.1f),
+                        unselectedContainerColor = Color.Transparent
+                    ),
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
                 )
             }
         }
@@ -74,16 +111,20 @@ fun AppDrawer(
         Spacer(Modifier.weight(1f))
 
         // Footer with Logout
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp), color = Color(0xFFF1F5F9))
         NavigationDrawerItem(
-            icon = { Icon(Icons.Default.Logout, contentDescription = "Logout") },
-            label = { Text("Logout") },
+            icon = { Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Logout", tint = Color(0xFFE11D48)) },
+            label = { Text("Logout", color = Color(0xFFE11D48), fontWeight = FontWeight.Bold) },
             selected = false,
             onClick = {
                 closeDrawer()
                 onLogout()
             },
-            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+            colors = NavigationDrawerItemDefaults.colors(
+                unselectedContainerColor = Color.Transparent
+            ),
+            modifier = Modifier.padding(12.dp)
         )
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(12.dp))
     }
 }

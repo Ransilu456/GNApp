@@ -3,6 +3,7 @@ package com.emarketing_paradice.gnsrilanka.ui.screens.request
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -18,42 +19,61 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.RequestPage
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.WorkspacePremium
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emarketing_paradice.gnsrilanka.data.model.Request
+import com.emarketing_paradice.gnsrilanka.data.model.RequestStatus
 import com.emarketing_paradice.gnsrilanka.ui.components.common.EmptyContent
+import com.emarketing_paradice.gnsrilanka.ui.theme.*
 import com.emarketing_paradice.gnsrilanka.viewmodel.RequestViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RequestListScreen(
-    requestViewModel: RequestViewModel,
+        requestViewModel: RequestViewModel,
+        userMessage: String?,
+        onAddRequest: () -> Unit,
+        onEditRequest: (Request) -> Unit,
+        clearUserMessage: () -> Unit
+) {
+    val requests by requestViewModel.requests.collectAsState()
+    
+    RequestListScreenContent(
+        requests = requests,
+        userMessage = userMessage,
+        onAddRequest = onAddRequest,
+        onEditRequest = onEditRequest,
+        clearUserMessage = clearUserMessage
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RequestListScreenContent(
+    requests: List<Request>,
     userMessage: String?,
     onAddRequest: () -> Unit,
     onEditRequest: (Request) -> Unit,
     clearUserMessage: () -> Unit
 ) {
-    val requests by requestViewModel.requests.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var searchQuery by remember { mutableStateOf("") }
-    var active by remember { mutableStateOf(false) }
 
-
-    val filteredRequests = requests.filter {
-        it.certificateType.contains(searchQuery, ignoreCase = true) || it.citizenNic.contains(searchQuery, ignoreCase = true)
-    }
+    val filteredRequests =
+            requests.filter {
+                (it.citizenName ?: "").contains(searchQuery, ignoreCase = true) ||
+                        (it.certificateType ?: "").contains(searchQuery, ignoreCase = true) ||
+                        (it.citizenNic ?: "").contains(searchQuery, ignoreCase = true)
+            }
 
     LaunchedEffect(userMessage) {
         userMessage?.let {
@@ -65,42 +85,53 @@ fun RequestListScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            containerColor = AppBackground
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(Color(0xFFF0F4F8))
-        ) {
-            SearchBar(
-                query = searchQuery,
-                onQueryChange = { searchQuery = it },
-                onSearch = { active = false },
-                active = active,
-                onActiveChange = { active = it },
-                placeholder = { Text("Search Requests") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                shape = RoundedCornerShape(30.dp),
-                colors = SearchBarDefaults.colors(containerColor = MaterialTheme.colorScheme.surface),
-                tonalElevation = 2.dp
-            ) {}
+        Column(modifier = Modifier.fillMaxSize()) {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.surface,
+                tonalElevation = 2.dp,
+                shadowElevation = 2.dp
+            ) {
+                Column(modifier = Modifier.padding(top = 8.dp)) {
+                    SearchBar(
+                        inputField = {
+                            SearchBarDefaults.InputField(
+                                query = searchQuery,
+                                onQueryChange = { searchQuery = it },
+                                onSearch = { },
+                                expanded = false,
+                                onExpandedChange = { },
+                                placeholder = { Text("Search by type or NIC") },
+                                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) }
+                            )
+                        },
+                        expanded = false,
+                        onExpandedChange = { },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                        shape = RoundedCornerShape(24.dp),
+                        colors = SearchBarDefaults.colors(containerColor = AppBackground),
+                        content = { }
+                    )
+                }
+            }
 
             if (filteredRequests.isEmpty()) {
-                EmptyContent("No requests found.", Icons.Default.Description)
+                Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                    EmptyContent("No requests found.", Icons.Default.Description)
+                }
             } else {
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    contentPadding = PaddingValues(16.dp)
+                        modifier = Modifier.fillMaxWidth().weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(16.dp)
                 ) {
                     items(filteredRequests) { request ->
-                        RequestListItem(
-                            request = request,
-                            onItemClick = { onEditRequest(request) }
-                        )
+                        RequestListItem(request = request, onItemClick = { onEditRequest(request) })
                     }
                 }
             }
@@ -109,59 +140,129 @@ fun RequestListScreen(
 }
 
 @Composable
-fun RequestListItem(
-    request: Request,
-    onItemClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onItemClick() },
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                Icons.Default.RequestPage,
-                contentDescription = "Request",
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer)
-                    .padding(8.dp),
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = request.certificateType,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "NIC: ${request.citizenNic}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray
-                )
+fun RequestListItem(request: Request, onItemClick: () -> Unit) {
+    val statusColor =
+            when (request.status) {
+                RequestStatus.Approved -> StatusGreen
+                RequestStatus.Pending -> StatusYellow
+                RequestStatus.Rejected -> StatusRed
             }
 
-            if (request.citizenNic.hashCode() % 3 == 0) {
+    Card(
+            modifier = Modifier.fillMaxWidth().clickable { onItemClick() },
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                            text = request.certificateType ?: "Unknown",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                            text = "NIC: ${request.citizenNic ?: "N/A"}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .background(statusColor.copy(alpha = 0.1f), RoundedCornerShape(8.dp))
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                            text = request.status.name,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = statusColor
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider(color = AppBackground, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+            ) {
                 Icon(
-                    imageVector = Icons.Default.WorkspacePremium,
-                    contentDescription = "Badge",
-                    tint = Color(0xFFFFC107),
-                    modifier = Modifier.size(32.dp)
+                        Icons.Default.CalendarToday,
+                        contentDescription = null,
+                        tint = Color.Gray,
+                        modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                        text = "Submitted: ${request.submissionDate ?: "N/A"}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Gray
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Text(
+                        text = "Details",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = BlueGradientStart,
+                        fontWeight = FontWeight.Bold
+                )
+                Icon(
+                        Icons.Default.ChevronRight,
+                        contentDescription = null,
+                        tint = BlueGradientStart,
+                        modifier = Modifier.size(20.dp)
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RequestListScreenPreview() {
+    val sampleRequests = listOf(
+        Request(
+            id = "R001",
+            citizenNic = "123456789V",
+            citizenName = "John Doe",
+            certificateType = "Character Certificate",
+            purpose = "Employment",
+            issuedDate = 0L,
+            submissionDate = "2023-10-27",
+            issuedByGn = "GN01",
+            description = "Character certificate for job",
+            status = RequestStatus.Pending
+        ),
+        Request(
+            id = "R002",
+            citizenNic = "987654321V",
+            citizenName = "Jane Smith",
+            certificateType = "Residency Certificate",
+            purpose = "School Admission",
+            issuedDate = 123456789L,
+            submissionDate = "2023-10-26",
+            issuedByGn = "GN01",
+            description = "Residency certificate for school",
+            status = RequestStatus.Approved
+        )
+    )
+    GNAppTheme {
+        RequestListScreenContent(
+            requests = sampleRequests,
+            userMessage = null,
+            onAddRequest = {},
+            onEditRequest = {},
+            clearUserMessage = {}
+        )
     }
 }
