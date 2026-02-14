@@ -1,5 +1,6 @@
 package com.emarketing_paradice.gnsrilanka
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,7 +23,7 @@ class MainActivity : ComponentActivity() {
 
         val repository = FileRepository(applicationContext)
 
-        val viewModelFactory = ViewModelFactory(repository)
+        val viewModelFactory = ViewModelFactory(repository, applicationContext)
 
         val authViewModel: AuthViewModel by viewModels { viewModelFactory }
         val citizenViewModel: CitizenViewModel by viewModels { viewModelFactory }
@@ -32,24 +33,29 @@ class MainActivity : ComponentActivity() {
         setContent {
             GNAppTheme {
                 MainScreen(
-                    authViewModel = authViewModel,
-                    citizenViewModel = citizenViewModel,
-                    householdViewModel = householdViewModel,
-                    requestViewModel = requestViewModel
+                        authViewModel = authViewModel,
+                        citizenViewModel = citizenViewModel,
+                        householdViewModel = householdViewModel,
+                        requestViewModel = requestViewModel
                 )
             }
         }
     }
 }
 
-class ViewModelFactory(private val repository: FileRepository) : ViewModelProvider.Factory {
+class ViewModelFactory(private val repository: FileRepository, private val context: Context) :
+        ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
-            modelClass.isAssignableFrom(AuthViewModel::class.java) -> AuthViewModel(repository) as T
-            modelClass.isAssignableFrom(CitizenViewModel::class.java) -> CitizenViewModel(repository) as T
-            modelClass.isAssignableFrom(HouseholdViewModel::class.java) -> HouseholdViewModel(repository) as T
-            modelClass.isAssignableFrom(RequestViewModel::class.java) -> RequestViewModel(repository) as T
+            modelClass.isAssignableFrom(AuthViewModel::class.java) ->
+                    AuthViewModel(repository, context) as T
+            modelClass.isAssignableFrom(CitizenViewModel::class.java) ->
+                    CitizenViewModel(repository) as T
+            modelClass.isAssignableFrom(HouseholdViewModel::class.java) ->
+                    HouseholdViewModel(repository) as T
+            modelClass.isAssignableFrom(RequestViewModel::class.java) ->
+                    RequestViewModel(repository) as T
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }

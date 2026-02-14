@@ -26,9 +26,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.emarketing_paradice.gnsrilanka.R
 import com.emarketing_paradice.gnsrilanka.data.model.Household
 import com.emarketing_paradice.gnsrilanka.ui.components.common.EmptyContent
 import com.emarketing_paradice.gnsrilanka.ui.theme.AppBackground
@@ -47,24 +49,24 @@ fun HouseholdListScreen(
         clearUserMessage: () -> Unit
 ) {
     val households by householdViewModel.households.collectAsState()
-    
+
     HouseholdListScreenContent(
-        households = households,
-        userMessage = userMessage,
-        onAddHousehold = onAddHousehold,
-        onEditHousehold = onEditHousehold,
-        clearUserMessage = clearUserMessage
+            households = households,
+            userMessage = userMessage,
+            onAddHousehold = onAddHousehold,
+            onEditHousehold = onEditHousehold,
+            clearUserMessage = clearUserMessage
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HouseholdListScreenContent(
-    households: List<Household>,
-    userMessage: String?,
-    onAddHousehold: () -> Unit,
-    onEditHousehold: (Household) -> Unit,
-    clearUserMessage: () -> Unit
+        households: List<Household>,
+        userMessage: String?,
+        onAddHousehold: () -> Unit,
+        onEditHousehold: (Household) -> Unit,
+        clearUserMessage: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -98,25 +100,32 @@ fun HouseholdListScreenContent(
     ) { innerPadding ->
         Column(modifier = Modifier.fillMaxSize().background(AppBackground)) {
             Surface(
-                modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 3.dp
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 0.dp
             ) {
                 SearchBar(
-                    query = searchQuery,
-                    onQueryChange = { searchQuery = it },
-                    onSearch = {},
-                    active = false,
-                    onActiveChange = {},
-                    placeholder = { Text("Search by address or Head NIC") },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .padding(top = innerPadding.calculateTopPadding()),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = SearchBarDefaults.colors(containerColor = AppBackground),
-                    tonalElevation = 0.dp
+                        query = searchQuery,
+                        onQueryChange = { searchQuery = it },
+                        onSearch = {},
+                        active = false,
+                        onActiveChange = {},
+                        placeholder = { Text("Search by address or Head NIC") },
+                        leadingIcon = {
+                            Icon(
+                                    painter = painterResource(id = R.drawable.ic_solar_magnifer),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp),
+                                    tint = Color(0xFF64748B)
+                            )
+                        },
+                        modifier =
+                                Modifier.fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                                        .padding(top = innerPadding.calculateTopPadding()),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = SearchBarDefaults.colors(containerColor = Color(0xFFF1F5F9)),
+                        tonalElevation = 0.dp
                 ) {}
             }
 
@@ -162,7 +171,7 @@ fun HouseholdListItem(household: Household, onItemClick: () -> Unit) {
                     contentAlignment = Alignment.Center
             ) {
                 Icon(
-                        Icons.Default.Home,
+                        painter = painterResource(id = R.drawable.ic_solar_home_smile),
                         contentDescription = "Household",
                         tint = BlueGradientStart,
                         modifier = Modifier.size(28.dp)
@@ -186,7 +195,7 @@ fun HouseholdListItem(household: Household, onItemClick: () -> Unit) {
             }
 
             Icon(
-                    Icons.Default.ChevronRight,
+                    painter = painterResource(id = R.drawable.ic_solar_alt_arrow_right),
                     contentDescription = null,
                     tint = Color.Gray,
                     modifier = Modifier.size(24.dp)
@@ -198,17 +207,18 @@ fun HouseholdListItem(household: Household, onItemClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun HouseholdListScreenPreview() {
-    val sampleHouseholds = listOf(
-        Household("H001", "123 Main St", "Colombo 01", "123456789V"),
-        Household("H002", "456 Oak Ave", "Colombo 01", "987654321V")
-    )
+    val sampleHouseholds =
+            listOf(
+                    Household("H001", "123 Main St", "Colombo 01", "123456789V"),
+                    Household("H002", "456 Oak Ave", "Colombo 01", "987654321V")
+            )
     GNAppTheme {
         HouseholdListScreenContent(
-            households = sampleHouseholds,
-            userMessage = null,
-            onAddHousehold = {},
-            onEditHousehold = {},
-            clearUserMessage = {}
+                households = sampleHouseholds,
+                userMessage = null,
+                onAddHousehold = {},
+                onEditHousehold = {},
+                clearUserMessage = {}
         )
     }
 }

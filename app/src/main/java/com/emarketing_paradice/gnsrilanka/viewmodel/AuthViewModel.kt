@@ -1,5 +1,7 @@
 package com.emarketing_paradice.gnsrilanka.viewmodel
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.emarketing_paradice.gnsrilanka.data.model.User
@@ -8,7 +10,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class AuthViewModel(private val repository: FileRepository) : ViewModel() {
+class AuthViewModel(private val repository: FileRepository, context: Context) : ViewModel() {
+    private val sharedPrefs: SharedPreferences =
+            context.getSharedPreferences("gn_auth_prefs", Context.MODE_PRIVATE)
+
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser
 
@@ -16,9 +21,16 @@ class AuthViewModel(private val repository: FileRepository) : ViewModel() {
     val uiState: StateFlow<AuthUiState> = _uiState
 
     init {
-        // Check if a user is already logged in
+        // Check if a user is already logged in from SharedPreferences
         viewModelScope.launch {
-            // In a real app, you might load the current user from a session cache or token
+            val savedNic = sharedPrefs.getString("logged_in_nic", null)
+            if (savedNic != null) {
+                val users = repository.getUsers()
+                val user = users.find { it.nic == savedNic }
+                if (user != null) {
+                    _currentUser.value = user
+                }
+            }
         }
     }
 
@@ -30,6 +42,8 @@ class AuthViewModel(private val repository: FileRepository) : ViewModel() {
             val users = repository.getUsers()
             val user = users.find { it.nic == nic && it.password == password }
             if (user != null) {
+                // Save session
+                sharedPrefs.edit().putString("logged_in_nic", user.nic).apply()
                 _currentUser.value = user
                 _uiState.value = AuthUiState.Success
             } else {
@@ -52,6 +66,10 @@ class AuthViewModel(private val repository: FileRepository) : ViewModel() {
             val newUser = User(nic, password)
             users.add(newUser)
             repository.saveUsers(users)
+
+            // Save session
+            sharedPrefs.edit().putString("logged_in_nic", newUser.nic).apply()
+
             _currentUser.value = newUser
             _uiState.value = AuthUiState.Success
         }
@@ -62,20 +80,26 @@ class AuthViewModel(private val repository: FileRepository) : ViewModel() {
             _uiState.value = AuthUiState.Error("NIC and Password cannot be empty.")
             return false
         }
-        // Basic NIC validation (can be improved)
-        if (nic.length < 10) {
-             _uiState.value = AuthUiState.Error("Invalid NIC format.")
+
+        // Precise Sri Lankan NIC validation
+        val oldNicPattern = Regex("^[0-9]{9}[vVxX]$")
+        val newNicPattern = Regex("^[0-9]{12}$")
+
+        if (!oldNicPattern.matches(nic) && !newNicPattern.matches(nic)) {
+            _uiState.value =
+                    AuthUiState.Error("Invalid NIC format. Use 9 digits + V/X or 12 digits.")
             return false
         }
+
         if (password.length < 6) {
             _uiState.value = AuthUiState.Error("Password must be at least 6 characters long.")
             return false
         }
         return true
     }
-    
+
     private fun validateInput(nic: String, password: String, confirm: String): Boolean {
-        if(!validateInput(nic,password)){
+        if (!validateInput(nic, password)) {
             return false
         }
         if (password != confirm) {
@@ -90,6 +114,7 @@ class AuthViewModel(private val repository: FileRepository) : ViewModel() {
     }
 
     fun logout() {
+        sharedPrefs.edit().remove("logged_in_nic").apply()
         _currentUser.value = null
         _uiState.value = AuthUiState.Idle
     }

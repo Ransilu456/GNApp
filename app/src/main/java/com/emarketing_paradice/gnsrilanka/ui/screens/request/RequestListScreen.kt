@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -25,9 +24,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.emarketing_paradice.gnsrilanka.R
 import com.emarketing_paradice.gnsrilanka.data.model.Request
 import com.emarketing_paradice.gnsrilanka.data.model.RequestStatus
 import com.emarketing_paradice.gnsrilanka.ui.components.common.EmptyContent
@@ -45,24 +46,24 @@ fun RequestListScreen(
         clearUserMessage: () -> Unit
 ) {
     val requests by requestViewModel.requests.collectAsState()
-    
+
     RequestListScreenContent(
-        requests = requests,
-        userMessage = userMessage,
-        onAddRequest = onAddRequest,
-        onEditRequest = onEditRequest,
-        clearUserMessage = clearUserMessage
+            requests = requests,
+            userMessage = userMessage,
+            onAddRequest = onAddRequest,
+            onEditRequest = onEditRequest,
+            clearUserMessage = clearUserMessage
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RequestListScreenContent(
-    requests: List<Request>,
-    userMessage: String?,
-    onAddRequest: () -> Unit,
-    onEditRequest: (Request) -> Unit,
-    clearUserMessage: () -> Unit
+        requests: List<Request>,
+        userMessage: String?,
+        onAddRequest: () -> Unit,
+        onEditRequest: (Request) -> Unit,
+        clearUserMessage: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -84,38 +85,48 @@ fun RequestListScreenContent(
         }
     }
 
-    Scaffold(
-            snackbarHost = { SnackbarHost(snackbarHostState) },
-            containerColor = AppBackground
-    ) { innerPadding ->
+    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }, containerColor = AppBackground) {
+            innerPadding ->
         Column(modifier = Modifier.fillMaxSize()) {
             Surface(
-                modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 2.dp,
-                shadowElevation = 2.dp
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 0.dp,
+                    shadowElevation = 0.dp
             ) {
                 Column(modifier = Modifier.padding(top = 8.dp)) {
                     SearchBar(
-                        inputField = {
-                            SearchBarDefaults.InputField(
-                                query = searchQuery,
-                                onQueryChange = { searchQuery = it },
-                                onSearch = { },
-                                expanded = false,
-                                onExpandedChange = { },
-                                placeholder = { Text("Search by type or NIC") },
-                                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) }
-                            )
-                        },
-                        expanded = false,
-                        onExpandedChange = { },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 4.dp),
-                        shape = RoundedCornerShape(24.dp),
-                        colors = SearchBarDefaults.colors(containerColor = AppBackground),
-                        content = { }
+                            inputField = {
+                                SearchBarDefaults.InputField(
+                                        query = searchQuery,
+                                        onQueryChange = { searchQuery = it },
+                                        onSearch = {},
+                                        expanded = false,
+                                        onExpandedChange = {},
+                                        placeholder = { Text("Search by type or NIC") },
+                                        leadingIcon = {
+                                            Icon(
+                                                    painter =
+                                                            painterResource(
+                                                                    id =
+                                                                            R.drawable
+                                                                                    .ic_solar_magnifer
+                                                            ),
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(20.dp),
+                                                    tint = Color(0xFF64748B)
+                                            )
+                                        }
+                                )
+                            },
+                            expanded = false,
+                            onExpandedChange = {},
+                            modifier =
+                                    Modifier.fillMaxWidth()
+                                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                            shape = RoundedCornerShape(24.dp),
+                            colors = SearchBarDefaults.colors(containerColor = Color(0xFFF1F5F9)),
+                            content = {}
                     )
                 }
             }
@@ -174,9 +185,12 @@ fun RequestListItem(request: Request, onItemClick: () -> Unit) {
                 }
 
                 Box(
-                    modifier = Modifier
-                        .background(statusColor.copy(alpha = 0.1f), RoundedCornerShape(8.dp))
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        modifier =
+                                Modifier.background(
+                                                statusColor.copy(alpha = 0.1f),
+                                                RoundedCornerShape(8.dp)
+                                        )
+                                        .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
                             text = request.status.name,
@@ -217,7 +231,7 @@ fun RequestListItem(request: Request, onItemClick: () -> Unit) {
                         fontWeight = FontWeight.Bold
                 )
                 Icon(
-                        Icons.Default.ChevronRight,
+                        painter = painterResource(id = R.drawable.ic_solar_alt_arrow_right),
                         contentDescription = null,
                         tint = BlueGradientStart,
                         modifier = Modifier.size(20.dp)
@@ -230,39 +244,40 @@ fun RequestListItem(request: Request, onItemClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun RequestListScreenPreview() {
-    val sampleRequests = listOf(
-        Request(
-            id = "R001",
-            citizenNic = "123456789V",
-            citizenName = "John Doe",
-            certificateType = "Character Certificate",
-            purpose = "Employment",
-            issuedDate = 0L,
-            submissionDate = "2023-10-27",
-            issuedByGn = "GN01",
-            description = "Character certificate for job",
-            status = RequestStatus.Pending
-        ),
-        Request(
-            id = "R002",
-            citizenNic = "987654321V",
-            citizenName = "Jane Smith",
-            certificateType = "Residency Certificate",
-            purpose = "School Admission",
-            issuedDate = 123456789L,
-            submissionDate = "2023-10-26",
-            issuedByGn = "GN01",
-            description = "Residency certificate for school",
-            status = RequestStatus.Approved
-        )
-    )
+    val sampleRequests =
+            listOf(
+                    Request(
+                            id = "R001",
+                            citizenNic = "123456789V",
+                            citizenName = "John Doe",
+                            certificateType = "Character Certificate",
+                            purpose = "Employment",
+                            issuedDate = 0L,
+                            submissionDate = "2023-10-27",
+                            issuedByGn = "GN01",
+                            description = "Character certificate for job",
+                            status = RequestStatus.Pending
+                    ),
+                    Request(
+                            id = "R002",
+                            citizenNic = "987654321V",
+                            citizenName = "Jane Smith",
+                            certificateType = "Residency Certificate",
+                            purpose = "School Admission",
+                            issuedDate = 123456789L,
+                            submissionDate = "2023-10-26",
+                            issuedByGn = "GN01",
+                            description = "Residency certificate for school",
+                            status = RequestStatus.Approved
+                    )
+            )
     GNAppTheme {
         RequestListScreenContent(
-            requests = sampleRequests,
-            userMessage = null,
-            onAddRequest = {},
-            onEditRequest = {},
-            clearUserMessage = {}
+                requests = sampleRequests,
+                userMessage = null,
+                onAddRequest = {},
+                onEditRequest = {},
+                clearUserMessage = {}
         )
     }
 }

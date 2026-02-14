@@ -1,6 +1,7 @@
 package com.emarketing_paradice.gnsrilanka.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -22,6 +23,14 @@ fun AppNavHost(
         requestViewModel: RequestViewModel,
         onOpenDrawer: () -> Unit
 ) {
+    val currentUser = authViewModel.currentUser.collectAsState().value
+
+    androidx.compose.runtime.LaunchedEffect(currentUser) {
+        if (currentUser != null) {
+            navController.navigate("main_flow") { popUpTo(Screen.Login.route) { inclusive = true } }
+        }
+    }
+
     NavHost(
             navController = navController,
             startDestination = Screen.Login.route,

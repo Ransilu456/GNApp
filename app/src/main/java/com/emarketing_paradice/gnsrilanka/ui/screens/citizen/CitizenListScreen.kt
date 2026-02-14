@@ -15,10 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.emarketing_paradice.gnsrilanka.R
 import com.emarketing_paradice.gnsrilanka.data.model.Citizen
 import com.emarketing_paradice.gnsrilanka.ui.components.common.EmptyContent
 import com.emarketing_paradice.gnsrilanka.ui.theme.*
@@ -28,44 +30,45 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CitizenListScreen(
-    citizenViewModel: CitizenViewModel,
-    userMessage: String?,
-    onAddCitizen: () -> Unit,
-    onEditCitizen: (Citizen) -> Unit,
-    clearUserMessage: () -> Unit
+        citizenViewModel: CitizenViewModel,
+        userMessage: String?,
+        onAddCitizen: () -> Unit,
+        onEditCitizen: (Citizen) -> Unit,
+        clearUserMessage: () -> Unit
 ) {
     val citizens by citizenViewModel.citizens.collectAsState()
 
     CitizenListScreenContent(
-        citizens = citizens,
-        userMessage = userMessage,
-        onAddCitizen = onAddCitizen,
-        onEditCitizen = onEditCitizen,
-        clearUserMessage = clearUserMessage
+            citizens = citizens,
+            userMessage = userMessage,
+            onAddCitizen = onAddCitizen,
+            onEditCitizen = onEditCitizen,
+            clearUserMessage = clearUserMessage
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CitizenListScreenContent(
-    citizens: List<Citizen>,
-    userMessage: String?,
-    onAddCitizen: () -> Unit,
-    onEditCitizen: (Citizen) -> Unit,
-    clearUserMessage: () -> Unit
+        citizens: List<Citizen>,
+        userMessage: String?,
+        onAddCitizen: () -> Unit,
+        onEditCitizen: (Citizen) -> Unit,
+        clearUserMessage: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var searchQuery by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf("All") }
 
-    val filteredCitizens = citizens.filter {
-        val fullName = it.fullName ?: ""
-        val nic = it.nic ?: ""
-        (fullName.contains(searchQuery, ignoreCase = true) ||
-                nic.contains(searchQuery, ignoreCase = true)) &&
-                (selectedFilter == "All" || getCitizenStatus(it) == selectedFilter)
-    }
+    val filteredCitizens =
+            citizens.filter {
+                val fullName = it.fullName ?: ""
+                val nic = it.nic ?: ""
+                (fullName.contains(searchQuery, ignoreCase = true) ||
+                        nic.contains(searchQuery, ignoreCase = true)) &&
+                        (selectedFilter == "All" || getCitizenStatus(it) == selectedFilter)
+            }
 
     LaunchedEffect(userMessage) {
         userMessage?.let {
@@ -76,47 +79,62 @@ fun CitizenListScreenContent(
         }
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        containerColor = AppBackground
-    ) { innerPadding ->
+    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }, containerColor = AppBackground) {
+            innerPadding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = innerPadding.calculateBottomPadding())
+                modifier =
+                        Modifier.fillMaxSize()
+                                .padding(bottom = innerPadding.calculateBottomPadding())
         ) {
             Surface(
-                modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 2.dp,
-                shadowElevation = 2.dp
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 0.dp,
+                    shadowElevation = 0.1.dp
             ) {
                 Column(modifier = Modifier.padding(top = 8.dp)) {
                     SearchBar(
-                        inputField = {
-                            SearchBarDefaults.InputField(
-                                query = searchQuery,
-                                onQueryChange = { searchQuery = it },
-                                onSearch = { },
-                                expanded = false,
-                                onExpandedChange = { },
-                                placeholder = { Text("Search by name or NIC") },
-                                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) }
-                            )
-                        },
-                        expanded = false,
-                        onExpandedChange = { },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 4.dp),
-                        shape = RoundedCornerShape(24.dp),
-                        colors = SearchBarDefaults.colors(containerColor = AppBackground),
-                        content = { }
+                            inputField = {
+                                SearchBarDefaults.InputField(
+                                        query = searchQuery,
+                                        onQueryChange = { searchQuery = it },
+                                        onSearch = {},
+                                        expanded = false,
+                                        onExpandedChange = {},
+                                        placeholder = { Text("Search by name or NIC") },
+                                        leadingIcon = {
+                                            Icon(
+                                                    painter =
+                                                            painterResource(
+                                                                    id =
+                                                                            R.drawable
+                                                                                    .ic_solar_magnifer
+                                                            ),
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(20.dp),
+                                                    tint = Color(0xFF64748B)
+                                            )
+                                        }
+                                )
+                            },
+                            expanded = false,
+                            onExpandedChange = {},
+                            modifier =
+                                    Modifier.fillMaxWidth()
+                                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                            shape = RoundedCornerShape(24.dp),
+                            colors =
+                                    SearchBarDefaults.colors(
+                                            containerColor =
+                                                    Color(0xFFF1F5F9), // Light neutral gray
+                                            dividerColor = Color.Transparent
+                                    ),
+                            content = {}
                     )
 
                     FilterSection(
-                        selectedFilter = selectedFilter,
-                        onFilterSelected = { selectedFilter = it }
+                            selectedFilter = selectedFilter,
+                            onFilterSelected = { selectedFilter = it }
                     )
                 }
             }
@@ -127,9 +145,9 @@ fun CitizenListScreenContent(
                 }
             } else {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(16.dp)
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(16.dp)
                 ) {
                     items(filteredCitizens, key = { it.nic ?: it.hashCode() }) { citizen ->
                         CitizenListItem(citizen = citizen, onItemClick = { onEditCitizen(citizen) })
@@ -144,28 +162,29 @@ fun CitizenListScreenContent(
 fun FilterSection(selectedFilter: String, onFilterSelected: (String) -> Unit) {
     val filters = listOf("All", "Approved", "Pending", "Rejected")
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         filters.forEach { filter ->
             FilterChip(
-                selected = selectedFilter == filter,
-                onClick = { onFilterSelected(filter) },
-                label = { Text(filter, style = MaterialTheme.typography.labelMedium) },
-                colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = BlueGradientStart,
-                    selectedLabelColor = Color.White,
-                    containerColor = Color.Transparent,
-                    labelColor = MaterialTheme.colorScheme.onSurfaceVariant
-                ),
-                border = FilterChipDefaults.filterChipBorder(
-                    enabled = true,
                     selected = selectedFilter == filter,
-                    borderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                    selectedBorderColor = Color.Transparent
-                )
+                    onClick = { onFilterSelected(filter) },
+                    label = { Text(filter, style = MaterialTheme.typography.labelMedium) },
+                    colors =
+                            FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = BlueGradientStart,
+                                    selectedLabelColor = Color.White,
+                                    containerColor = Color.Transparent,
+                                    labelColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            ),
+                    border =
+                            FilterChipDefaults.filterChipBorder(
+                                    enabled = true,
+                                    selected = selectedFilter == filter,
+                                    borderColor =
+                                            MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                                    selectedBorderColor = Color.Transparent
+                            )
             )
         }
     }
@@ -174,38 +193,35 @@ fun FilterSection(selectedFilter: String, onFilterSelected: (String) -> Unit) {
 @Composable
 fun CitizenListItem(citizen: Citizen, onItemClick: () -> Unit) {
     val status = getCitizenStatus(citizen)
-    val statusColor = when (status) {
-        "Approved" -> StatusGreen
-        "Pending" -> StatusYellow
-        else -> StatusRed
-    }
+    val statusColor =
+            when (status) {
+                "Approved" -> StatusGreen
+                "Pending" -> StatusYellow
+                else -> StatusRed
+            }
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onItemClick() },
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+            modifier = Modifier.fillMaxWidth().clickable { onItemClick() },
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(BlueGradientStart.copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
+                    modifier =
+                            Modifier.size(48.dp)
+                                    .clip(CircleShape)
+                                    .background(BlueGradientStart.copy(alpha = 0.1f)),
+                    contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    Icons.Default.Person,
-                    contentDescription = null,
-                    tint = BlueGradientStart,
-                    modifier = Modifier.size(24.dp)
+                        painter = painterResource(id = R.drawable.ic_solar_user_circle),
+                        contentDescription = null,
+                        tint = BlueGradientStart,
+                        modifier = Modifier.size(24.dp)
                 )
             }
 
@@ -213,37 +229,40 @@ fun CitizenListItem(citizen: Citizen, onItemClick: () -> Unit) {
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = citizen.fullName ?: "Unknown",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                        text = citizen.fullName ?: "Unknown",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "NIC: ${citizen.nic ?: "N/A"}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = "NIC: ${citizen.nic ?: "N/A"}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 if (!citizen.address.isNullOrBlank()) {
                     Text(
-                        text = citizen.address,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                            text = citizen.address,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                     )
                 }
             }
 
             Box(
-                modifier = Modifier
-                    .background(statusColor.copy(alpha = 0.1f), RoundedCornerShape(8.dp))
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                    modifier =
+                            Modifier.background(
+                                            statusColor.copy(alpha = 0.1f),
+                                            RoundedCornerShape(8.dp)
+                                    )
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
                 Text(
-                    text = status,
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = statusColor
+                        text = status,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = statusColor
                 )
             }
         }
@@ -263,17 +282,34 @@ private fun getCitizenStatus(citizen: Citizen): String {
 @Preview(showBackground = true)
 @Composable
 fun CitizenListScreenPreview() {
-    val sampleCitizens = listOf(
-        Citizen("123456789V", "John Doe", "1990-01-01", "Male", "Engineer", "H001", "123 Main St"),
-        Citizen("987654321V", "Jane Smith", "1992-05-15", "Female", "Doctor", "H002", "456 Oak Ave")
-    )
+    val sampleCitizens =
+            listOf(
+                    Citizen(
+                            "123456789V",
+                            "John Doe",
+                            "1990-01-01",
+                            "Male",
+                            "Engineer",
+                            "H001",
+                            "123 Main St"
+                    ),
+                    Citizen(
+                            "987654321V",
+                            "Jane Smith",
+                            "1992-05-15",
+                            "Female",
+                            "Doctor",
+                            "H002",
+                            "456 Oak Ave"
+                    )
+            )
     GNAppTheme {
         CitizenListScreenContent(
-            citizens = sampleCitizens,
-            userMessage = null,
-            onAddCitizen = {},
-            onEditCitizen = {},
-            clearUserMessage = {}
+                citizens = sampleCitizens,
+                userMessage = null,
+                onAddCitizen = {},
+                onEditCitizen = {},
+                clearUserMessage = {}
         )
     }
 }
