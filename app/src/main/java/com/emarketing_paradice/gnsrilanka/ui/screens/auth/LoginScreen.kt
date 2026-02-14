@@ -40,6 +40,8 @@ import com.emarketing_paradice.gnsrilanka.ui.theme.BlueGradientStart
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthUiState
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthViewModel
 import kotlinx.coroutines.flow.collectLatest
+import androidx.compose.ui.tooling.preview.Preview
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -373,8 +375,6 @@ fun LoginScreenContent(
                 }
         }
 }
-
-import androidx.compose.ui.tooling.preview.Preview
 
 @Preview(showBackground = true)
 @Composable

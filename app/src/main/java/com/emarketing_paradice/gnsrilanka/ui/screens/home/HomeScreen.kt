@@ -3,7 +3,6 @@ package com.emarketing_paradice.gnsrilanka.ui.screens.home
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.remember
@@ -19,15 +18,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.emarketing_paradice.gnsrilanka.R
+
+import com.emarketing_paradice.gnsrilanka.data.model.Citizen
+import com.emarketing_paradice.gnsrilanka.data.model.User
+import com.emarketing_paradice.gnsrilanka.ui.theme.GNAppTheme
 import com.emarketing_paradice.gnsrilanka.viewmodel.*
 
 // --- Theme Colors ---
 val GnPrimary = Color(0xFF0014A8)
 val GnBackground = Color(0xFFF4F7FE)
-val GnSurface = Color.White
 val GnTextPrimary = Color(0xFF1E293B)
 val GnTextSecondary = Color(0xFF94A3B8)
-val GnAccent = Color(0xFFFFB300)
 
 @Composable
 fun HomeScreen(
@@ -46,6 +47,31 @@ fun HomeScreen(
     val requestState by requestViewModel.uiState.collectAsState()
     val currentUser by authViewModel.currentUser.collectAsState()
 
+    HomeContent(
+            citizenState = citizenState,
+            householdState = householdState,
+            requestState = requestState,
+            currentUser = currentUser,
+            onNavigateToCitizens = onNavigateToCitizens,
+            onNavigateToHouseholds = onNavigateToHouseholds,
+            onNavigateToRequests = onNavigateToRequests,
+            onNavigateToProfile = onNavigateToProfile,
+            onOpenDrawer = onOpenDrawer
+    )
+}
+
+@Composable
+fun HomeContent(
+        citizenState: CitizenUiState,
+        householdState: HouseholdUiState,
+        requestState: RequestUiState,
+        currentUser: User?,
+        onNavigateToCitizens: () -> Unit,
+        onNavigateToHouseholds: () -> Unit,
+        onNavigateToRequests: () -> Unit,
+        onNavigateToProfile: () -> Unit,
+        onOpenDrawer: () -> Unit
+) {
     // Find the current user's name from citizen list if available
     val userName =
             remember(currentUser, citizenState.citizens) {
@@ -246,7 +272,7 @@ fun ActionGrid(
                     onNavigateToCitizens
             )
             ActionCard(
-                    "Households",
+                    "Houses",
                     R.drawable.ic_solar_home_smile,
                     Modifier.weight(1f),
                     onNavigateToHouseholds
@@ -254,7 +280,7 @@ fun ActionGrid(
         }
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             ActionCard(
-                    "Service Requests",
+                    "Requests",
                     R.drawable.ic_solar_documents,
                     Modifier.weight(1f),
                     onNavigateToRequests
@@ -317,11 +343,33 @@ fun ActionCard(label: String, icon: Int, modifier: Modifier = Modifier, onClick:
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    // Mock view models would be needed for a full preview,
-    // but for UI layout checking we can create a simplified version
-    // or just preview the components.
-    // Ideally we decouple pure UI from ViewModels.
-    // For now, let's preview the cards.
+    GNAppTheme {
+        HomeContent(
+                citizenState =
+                        CitizenUiState(
+                                citizens =
+                                        listOf(
+                                                Citizen(
+                                                        "123456789V",
+                                                        "John Doe",
+                                                        "1990-01-01",
+                                                        "Male",
+                                                        "Engineer",
+                                                        "H001",
+                                                        "No 1, Main St"
+                                                )
+                                        )
+                        ),
+                householdState = HouseholdUiState(households = listOf()),
+                requestState = RequestUiState(requests = listOf()),
+                currentUser = User("123456789V", "password"),
+                onNavigateToCitizens = {},
+                onNavigateToHouseholds = {},
+                onNavigateToRequests = {},
+                onNavigateToProfile = {},
+                onOpenDrawer = {}
+        )
+    }
 }
 
 @Preview(showBackground = true, widthDp = 360)

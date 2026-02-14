@@ -28,7 +28,6 @@ val GnBackground = Color(0xFFF4F7FE)
 val GnSurface = Color.White
 val GnTextPrimary = Color(0xFF1E293B)
 val GnTextSecondary = Color(0xFF94A3B8)
-val GnAccent = Color(0xFFFFB300)
 
 @Composable
 fun ProfileScreen(
