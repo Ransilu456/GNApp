@@ -63,6 +63,38 @@ fun LoginScreen(
                 }
         }
 
+        LoginScreenContent(
+                uiState = uiState,
+                nic = nic,
+                password = password,
+                passwordVisible = passwordVisible,
+                onNicChange = { nic = it },
+                onPasswordChange = { password = it },
+                onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+                onLogin = {
+                        focusManager.clearFocus()
+                        authViewModel.login(nic, password)
+                },
+                onNavigateToRegister = onNavigateToRegister
+        )
+
+        DisposableEffect(Unit) { onDispose { authViewModel.resetState() } }
+}
+
+@Composable
+fun LoginScreenContent(
+        uiState: AuthUiState,
+        nic: String,
+        password: String,
+        passwordVisible: Boolean,
+        onNicChange: (String) -> Unit,
+        onPasswordChange: (String) -> Unit,
+        onPasswordVisibilityChange: () -> Unit,
+        onLogin: () -> Unit,
+        onNavigateToRegister: () -> Unit
+) {
+        val focusManager = LocalFocusManager.current
+
         Scaffold(
                 modifier = Modifier.fillMaxSize(),
         ) { innerPadding ->
@@ -152,7 +184,7 @@ fun LoginScreen(
                                         ) {
                                                 OutlinedTextField(
                                                         value = nic,
-                                                        onValueChange = { nic = it },
+                                                        onValueChange = onNicChange,
                                                         label = { Text("NIC Number") },
                                                         leadingIcon = {
                                                                 Icon(
@@ -190,7 +222,7 @@ fun LoginScreen(
 
                                                 OutlinedTextField(
                                                         value = password,
-                                                        onValueChange = { password = it },
+                                                        onValueChange = onPasswordChange,
                                                         label = { Text("Password") },
                                                         leadingIcon = {
                                                                 Icon(
@@ -206,24 +238,6 @@ fun LoginScreen(
                                                                 )
                                                         },
                                                         trailingIcon = {
-                                                                val image =
-                                                                        if (passwordVisible)
-                                                                                R.drawable
-                                                                                        .ic_solar_refresh /* Placeholder for visibility if needed, but I'll stick to icons I have or standard if no solar visibility icons yet */
-                                                                        else
-                                                                                R.drawable
-                                                                                        .ic_solar_refresh
-                                                                // Actually, I don't see Solar eye
-                                                                // icons in the provided list.
-                                                                // I'll use standard for now or just
-                                                                // eye icons if I can find
-                                                                // them.
-                                                                // Wait, I created
-                                                                // ic_solar_magnifer,
-                                                                // ic_solar_user_id, etc.
-                                                                // I'll use standard visibility
-                                                                // icons for now as they are
-                                                                // familiar.
                                                                 val icon =
                                                                         if (passwordVisible)
                                                                                 Icons.Filled
@@ -232,10 +246,7 @@ fun LoginScreen(
                                                                                 Icons.Filled
                                                                                         .VisibilityOff
                                                                 IconButton(
-                                                                        onClick = {
-                                                                                passwordVisible =
-                                                                                        !passwordVisible
-                                                                        }
+                                                                        onClick = onPasswordVisibilityChange
                                                                 ) {
                                                                         Icon(
                                                                                 imageVector = icon,
@@ -261,12 +272,7 @@ fun LoginScreen(
                                                         keyboardActions =
                                                                 KeyboardActions(
                                                                         onDone = {
-                                                                                focusManager
-                                                                                        .clearFocus()
-                                                                                authViewModel.login(
-                                                                                        nic,
-                                                                                        password
-                                                                                )
+                                                                                onLogin()
                                                                         }
                                                                 ),
                                                         singleLine = true,
@@ -305,10 +311,7 @@ fun LoginScreen(
                                                 Spacer(modifier = Modifier.height(8.dp))
 
                                                 Button(
-                                                        onClick = {
-                                                                focusManager.clearFocus()
-                                                                authViewModel.login(nic, password)
-                                                        },
+                                                        onClick = onLogin,
                                                         modifier =
                                                                 Modifier.fillMaxWidth()
                                                                         .height(56.dp),
@@ -369,6 +372,23 @@ fun LoginScreen(
                         }
                 }
         }
-
-        DisposableEffect(Unit) { onDispose { authViewModel.resetState() } }
 }
+
+import androidx.compose.ui.tooling.preview.Preview
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+        LoginScreenContent(
+                uiState = AuthUiState.Idle,
+                nic = "",
+                password = "",
+                passwordVisible = false,
+                onNicChange = {},
+                onPasswordChange = {},
+                onPasswordVisibilityChange = {},
+                onLogin = {},
+                onNavigateToRegister = {}
+        )
+}
+

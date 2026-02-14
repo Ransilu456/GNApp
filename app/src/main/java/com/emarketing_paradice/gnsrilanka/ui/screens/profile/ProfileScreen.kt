@@ -1,8 +1,11 @@
 package com.emarketing_paradice.gnsrilanka.ui.screens.profile
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.emarketing_paradice.gnsrilanka.R
+import com.emarketing_paradice.gnsrilanka.ui.theme.GNAppTheme
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.CitizenViewModel
 
@@ -42,6 +46,21 @@ fun ProfileScreen(
                         citizenState.citizens.find { it.nic == currentUser?.nic }
                 }
 
+        ProfileScreenContent(
+                fullName = citizenInfo?.fullName ?: "Officer",
+                division = "North Division - Colombo", // Placeholder or fetch if available
+                onLogout = onLogout,
+                onNavigateToEditProfile = onNavigateToEditProfile
+        )
+}
+
+@Composable
+fun ProfileScreenContent(
+        fullName: String,
+        division: String,
+        onLogout: () -> Unit,
+        onNavigateToEditProfile: () -> Unit
+) {
         Scaffold(containerColor = GnBackground) { padding ->
                 Column(
                         modifier =
@@ -73,25 +92,32 @@ fun ProfileScreen(
                                         Surface(
                                                 modifier = Modifier.size(100.dp),
                                                 shape = RoundedCornerShape(32.dp),
-                                                color = Color.White.copy(alpha = 0.2f)
+                                                color = Color.White.copy(alpha = 0.2f),
+                                                border =
+                                                        BorderStroke(
+                                                                1.dp,
+                                                                Color.White.copy(alpha = 0.3f)
+                                                        )
                                         ) {
-                                                Icon(
-                                                        painter =
-                                                                painterResource(
-                                                                        id =
-                                                                                R.drawable
-                                                                                        .ic_solar_user_circle
-                                                                ),
-                                                        contentDescription = null,
-                                                        modifier = Modifier.size(48.dp),
-                                                        tint = Color.White
-                                                )
+                                                Box(contentAlignment = Alignment.Center) {
+                                                        Icon(
+                                                                painter =
+                                                                        painterResource(
+                                                                                id =
+                                                                                        R.drawable
+                                                                                                .ic_solar_user_circle
+                                                                        ),
+                                                                contentDescription = null,
+                                                                modifier = Modifier.size(48.dp),
+                                                                tint = Color.White
+                                                        )
+                                                }
                                         }
 
                                         Spacer(modifier = Modifier.height(16.dp))
 
                                         Text(
-                                                text = citizenInfo?.fullName ?: "Officer",
+                                                text = fullName,
                                                 color = Color.White,
                                                 fontSize = 24.sp,
                                                 fontWeight = FontWeight.Bold
@@ -112,14 +138,8 @@ fun ProfileScreen(
                                 ProfileDetailCard(
                                         items =
                                                 listOf(
-                                                        ProfileItem(
-                                                                "Full Name",
-                                                                citizenInfo?.fullName ?: "N/A"
-                                                        ),
-                                                        ProfileItem(
-                                                                "Division",
-                                                                "North Division - Colombo"
-                                                        )
+                                                        ProfileItem("Full Name", fullName),
+                                                        ProfileItem("Division", division)
                                                 )
                                 )
 
@@ -194,14 +214,24 @@ fun ProfileDetailCard(items: List<ProfileItem>) {
         ) {
                 Column(modifier = Modifier.padding(24.dp)) {
                         items.forEachIndexed { index, item ->
-                                Column {
-                                        Text(item.label, color = GnTextSecondary, fontSize = 12.sp)
-                                        Text(
-                                                item.value,
-                                                color = GnTextPrimary,
-                                                fontSize = 16.sp,
-                                                fontWeight = FontWeight.Medium
-                                        )
+                                Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                        Column {
+                                                Text(
+                                                        item.label,
+                                                        color = GnTextSecondary,
+                                                        fontSize = 12.sp
+                                                )
+                                                Text(
+                                                        item.value,
+                                                        color = GnTextPrimary,
+                                                        fontSize = 16.sp,
+                                                        fontWeight = FontWeight.Medium
+                                                )
+                                        }
                                 }
                                 if (index < items.size - 1) {
                                         HorizontalDivider(
@@ -222,8 +252,9 @@ fun SettingsActionItem(title: String, subtitle: String, icon: Int, onClick: () -
                 onClick = onClick,
                 modifier = Modifier.padding(bottom = 12.dp),
                 shape = RoundedCornerShape(20.dp),
-                color = GnSurface
-        ) {
+                color = GnSurface,
+                // Using border/shadow might be nice here too, but consistent with design
+                ) {
                 Row(
                         modifier = Modifier.padding(16.dp).fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
@@ -240,7 +271,8 @@ fun SettingsActionItem(title: String, subtitle: String, icon: Int, onClick: () -
                                 Icon(
                                         painter = painterResource(id = icon),
                                         contentDescription = null,
-                                        tint = GnPrimary
+                                        tint = GnPrimary,
+                                        modifier = Modifier.size(24.dp)
                                 )
                         }
 
@@ -254,7 +286,8 @@ fun SettingsActionItem(title: String, subtitle: String, icon: Int, onClick: () -
                         Icon(
                                 painter = painterResource(id = R.drawable.ic_solar_alt_arrow_right),
                                 contentDescription = null,
-                                tint = GnTextSecondary
+                                tint = GnTextSecondary,
+                                modifier = Modifier.size(20.dp)
                         )
                 }
         }
@@ -263,5 +296,12 @@ fun SettingsActionItem(title: String, subtitle: String, icon: Int, onClick: () -
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
-        // Redacted for brevity as it depends on ViewModels
+        GNAppTheme {
+                ProfileScreenContent(
+                        fullName = "John Doe-Officer",
+                        division = "North Division - Colombo",
+                        onLogout = {},
+                        onNavigateToEditProfile = {}
+                )
+        }
 }

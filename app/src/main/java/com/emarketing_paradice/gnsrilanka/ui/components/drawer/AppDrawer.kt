@@ -23,127 +23,163 @@ fun AppDrawer(
         onLogout: () -> Unit,
         closeDrawer: () -> Unit
 ) {
-    val items =
-            listOf(
-                    Screen.Home,
-                    Screen.CitizenList,
-                    Screen.HouseholdList,
-                    Screen.RequestList,
-                    Screen.Profile
-            )
+        val items =
+                listOf(
+                        Screen.Home,
+                        Screen.CitizenList,
+                        Screen.HouseholdList,
+                        Screen.RequestList,
+                        Screen.Profile
+                )
 
-    ModalDrawerSheet(
-            drawerContainerColor = Color.White,
-            drawerShape = RoundedCornerShape(topEnd = 32.dp, bottomEnd = 32.dp)
-    ) {
-        // Header
-        Box(
-                modifier =
-                        Modifier.fillMaxWidth()
-                                .height(200.dp)
-                                .background(
-                                        Brush.verticalGradient(
-                                                colors =
-                                                        listOf(Color(0xFF0014A8), Color(0xFF000B5E))
-                                        )
-                                )
-                                .padding(24.dp)
+        ModalDrawerSheet(
+                drawerContainerColor = Color.White,
+                drawerShape = RoundedCornerShape(topEnd = 32.dp, bottomEnd = 32.dp)
         ) {
-            Column(modifier = Modifier.align(Alignment.BottomStart)) {
+                // Header
                 Box(
                         modifier =
-                                Modifier.size(64.dp)
-                                        .clip(RoundedCornerShape(20.dp))
-                                        .background(Color.White.copy(alpha = 0.2f)),
-                        contentAlignment = Alignment.Center
+                                Modifier.fillMaxWidth()
+                                        .height(200.dp)
+                                        .background(
+                                                Brush.verticalGradient(
+                                                        colors =
+                                                                listOf(
+                                                                        Color(0xFF0014A8),
+                                                                        Color(0xFF000B5E)
+                                                                )
+                                                )
+                                        )
+                                        .padding(24.dp)
                 ) {
-                    Icon(
-                            painter = painterResource(id = R.drawable.ic_solar_user_circle),
-                            contentDescription = null,
-                            modifier = Modifier.size(32.dp),
-                            tint = Color.White
-                    )
+                        Column(modifier = Modifier.align(Alignment.BottomStart)) {
+                                Box(
+                                        modifier =
+                                                Modifier.size(64.dp)
+                                                        .clip(RoundedCornerShape(20.dp))
+                                                        .background(Color.White.copy(alpha = 0.2f)),
+                                        contentAlignment = Alignment.Center
+                                ) {
+                                        Icon(
+                                                painter =
+                                                        painterResource(
+                                                                id = R.drawable.ic_solar_user_circle
+                                                        ),
+                                                contentDescription = null,
+                                                modifier = Modifier.size(32.dp),
+                                                tint = Color.White
+                                        )
+                                }
+                                Spacer(Modifier.height(16.dp))
+                                Text(
+                                        "Digital Assistant",
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                )
+                                Text(
+                                        "Grama Niladhari - Sri Lanka",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = Color.White.copy(alpha = 0.6f)
+                                )
+                        }
                 }
-                Spacer(Modifier.height(16.dp))
-                Text(
-                        "Digital Assistant",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                )
-                Text(
-                        "Grama Niladhari - Sri Lanka",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.6f)
-                )
-            }
-        }
 
-        Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(24.dp))
 
-        // Navigation Items
-        items.forEach { screen ->
-            screen.icon?.let { icon ->
-                val isSelected = currentRoute == screen.route
+                // Navigation Items
+                items.forEach { screen ->
+                        screen.icon?.let { icon ->
+                                val isSelected = currentRoute == screen.route
+                                NavigationDrawerItem(
+                                        icon = {
+                                                Icon(
+                                                        painter = painterResource(id = icon),
+                                                        contentDescription = screen.title,
+                                                        tint =
+                                                                if (isSelected) Color(0xFF0014A8)
+                                                                else Color(0xFF94A3B8)
+                                                )
+                                        },
+                                        label = {
+                                                Text(
+                                                        screen.title,
+                                                        fontWeight =
+                                                                if (isSelected) FontWeight.Bold
+                                                                else FontWeight.Medium,
+                                                        color =
+                                                                if (isSelected) Color(0xFF0014A8)
+                                                                else Color(0xFF1E293B)
+                                                )
+                                        },
+                                        selected = isSelected,
+                                        onClick = {
+                                                onNavigate(screen.route)
+                                                closeDrawer()
+                                        },
+                                        colors =
+                                                NavigationDrawerItemDefaults.colors(
+                                                        selectedContainerColor =
+                                                                Color(0xFF0014A8)
+                                                                        .copy(alpha = 0.1f),
+                                                        unselectedContainerColor = Color.Transparent
+                                                ),
+                                        modifier =
+                                                Modifier.padding(
+                                                        horizontal = 12.dp,
+                                                        vertical = 4.dp
+                                                )
+                                )
+                        }
+                }
+
+                Spacer(Modifier.weight(1f))
+
+                // Footer with Logout
+                HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 24.dp),
+                        color = Color(0xFFF1F5F9)
+                )
                 NavigationDrawerItem(
                         icon = {
-                            Icon(
-                                    painter = painterResource(id = icon),
-                                    contentDescription = screen.title,
-                                    tint = if (isSelected) Color(0xFF0014A8) else Color(0xFF94A3B8)
-                            )
+                                Icon(
+                                        painter = painterResource(id = R.drawable.ic_solar_logout),
+                                        contentDescription = "Logout",
+                                        tint = Color(0xFFE11D48)
+                                )
                         },
                         label = {
-                            Text(
-                                    screen.title,
-                                    fontWeight =
-                                            if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                    color = if (isSelected) Color(0xFF0014A8) else Color(0xFF1E293B)
-                            )
+                                Text(
+                                        "Logout",
+                                        color = Color(0xFFE11D48),
+                                        fontWeight = FontWeight.Bold
+                                )
                         },
-                        selected = isSelected,
+                        selected = false,
                         onClick = {
-                            onNavigate(screen.route)
-                            closeDrawer()
+                                closeDrawer()
+                                onLogout()
                         },
                         colors =
                                 NavigationDrawerItemDefaults.colors(
-                                        selectedContainerColor =
-                                                Color(0xFF0014A8).copy(alpha = 0.1f),
                                         unselectedContainerColor = Color.Transparent
                                 ),
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+                        modifier = Modifier.padding(12.dp)
                 )
-            }
+                Spacer(Modifier.height(12.dp))
         }
+}
 
-        Spacer(Modifier.weight(1f))
-
-        // Footer with Logout
-        HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 24.dp),
-                color = Color(0xFFF1F5F9)
-        )
-        NavigationDrawerItem(
-                icon = {
-                    Icon(
-                            painter = painterResource(id = R.drawable.ic_solar_logout),
-                            contentDescription = "Logout",
-                            tint = Color(0xFFE11D48)
-                    )
-                },
-                label = { Text("Logout", color = Color(0xFFE11D48), fontWeight = FontWeight.Bold) },
-                selected = false,
-                onClick = {
-                    closeDrawer()
-                    onLogout()
-                },
-                colors =
-                        NavigationDrawerItemDefaults.colors(
-                                unselectedContainerColor = Color.Transparent
-                        ),
-                modifier = Modifier.padding(12.dp)
-        )
-        Spacer(Modifier.height(12.dp))
-    }
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Composable
+fun AppDrawerPreview() {
+        com.emarketing_paradice.gnsrilanka.ui.theme.GNAppTheme {
+                AppDrawer(
+                        currentRoute =
+                                com.emarketing_paradice.gnsrilanka.ui.navigation.Screen.Home.route,
+                        onNavigate = {},
+                        onLogout = {},
+                        closeDrawer = {}
+                )
+        }
 }

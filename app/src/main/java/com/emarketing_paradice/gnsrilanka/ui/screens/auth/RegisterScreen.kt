@@ -56,6 +56,46 @@ fun RegisterScreen(
                 }
         }
 
+        RegisterScreenContent(
+                uiState = uiState,
+                nic = nic,
+                password = password,
+                confirmPassword = confirmPassword,
+                passwordVisible = passwordVisible,
+                confirmPasswordVisible = confirmPasswordVisible,
+                onNicChange = { nic = it },
+                onPasswordChange = { password = it },
+                onConfirmPasswordChange = { confirmPassword = it },
+                onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+                onConfirmPasswordVisibilityChange = { confirmPasswordVisible = !confirmPasswordVisible },
+                onRegister = {
+                        focusManager.clearFocus()
+                        authViewModel.register(nic, password, confirmPassword)
+                },
+                onNavigateToLogin = onNavigateToLogin
+        )
+
+        DisposableEffect(Unit) { onDispose { authViewModel.resetState() } }
+}
+
+@Composable
+fun RegisterScreenContent(
+        uiState: AuthUiState,
+        nic: String,
+        password: String,
+        confirmPassword: String,
+        passwordVisible: Boolean,
+        confirmPasswordVisible: Boolean,
+        onNicChange: (String) -> Unit,
+        onPasswordChange: (String) -> Unit,
+        onConfirmPasswordChange: (String) -> Unit,
+        onPasswordVisibilityChange: () -> Unit,
+        onConfirmPasswordVisibilityChange: () -> Unit,
+        onRegister: () -> Unit,
+        onNavigateToLogin: () -> Unit
+) {
+        val focusManager = LocalFocusManager.current
+
         Scaffold(
                 modifier = Modifier.fillMaxSize(),
         ) { innerPadding ->
@@ -117,7 +157,7 @@ fun RegisterScreen(
                                         ) {
                                                 OutlinedTextField(
                                                         value = nic,
-                                                        onValueChange = { nic = it },
+                                                        onValueChange = onNicChange,
                                                         label = { Text("NIC Number") },
                                                         leadingIcon = {
                                                                 Icon(
@@ -155,7 +195,7 @@ fun RegisterScreen(
 
                                                 OutlinedTextField(
                                                         value = password,
-                                                        onValueChange = { password = it },
+                                                        onValueChange = onPasswordChange,
                                                         label = { Text("Password") },
                                                         leadingIcon = {
                                                                 Icon(
@@ -180,10 +220,7 @@ fun RegisterScreen(
                                                                                         .VisibilityOff
 
                                                                 IconButton(
-                                                                        onClick = {
-                                                                                passwordVisible =
-                                                                                        !passwordVisible
-                                                                        }
+                                                                        onClick = onPasswordVisibilityChange
                                                                 ) {
                                                                         Icon(
                                                                                 imageVector = icon,
@@ -226,7 +263,7 @@ fun RegisterScreen(
 
                                                 OutlinedTextField(
                                                         value = confirmPassword,
-                                                        onValueChange = { confirmPassword = it },
+                                                        onValueChange = onConfirmPasswordChange,
                                                         label = { Text("Confirm Password") },
                                                         leadingIcon = {
                                                                 Icon(
@@ -251,10 +288,7 @@ fun RegisterScreen(
                                                                                         .VisibilityOff
 
                                                                 IconButton(
-                                                                        onClick = {
-                                                                                confirmPasswordVisible =
-                                                                                        !confirmPasswordVisible
-                                                                        }
+                                                                        onClick = onConfirmPasswordVisibilityChange
                                                                 ) {
                                                                         Icon(
                                                                                 imageVector = icon,
@@ -284,14 +318,7 @@ fun RegisterScreen(
                                                         keyboardActions =
                                                                 KeyboardActions(
                                                                         onDone = {
-                                                                                focusManager
-                                                                                        .clearFocus()
-                                                                                authViewModel
-                                                                                        .register(
-                                                                                                nic,
-                                                                                                password,
-                                                                                                confirmPassword
-                                                                                        )
+                                                                                onRegister()
                                                                         }
                                                                 ),
                                                         singleLine = true,
@@ -330,14 +357,7 @@ fun RegisterScreen(
                                                 Spacer(modifier = Modifier.height(8.dp))
 
                                                 Button(
-                                                        onClick = {
-                                                                focusManager.clearFocus()
-                                                                authViewModel.register(
-                                                                        nic,
-                                                                        password,
-                                                                        confirmPassword
-                                                                )
-                                                        },
+                                                        onClick = onRegister,
                                                         modifier =
                                                                 Modifier.fillMaxWidth()
                                                                         .height(56.dp),
@@ -400,6 +420,27 @@ fun RegisterScreen(
                         }
                 }
         }
-
-        DisposableEffect(Unit) { onDispose { authViewModel.resetState() } }
 }
+
+import androidx.compose.ui.tooling.preview.Preview
+
+@Preview(showBackground = true)
+@Composable
+fun RegisterScreenPreview() {
+        RegisterScreenContent(
+                uiState = AuthUiState.Idle,
+                nic = "",
+                password = "",
+                confirmPassword = "",
+                passwordVisible = false,
+                confirmPasswordVisible = false,
+                onNicChange = {},
+                onPasswordChange = {},
+                onConfirmPasswordChange = {},
+                onPasswordVisibilityChange = {},
+                onConfirmPasswordVisibilityChange = {},
+                onRegister = {},
+                onNavigateToLogin = {}
+        )
+}
+
