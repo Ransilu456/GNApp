@@ -33,15 +33,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emarketing_paradice.gnsrilanka.R
 import com.emarketing_paradice.gnsrilanka.ui.theme.BlueGradientEnd
 import com.emarketing_paradice.gnsrilanka.ui.theme.BlueGradientStart
+import com.emarketing_paradice.gnsrilanka.ui.theme.PreviewData
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthUiState
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthViewModel
 import kotlinx.coroutines.flow.collectLatest
-import androidx.compose.ui.tooling.preview.Preview
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -248,7 +248,8 @@ fun LoginScreenContent(
                                                                                 Icons.Filled
                                                                                         .VisibilityOff
                                                                 IconButton(
-                                                                        onClick = onPasswordVisibilityChange
+                                                                        onClick =
+                                                                                onPasswordVisibilityChange
                                                                 ) {
                                                                         Icon(
                                                                                 imageVector = icon,
@@ -273,9 +274,7 @@ fun LoginScreenContent(
                                                                 ),
                                                         keyboardActions =
                                                                 KeyboardActions(
-                                                                        onDone = {
-                                                                                onLogin()
-                                                                        }
+                                                                        onDone = { onLogin() }
                                                                 ),
                                                         singleLine = true,
                                                         colors =
@@ -378,7 +377,7 @@ fun LoginScreenContent(
 
 @Preview(showBackground = true)
 @Composable
-fun LoginScreenPreview() {
+fun LoginScreenIdlePreview() {
         LoginScreenContent(
                 uiState = AuthUiState.Idle,
                 nic = "",
@@ -392,3 +391,34 @@ fun LoginScreenPreview() {
         )
 }
 
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenLoadingPreview() {
+        LoginScreenContent(
+                uiState = AuthUiState.Loading,
+                nic = PreviewData.sampleUser.nic,
+                password = PreviewData.sampleUser.password,
+                passwordVisible = false,
+                onNicChange = {},
+                onPasswordChange = {},
+                onPasswordVisibilityChange = {},
+                onLogin = {},
+                onNavigateToRegister = {}
+        )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenErrorPreview() {
+        LoginScreenContent(
+                uiState = AuthUiState.Error("Invalid NIC or password"),
+                nic = "invalid",
+                password = "wrong",
+                passwordVisible = false,
+                onNicChange = {},
+                onPasswordChange = {},
+                onPasswordVisibilityChange = {},
+                onLogin = {},
+                onNavigateToRegister = {}
+        )
+}

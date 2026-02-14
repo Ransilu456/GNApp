@@ -30,22 +30,22 @@ fun AppBottomBar(currentRoute: String?, onNavigate: (String) -> Unit) {
                 modifier =
                         Modifier.fillMaxWidth()
                                 .shadow(
-                                        elevation = 20.dp,
+                                        elevation = 12.dp,
                                         shape =
                                                 RoundedCornerShape(
-                                                        topStart = 32.dp,
-                                                        topEnd = 32.dp
+                                                        topStart = 24.dp,
+                                                        topEnd = 24.dp
                                                 ),
-                                        ambientColor = Color.Black.copy(alpha = 0.5f),
-                                        spotColor = Color(0xFF0014A8).copy(alpha = 0.2f)
+                                        ambientColor = Color.Black.copy(alpha = 0.1f),
+                                        spotColor = Color(0xFF0014A8).copy(alpha = 0.1f)
                                 )
-                                .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)),
+                                .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
                 color = Color.White,
                 tonalElevation = 0.dp
         ) {
                 NavigationBar(
                         containerColor = Color.Transparent,
-                        modifier = Modifier.height(128.dp),
+                        modifier = Modifier.height(80.dp),
                         tonalElevation = 0.dp
                 ) {
                         items.forEach { screen ->
@@ -75,11 +75,11 @@ fun AppBottomBar(currentRoute: String?, onNavigate: (String) -> Unit) {
                                                 colors =
                                                         NavigationBarItemDefaults.colors(
                                                                 selectedIconColor =
-                                                                        Color(0xFF059669),
+                                                                        Color(0xFF0014A8),
                                                                 selectedTextColor =
-                                                                        Color(0xFF059669),
+                                                                        Color(0xFF0014A8),
                                                                 indicatorColor =
-                                                                        Color(0xFF059669)
+                                                                        Color(0xFF0014A8)
                                                                                 .copy(alpha = 0.1f),
                                                                 unselectedIconColor =
                                                                         Color(0xFF94A3B8),
@@ -97,10 +97,6 @@ fun AppBottomBar(currentRoute: String?, onNavigate: (String) -> Unit) {
 @Composable
 fun AppBottomBarPreview() {
         com.emarketing_paradice.gnsrilanka.ui.theme.GNAppTheme {
-                AppBottomBar(
-                        currentRoute =
-                                Screen.Home.route,
-                        onNavigate = {}
-                )
+                AppBottomBar(currentRoute = Screen.Home.route, onNavigate = {})
         }
 }

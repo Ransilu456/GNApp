@@ -22,6 +22,8 @@ data class CitizenUiState(
         val occupation: String = "",
         val householdId: String = "",
         val address: String = "",
+        val contactNumber: String = "",
+        val notes: String = "",
         val nicError: String? = null,
         val fullNameError: String? = null,
         val dobError: String? = null,
@@ -81,6 +83,14 @@ class CitizenViewModel(private val repository: FileRepository) : ViewModel() {
         _uiState.update { it.copy(address = value) }
     }
 
+    fun onContactNumberChanged(value: String) {
+        _uiState.update { it.copy(contactNumber = value) }
+    }
+
+    fun onNotesChanged(value: String) {
+        _uiState.update { it.copy(notes = value) }
+    }
+
     fun saveCitizen() {
         if (!validateForm()) return
 
@@ -95,7 +105,9 @@ class CitizenViewModel(private val repository: FileRepository) : ViewModel() {
                                 gender = _uiState.value.gender,
                                 occupation = _uiState.value.occupation,
                                 householdId = _uiState.value.householdId,
-                                address = _uiState.value.address
+                                address = _uiState.value.address,
+                                contactNumber = _uiState.value.contactNumber,
+                                notes = _uiState.value.notes
                         )
                 repository.saveCitizen(citizen)
                 loadCitizens()
@@ -140,6 +152,8 @@ class CitizenViewModel(private val repository: FileRepository) : ViewModel() {
                     occupation = "",
                     householdId = "",
                     address = "",
+                    contactNumber = "",
+                    notes = "",
                     nicError = null,
                     fullNameError = null,
                     dobError = null,
@@ -167,6 +181,8 @@ class CitizenViewModel(private val repository: FileRepository) : ViewModel() {
                     occupation = citizen.occupation,
                     householdId = citizen.householdId,
                     address = citizen.address,
+                    contactNumber = citizen.contactNumber,
+                    notes = citizen.notes,
                     formStatus = FormStatus.Idle
             )
         }

@@ -1,7 +1,13 @@
 package com.emarketing_paradice.gnsrilanka.ui.components.drawer
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -19,6 +25,7 @@ import com.emarketing_paradice.gnsrilanka.ui.navigation.Screen
 @Composable
 fun AppDrawer(
         currentRoute: String?,
+        officerProfile: com.emarketing_paradice.gnsrilanka.data.model.OfficerProfile?,
         onNavigate: (String) -> Unit,
         onLogout: () -> Unit,
         closeDrawer: () -> Unit
@@ -72,13 +79,13 @@ fun AppDrawer(
                                 }
                                 Spacer(Modifier.height(16.dp))
                                 Text(
-                                        "Digital Assistant",
+                                        officerProfile?.officerName ?: "Digital Assistant",
                                         style = MaterialTheme.typography.titleLarge,
                                         fontWeight = FontWeight.Bold,
                                         color = Color.White
                                 )
                                 Text(
-                                        "Grama Niladhari - Sri Lanka",
+                                        officerProfile?.gnDivision ?: "Grama Niladhari - Sri Lanka",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = Color.White.copy(alpha = 0.6f)
                                 )
@@ -176,7 +183,8 @@ fun AppDrawerPreview() {
         com.emarketing_paradice.gnsrilanka.ui.theme.GNAppTheme {
                 AppDrawer(
                         currentRoute =
-                                com.emarketing_paradice.gnsrilanka.ui.navigation.Screen.Home.route,
+                                Screen.Home.route,
+                        officerProfile = null,
                         onNavigate = {},
                         onLogout = {},
                         closeDrawer = {}

@@ -17,18 +17,25 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.emarketing_paradice.gnsrilanka.R
 import com.emarketing_paradice.gnsrilanka.ui.components.bottombar.AppBottomBar
 import com.emarketing_paradice.gnsrilanka.ui.components.drawer.AppDrawer
 import com.emarketing_paradice.gnsrilanka.ui.navigation.AppNavHost
@@ -53,6 +60,7 @@ fun MainScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val showBottomBar =
             currentRoute in
@@ -72,6 +80,7 @@ fun MainScreen(
             drawerContent = {
                 AppDrawer(
                         currentRoute = currentRoute,
+                        officerProfile = authViewModel.officerProfile.collectAsState().value,
                         onNavigate = { route ->
                             navController.navigate(route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
@@ -93,6 +102,7 @@ fun MainScreen(
     ) {
         Scaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+                snackbarHost = { SnackbarHost(snackbarHostState) },
                 topBar = {
                     if (showTopBar) {
                         CenterAlignedTopAppBar(
@@ -131,6 +141,29 @@ fun MainScreen(
                                     }
                                 },
                                 actions = {
+                                    IconButton(
+                                            onClick = {
+                                                navController.navigate(Screen.Notifications.route)
+                                            }
+                                    ) {
+                                        BadgedBox(
+                                                badge = {
+                                                    Badge(
+                                                            containerColor =
+                                                                    MaterialTheme.colorScheme.error
+                                                    ) { Text("3", color = Color.White) }
+                                                }
+                                        ) {
+                                            Icon(
+                                                    painter =
+                                                            painterResource(
+                                                                    id = R.drawable.ic_solar_bell
+                                                            ),
+                                                    contentDescription = "Notifications",
+                                                    tint = MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
+                                    }
                                     when (currentRoute) {
                                         Screen.CitizenList.route -> {
                                             IconButton(
@@ -171,6 +204,22 @@ fun MainScreen(
                                                 Icon(
                                                         Icons.Default.Add,
                                                         contentDescription = "Add Request"
+                                                )
+                                            }
+                                        }
+                                        Screen.Profile.route -> {
+                                            IconButton(onClick = { /* Handle Notifications */}) {
+                                                Icon(
+                                                        painter =
+                                                                painterResource(
+                                                                        id =
+                                                                                R.drawable
+                                                                                        .ic_solar_bell
+                                                                ),
+                                                        contentDescription = "Notifications",
+                                                        tint =
+                                                                MaterialTheme.colorScheme
+                                                                        .onBackground
                                                 )
                                             }
                                         }
@@ -226,10 +275,11 @@ fun MainScreen(
                                 },
                                 colors =
                                         TopAppBarDefaults.centerAlignedTopAppBarColors(
-                                                containerColor =
-                                                        MaterialTheme.colorScheme.background,
+                                                containerColor = Color.Transparent,
                                                 scrolledContainerColor =
-                                                        MaterialTheme.colorScheme.surface,
+                                                        MaterialTheme.colorScheme.surface.copy(
+                                                                alpha = 0.95f
+                                                        ),
                                                 titleContentColor =
                                                         MaterialTheme.colorScheme.onBackground,
                                                 navigationIconContentColor =
@@ -265,6 +315,7 @@ fun MainScreen(
                     citizenViewModel = citizenViewModel,
                     householdViewModel = householdViewModel,
                     requestViewModel = requestViewModel,
+                    snackbarHostState = snackbarHostState,
                     onOpenDrawer = { scope.launch { drawerState.open() } }
             )
         }

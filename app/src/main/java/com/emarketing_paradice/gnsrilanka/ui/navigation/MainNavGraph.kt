@@ -7,6 +7,7 @@ import androidx.navigation.navigation
 import com.emarketing_paradice.gnsrilanka.ui.screens.citizen.*
 import com.emarketing_paradice.gnsrilanka.ui.screens.home.HomeScreen
 import com.emarketing_paradice.gnsrilanka.ui.screens.household.*
+import com.emarketing_paradice.gnsrilanka.ui.screens.notifications.NotificationsScreen
 import com.emarketing_paradice.gnsrilanka.ui.screens.profile.ProfileScreen
 import com.emarketing_paradice.gnsrilanka.ui.screens.request.*
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthViewModel
@@ -20,6 +21,7 @@ fun NavGraphBuilder.mainNavGraph(
         citizenViewModel: CitizenViewModel,
         householdViewModel: HouseholdViewModel,
         requestViewModel: RequestViewModel,
+        snackbarHostState: androidx.compose.material3.SnackbarHostState,
         onOpenDrawer: () -> Unit
 ) {
     navigation(startDestination = Screen.Home.route, route = "main_flow") {
@@ -67,6 +69,7 @@ fun NavGraphBuilder.mainNavGraph(
             CitizenListScreen(
                     citizenViewModel = citizenViewModel,
                     userMessage = message,
+                    snackbarHostState = snackbarHostState,
                     onAddCitizen = { navController.navigate(Screen.CitizenAdd.route) },
                     onEditCitizen = { citizen ->
                         citizenViewModel.loadCitizenForEdit(citizen)
@@ -108,6 +111,7 @@ fun NavGraphBuilder.mainNavGraph(
             HouseholdListScreen(
                     householdViewModel = householdViewModel,
                     userMessage = message,
+                    snackbarHostState = snackbarHostState,
                     onAddHousehold = { navController.navigate(Screen.HouseholdAdd.route) },
                     onEditHousehold = { household ->
                         householdViewModel.loadHouseholdForEdit(household)
@@ -149,6 +153,7 @@ fun NavGraphBuilder.mainNavGraph(
             RequestListScreen(
                     requestViewModel = requestViewModel,
                     userMessage = message,
+                    snackbarHostState = snackbarHostState,
                     onAddRequest = { navController.navigate(Screen.RequestAdd.route) },
                     onEditRequest = { request ->
                         requestViewModel.loadRequestForEdit(request)
@@ -182,6 +187,10 @@ fun NavGraphBuilder.mainNavGraph(
                         navController.popBackStack()
                     }
             )
+        }
+
+        composable(Screen.Notifications.route) {
+            NotificationsScreen(onBack = { navController.popBackStack() })
         }
     }
 }

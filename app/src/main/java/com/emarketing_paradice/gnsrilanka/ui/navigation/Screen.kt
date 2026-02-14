@@ -19,11 +19,7 @@ sealed class Screen(val route: String, val title: String, val icon: Int? = null)
                 )
 
         object HouseholdList :
-                Screen(
-                        route = "household_list",
-                        title = "Houses",
-                        icon = R.drawable.ic_solar_home
-                )
+                Screen(route = "household_list", title = "Houses", icon = R.drawable.ic_solar_home)
 
         object RequestList :
                 Screen(
@@ -38,9 +34,15 @@ sealed class Screen(val route: String, val title: String, val icon: Int? = null)
         // Detail / Form screens (NO bottom bar)
         object CitizenAdd : Screen("citizen_add", "Add Citizen")
         object CitizenEdit : Screen("citizen_edit", "Edit Citizen")
-        object RequestAdd : Screen("request_add", "Add Request")
-        object RequestEdit : Screen("request_edit", "Edit Request")
-        // Detail / Form screens (no bottom bar)
         object HouseholdAdd : Screen("household_add", "Add Household")
         object HouseholdEdit : Screen("household_edit", "Edit Household")
+        object RequestAdd : Screen("request_add", "Add Request")
+        object RequestEdit : Screen("request_edit", "Edit Request")
+
+        object Notifications :
+                Screen(
+                        route = "notifications",
+                        title = "Notifications",
+                        icon = R.drawable.ic_solar_bell
+                )
 }

@@ -4,10 +4,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.emarketing_paradice.gnsrilanka.data.model.OfficerProfile
 import com.emarketing_paradice.gnsrilanka.data.model.User
 import com.emarketing_paradice.gnsrilanka.data.repository.FileRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AuthViewModel(private val repository: FileRepository, context: Context) : ViewModel() {
@@ -17,8 +19,11 @@ class AuthViewModel(private val repository: FileRepository, context: Context) : 
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser
 
+    private val _officerProfile = MutableStateFlow<OfficerProfile?>(null)
+    val officerProfile: StateFlow<OfficerProfile?> = _officerProfile.asStateFlow()
+
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
-    val uiState: StateFlow<AuthUiState> = _uiState
+    val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
     init {
         // Check if a user is already logged in from SharedPreferences
@@ -29,7 +34,40 @@ class AuthViewModel(private val repository: FileRepository, context: Context) : 
                 val user = users.find { it.nic == savedNic }
                 if (user != null) {
                     _currentUser.value = user
+                    loadOfficerProfile()
                 }
+            }
+        }
+    }
+
+    private fun loadOfficerProfile() {
+        _currentUser.value?.let { user ->
+            viewModelScope.launch {
+                val profile = repository.getOfficerProfile(user.nic)
+                if (profile == null) {
+                    // Initialize default profile for new officer
+                    val defaultProfile =
+                            OfficerProfile(
+                                    officerName = "Officer ${user.nic.takeLast(4)}",
+                                    gnDivision = "Assigned Division",
+                                    officeAddress = "Regional Office",
+                                    contactInfo = "Contact Not Set",
+                                    authenticationSettings = "Standard"
+                            )
+                    repository.saveOfficerProfile(user.nic, defaultProfile)
+                    _officerProfile.value = defaultProfile
+                } else {
+                    _officerProfile.value = profile
+                }
+            }
+        }
+    }
+
+    fun saveOfficerProfile(profile: OfficerProfile) {
+        _currentUser.value?.let { user ->
+            viewModelScope.launch {
+                repository.saveOfficerProfile(user.nic, profile)
+                _officerProfile.value = profile
             }
         }
     }
@@ -45,6 +83,7 @@ class AuthViewModel(private val repository: FileRepository, context: Context) : 
                 // Save session
                 sharedPrefs.edit().putString("logged_in_nic", user.nic).apply()
                 _currentUser.value = user
+                loadOfficerProfile()
                 _uiState.value = AuthUiState.Success
             } else {
                 _uiState.value = AuthUiState.Error("Invalid NIC or Password")
@@ -71,6 +110,7 @@ class AuthViewModel(private val repository: FileRepository, context: Context) : 
             sharedPrefs.edit().putString("logged_in_nic", newUser.nic).apply()
 
             _currentUser.value = newUser
+            loadOfficerProfile()
             _uiState.value = AuthUiState.Success
         }
     }
@@ -116,6 +156,7 @@ class AuthViewModel(private val repository: FileRepository, context: Context) : 
     fun logout() {
         sharedPrefs.edit().remove("logged_in_nic").apply()
         _currentUser.value = null
+        _officerProfile.value = null
         _uiState.value = AuthUiState.Idle
     }
 }

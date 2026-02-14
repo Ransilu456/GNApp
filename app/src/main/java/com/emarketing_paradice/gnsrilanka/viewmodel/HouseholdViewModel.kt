@@ -19,6 +19,8 @@ data class HouseholdUiState(
         val address: String = "",
         val gnDivision: String = "",
         val headNic: String = "",
+        val membersCount: String = "0",
+        val remarks: String = "",
         val idError: String? = null,
         val addressError: String? = null,
         val gnDivisionError: String? = null,
@@ -53,6 +55,8 @@ class HouseholdViewModel(private val repository: FileRepository) : ViewModel() {
                     address = household.address,
                     gnDivision = household.gnDivision,
                     headNic = household.headNic,
+                    membersCount = household.membersCount.toString(),
+                    remarks = household.remarks,
                     formStatus = FormStatus.Idle
             )
         }
@@ -74,6 +78,14 @@ class HouseholdViewModel(private val repository: FileRepository) : ViewModel() {
         _uiState.update { it.copy(headNic = value, headNicError = null) }
     }
 
+    fun onMembersCountChanged(value: String) {
+        _uiState.update { it.copy(membersCount = value) }
+    }
+
+    fun onRemarksChanged(value: String) {
+        _uiState.update { it.copy(remarks = value) }
+    }
+
     fun saveHousehold() {
         if (!validateForm()) return
 
@@ -85,7 +97,9 @@ class HouseholdViewModel(private val repository: FileRepository) : ViewModel() {
                                 id = _uiState.value.id,
                                 address = _uiState.value.address,
                                 gnDivision = _uiState.value.gnDivision,
-                                headNic = _uiState.value.headNic
+                                headNic = _uiState.value.headNic,
+                                membersCount = _uiState.value.membersCount.toIntOrNull() ?: 0,
+                                remarks = _uiState.value.remarks
                         )
                 repository.saveHousehold(household)
                 loadHouseholds()
@@ -123,6 +137,8 @@ class HouseholdViewModel(private val repository: FileRepository) : ViewModel() {
                     address = "",
                     gnDivision = "",
                     headNic = "",
+                    membersCount = "0",
+                    remarks = "",
                     idError = null,
                     addressError = null,
                     gnDivisionError = null,

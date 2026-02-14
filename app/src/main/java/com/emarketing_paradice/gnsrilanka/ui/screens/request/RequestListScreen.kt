@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,6 +34,7 @@ import com.emarketing_paradice.gnsrilanka.data.model.Request
 import com.emarketing_paradice.gnsrilanka.data.model.RequestStatus
 import com.emarketing_paradice.gnsrilanka.ui.components.common.EmptyContent
 import com.emarketing_paradice.gnsrilanka.ui.theme.*
+import com.emarketing_paradice.gnsrilanka.ui.theme.PreviewData
 import com.emarketing_paradice.gnsrilanka.viewmodel.RequestViewModel
 import kotlinx.coroutines.launch
 
@@ -41,19 +43,22 @@ import kotlinx.coroutines.launch
 fun RequestListScreen(
         requestViewModel: RequestViewModel,
         userMessage: String?,
+        snackbarHostState: SnackbarHostState,
         onAddRequest: () -> Unit,
         onEditRequest: (Request) -> Unit,
         clearUserMessage: () -> Unit
 ) {
-    val requests by requestViewModel.requests.collectAsState()
+        val requests by requestViewModel.requests.collectAsState()
 
-    RequestListScreenContent(
-            requests = requests,
-            userMessage = userMessage,
-            onAddRequest = onAddRequest,
-            onEditRequest = onEditRequest,
-            clearUserMessage = clearUserMessage
-    )
+        RequestListScreenContent(
+                requests = requests,
+                userMessage = userMessage,
+                snackbarHostState = snackbarHostState,
+                onAddRequest = onAddRequest,
+                onEditRequest = onEditRequest,
+                onDeleteRequest = { requestViewModel.deleteRequest(it.id) },
+                clearUserMessage = clearUserMessage
+        )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,223 +66,227 @@ fun RequestListScreen(
 fun RequestListScreenContent(
         requests: List<Request>,
         userMessage: String?,
+        snackbarHostState: SnackbarHostState,
         onAddRequest: () -> Unit,
         onEditRequest: (Request) -> Unit,
+        onDeleteRequest: (Request) -> Unit,
         clearUserMessage: () -> Unit
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    var searchQuery by remember { mutableStateOf("") }
+        val scope = rememberCoroutineScope()
+        var searchQuery by remember { mutableStateOf("") }
 
-    val filteredRequests =
-            requests.filter {
-                (it.citizenName ?: "").contains(searchQuery, ignoreCase = true) ||
-                        (it.certificateType ?: "").contains(searchQuery, ignoreCase = true) ||
-                        (it.citizenNic ?: "").contains(searchQuery, ignoreCase = true)
-            }
+        val filteredRequests =
+                requests.filter {
+                        (it.citizenName ?: "").contains(searchQuery, ignoreCase = true) ||
+                                (it.certificateType ?: "").contains(
+                                        searchQuery,
+                                        ignoreCase = true
+                                ) ||
+                                (it.citizenNic ?: "").contains(searchQuery, ignoreCase = true)
+                }
 
-    LaunchedEffect(userMessage) {
-        userMessage?.let {
-            scope.launch {
-                snackbarHostState.showSnackbar(it)
-                clearUserMessage()
-            }
+        LaunchedEffect(userMessage) {
+                userMessage?.let {
+                        scope.launch {
+                                snackbarHostState.showSnackbar(it)
+                                clearUserMessage()
+                        }
+                }
         }
-    }
 
-    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }, containerColor = AppBackground) {
-            innerPadding ->
         Column(modifier = Modifier.fillMaxSize()) {
-            Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = MaterialTheme.colorScheme.surface,
-                    tonalElevation = 0.dp,
-                    shadowElevation = 0.dp
-            ) {
-                Column(modifier = Modifier.padding(top = 8.dp)) {
-                    SearchBar(
-                            inputField = {
-                                SearchBarDefaults.InputField(
+                Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.surface,
+                        tonalElevation = 0.dp,
+                        shadowElevation = 0.dp
+                ) {
+                        Column(modifier = Modifier.padding(top = 0.dp)) {
+                                SearchBar(
                                         query = searchQuery,
                                         onQueryChange = { searchQuery = it },
                                         onSearch = {},
-                                        expanded = false,
-                                        onExpandedChange = {},
-                                        placeholder = { Text("Search by type or NIC") },
+                                        active = false,
+                                        onActiveChange = {},
+                                        placeholder = {
+                                                Text(
+                                                        stringResource(R.string.search_placeholder),
+                                                        color = Color(0xFF64748B)
+                                                )
+                                        },
                                         leadingIcon = {
-                                            Icon(
-                                                    painter =
-                                                            painterResource(
-                                                                    id =
-                                                                            R.drawable
-                                                                                    .ic_solar_magnifer
-                                                            ),
-                                                    contentDescription = null,
-                                                    modifier = Modifier.size(20.dp),
-                                                    tint = Color(0xFF64748B)
-                                            )
-                                        }
-                                )
-                            },
-                            expanded = false,
-                            onExpandedChange = {},
-                            modifier =
-                                    Modifier.fillMaxWidth()
-                                            .padding(horizontal = 16.dp, vertical = 4.dp),
-                            shape = RoundedCornerShape(24.dp),
-                            colors = SearchBarDefaults.colors(containerColor = Color(0xFFF1F5F9)),
-                            content = {}
-                    )
+                                                Icon(
+                                                        painter =
+                                                                painterResource(
+                                                                        id =
+                                                                                R.drawable
+                                                                                        .ic_solar_magnifer
+                                                                ),
+                                                        contentDescription = null,
+                                                        modifier = Modifier.size(20.dp),
+                                                        tint = Color(0xFF64748B)
+                                                )
+                                        },
+                                        modifier =
+                                                Modifier.fillMaxWidth()
+                                                        .padding(
+                                                                horizontal = 16.dp,
+                                                                vertical = 8.dp
+                                                        ),
+                                        shape = RoundedCornerShape(16.dp),
+                                        colors =
+                                                SearchBarDefaults.colors(
+                                                        containerColor = Color.White
+                                                ),
+                                        tonalElevation = 1.dp
+                                ) {}
+                                Spacer(modifier = Modifier.height(8.dp))
+                        }
                 }
-            }
 
-            if (filteredRequests.isEmpty()) {
-                Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                    EmptyContent("No requests found.", Icons.Default.Description)
+                if (filteredRequests.isEmpty()) {
+                        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                                EmptyContent(
+                                        stringResource(R.string.no_data_found),
+                                        Icons.Default.Description
+                                )
+                        }
+                } else {
+                        LazyColumn(
+                                modifier = Modifier.fillMaxWidth().weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(12.dp),
+                                contentPadding = PaddingValues(16.dp)
+                        ) {
+                                items(filteredRequests) { request ->
+                                        RequestListItem(
+                                                request = request,
+                                                onItemClick = { onEditRequest(request) },
+                                                onDeleteClick = { onDeleteRequest(request) }
+                                        )
+                                }
+                        }
                 }
-            } else {
-                LazyColumn(
-                        modifier = Modifier.fillMaxWidth().weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                        contentPadding = PaddingValues(16.dp)
-                ) {
-                    items(filteredRequests) { request ->
-                        RequestListItem(request = request, onItemClick = { onEditRequest(request) })
-                    }
-                }
-            }
         }
-    }
 }
 
 @Composable
-fun RequestListItem(request: Request, onItemClick: () -> Unit) {
-    val statusColor =
-            when (request.status) {
-                RequestStatus.Approved -> StatusGreen
-                RequestStatus.Pending -> StatusYellow
-                RequestStatus.Rejected -> StatusRed
-            }
-
-    Card(
-            modifier = Modifier.fillMaxWidth().clickable { onItemClick() },
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                            text = request.certificateType ?: "Unknown",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                            text = "NIC: ${request.citizenNic ?: "N/A"}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray
-                    )
+fun RequestListItem(request: Request, onItemClick: () -> Unit, onDeleteClick: () -> Unit) {
+        val statusColor =
+                when (request.status) {
+                        RequestStatus.Approved -> StatusGreen
+                        RequestStatus.Pending -> StatusYellow
+                        RequestStatus.Rejected -> StatusRed
                 }
 
-                Box(
-                        modifier =
-                                Modifier.background(
-                                                statusColor.copy(alpha = 0.1f),
-                                                RoundedCornerShape(8.dp)
+        Card(
+                modifier = Modifier.fillMaxWidth().clickable { onItemClick() },
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                        Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                                text = request.certificateType ?: "Unknown",
+                                                style = MaterialTheme.typography.titleMedium,
+                                                fontWeight = FontWeight.Bold
                                         )
-                                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text(
-                            text = request.status.name,
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = statusColor
-                    )
+                                        Text(
+                                                text = "NIC: ${request.citizenNic ?: "N/A"}",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = Color.Gray
+                                        )
+                                }
+
+                                Box(
+                                        modifier =
+                                                Modifier.background(
+                                                                statusColor.copy(alpha = 0.1f),
+                                                                RoundedCornerShape(8.dp)
+                                                        )
+                                                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                                ) {
+                                        Text(
+                                                text = request.status.name,
+                                                style = MaterialTheme.typography.labelSmall,
+                                                fontWeight = FontWeight.Bold,
+                                                color = statusColor
+                                        )
+                                }
+
+                                IconButton(
+                                        onClick = onDeleteClick,
+                                        modifier = Modifier.size(24.dp)
+                                ) {
+                                        Icon(
+                                                Icons.Default.Delete,
+                                                contentDescription = "Delete",
+                                                tint = Color.Red.copy(alpha = 0.6f),
+                                                modifier = Modifier.size(18.dp)
+                                        )
+                                }
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+                        HorizontalDivider(color = AppBackground, thickness = 1.dp)
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                        ) {
+                                Icon(
+                                        Icons.Default.CalendarToday,
+                                        contentDescription = null,
+                                        tint = Color.Gray,
+                                        modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                        text = "Submitted: ${request.submissionDate ?: "N/A"}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = Color.Gray
+                                )
+
+                                Spacer(modifier = Modifier.weight(1f))
+
+                                Text(
+                                        text = stringResource(R.string.details),
+                                        style = MaterialTheme.typography.labelLarge,
+                                        color = BlueGradientStart,
+                                        fontWeight = FontWeight.Bold
+                                )
+                                Icon(
+                                        painter =
+                                                painterResource(
+                                                        id = R.drawable.ic_solar_alt_arrow_right
+                                                ),
+                                        contentDescription = null,
+                                        tint = BlueGradientStart,
+                                        modifier = Modifier.size(20.dp)
+                                )
+                        }
                 }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-            HorizontalDivider(color = AppBackground, thickness = 1.dp)
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                        Icons.Default.CalendarToday,
-                        contentDescription = null,
-                        tint = Color.Gray,
-                        modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                        text = "Submitted: ${request.submissionDate ?: "N/A"}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Text(
-                        text = "Details",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = BlueGradientStart,
-                        fontWeight = FontWeight.Bold
-                )
-                Icon(
-                        painter = painterResource(id = R.drawable.ic_solar_alt_arrow_right),
-                        contentDescription = null,
-                        tint = BlueGradientStart,
-                        modifier = Modifier.size(20.dp)
-                )
-            }
         }
-    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun RequestListScreenPreview() {
-    val sampleRequests =
-            listOf(
-                    Request(
-                            id = "R001",
-                            citizenNic = "123456789V",
-                            citizenName = "John Doe",
-                            certificateType = "Character Certificate",
-                            purpose = "Employment",
-                            issuedDate = 0L,
-                            submissionDate = "2023-10-27",
-                            issuedByGn = "GN01",
-                            description = "Character certificate for job",
-                            status = RequestStatus.Pending
-                    ),
-                    Request(
-                            id = "R002",
-                            citizenNic = "987654321V",
-                            citizenName = "Jane Smith",
-                            certificateType = "Residency Certificate",
-                            purpose = "School Admission",
-                            issuedDate = 123456789L,
-                            submissionDate = "2023-10-26",
-                            issuedByGn = "GN01",
-                            description = "Residency certificate for school",
-                            status = RequestStatus.Approved
-                    )
-            )
-    GNAppTheme {
-        RequestListScreenContent(
-                requests = sampleRequests,
-                userMessage = null,
-                onAddRequest = {},
-                onEditRequest = {},
-                clearUserMessage = {}
-        )
-    }
+        GNAppTheme {
+                RequestListScreenContent(
+                        requests = PreviewData.sampleRequests,
+                        userMessage = null,
+                        snackbarHostState = remember { SnackbarHostState() },
+                        onAddRequest = {},
+                        onEditRequest = {},
+                        onDeleteRequest = {},
+                        clearUserMessage = {}
+                )
+        }
 }

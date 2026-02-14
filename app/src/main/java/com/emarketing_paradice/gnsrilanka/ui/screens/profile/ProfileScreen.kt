@@ -36,42 +36,55 @@ fun ProfileScreen(
         onLogout: () -> Unit,
         onNavigateToEditProfile: () -> Unit
 ) {
-        val currentUser by authViewModel.currentUser.collectAsState()
-        val citizenState by citizenViewModel.uiState.collectAsState()
-
-        // Find detailed citizen info for the logged-in user
-        val citizenInfo =
-                remember(currentUser, citizenState.citizens) {
-                        citizenState.citizens.find { it.nic == currentUser?.nic }
-                }
+        val officerProfile by authViewModel.officerProfile.collectAsState()
 
         ProfileScreenContent(
-                fullName = citizenInfo?.fullName ?: "Officer",
-                division = "North Division - Colombo", // Placeholder or fetch if available
+                profile = officerProfile,
                 onLogout = onLogout,
                 onNavigateToEditProfile = onNavigateToEditProfile
         )
 }
 
+@Preview(showBackground = true)
+@Composable
+fun ProfileScreenPreview() {
+        GNAppTheme {
+                ProfileScreenContent(
+                        profile =
+                                com.emarketing_paradice.gnsrilanka.data.model.OfficerProfile(
+                                        officerName = "Demo Officer",
+                                        gnDivision = "Colombo Central",
+                                        officeAddress = "Regional Office, Colombo",
+                                        contactInfo = "011-2345678",
+                                        authenticationSettings = "Standard"
+                                ),
+                        onLogout = {},
+                        onNavigateToEditProfile = {}
+                )
+        }
+}
+
 @Composable
 fun ProfileScreenContent(
-        fullName: String,
-        division: String,
+        profile: com.emarketing_paradice.gnsrilanka.data.model.OfficerProfile?,
         onLogout: () -> Unit,
         onNavigateToEditProfile: () -> Unit
 ) {
+        val fullName = profile?.officerName ?: "Officer"
+        val division = profile?.gnDivision ?: "Assigned Division"
+
         Scaffold(containerColor = GnBackground) { padding ->
                 Column(
                         modifier =
-                                Modifier.padding(padding)
-                                        .fillMaxSize()
+                                Modifier.fillMaxSize()
                                         .verticalScroll(rememberScrollState())
+                                        .padding(bottom = padding.calculateBottomPadding())
                 ) {
-                        // Header Section with Cleaner Professional Style
+                        // Header Section
                         Box(
                                 modifier =
                                         Modifier.fillMaxWidth()
-                                                .height(220.dp)
+                                                .height(260.dp)
                                                 .background(
                                                         Brush.verticalGradient(
                                                                 colors =
@@ -83,18 +96,18 @@ fun ProfileScreenContent(
                                                 )
                         ) {
                                 Column(
-                                        modifier = Modifier.fillMaxSize(),
+                                        modifier = Modifier.fillMaxSize().padding(bottom = 40.dp),
                                         horizontalAlignment = Alignment.CenterHorizontally,
                                         verticalArrangement = Arrangement.Center
                                 ) {
                                         // Profile Image Placeholder
                                         Surface(
-                                                modifier = Modifier.size(100.dp),
-                                                shape = RoundedCornerShape(32.dp),
-                                                color = Color.White.copy(alpha = 0.2f),
+                                                modifier = Modifier.size(110.dp),
+                                                shape = RoundedCornerShape(36.dp),
+                                                color = Color.White.copy(alpha = 0.15f),
                                                 border =
                                                         BorderStroke(
-                                                                1.dp,
+                                                                2.dp,
                                                                 Color.White.copy(alpha = 0.3f)
                                                         )
                                         ) {
@@ -107,26 +120,45 @@ fun ProfileScreenContent(
                                                                                                 .ic_solar_user_circle
                                                                         ),
                                                                 contentDescription = null,
-                                                                modifier = Modifier.size(48.dp),
+                                                                modifier = Modifier.size(60.dp),
                                                                 tint = Color.White
                                                         )
                                                 }
                                         }
 
-                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Spacer(modifier = Modifier.height(20.dp))
 
                                         Text(
                                                 text = fullName,
                                                 color = Color.White,
-                                                fontSize = 24.sp,
-                                                fontWeight = FontWeight.Bold
+                                                fontSize = 26.sp,
+                                                fontWeight = FontWeight.ExtraBold,
+                                                letterSpacing = 0.5.sp
                                         )
 
-                                        Text(
-                                                text = "Grama Niladhari Officer",
-                                                color = Color.White.copy(alpha = 0.7f),
-                                                fontSize = 14.sp
-                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+
+                                        Surface(
+                                                color = Color.White.copy(alpha = 0.15f),
+                                                shape = RoundedCornerShape(8.dp)
+                                        ) {
+                                                Text(
+                                                        text =
+                                                                androidx.compose.ui.res
+                                                                        .stringResource(
+                                                                                R.string
+                                                                                        .officer_title
+                                                                        ),
+                                                        color = Color.White,
+                                                        fontSize = 12.sp,
+                                                        fontWeight = FontWeight.Medium,
+                                                        modifier =
+                                                                Modifier.padding(
+                                                                        horizontal = 12.dp,
+                                                                        vertical = 4.dp
+                                                                )
+                                                )
+                                        }
                                 }
                         }
 
@@ -137,15 +169,46 @@ fun ProfileScreenContent(
                                 ProfileDetailCard(
                                         items =
                                                 listOf(
-                                                        ProfileItem("Full Name", fullName),
-                                                        ProfileItem("Division", division)
+                                                        ProfileItem(
+                                                                androidx.compose.ui.res
+                                                                        .stringResource(
+                                                                                R.string.full_name
+                                                                        ),
+                                                                fullName
+                                                        ),
+                                                        ProfileItem(
+                                                                androidx.compose.ui.res
+                                                                        .stringResource(
+                                                                                R.string.gn_division
+                                                                        ),
+                                                                division
+                                                        ),
+                                                        ProfileItem(
+                                                                androidx.compose.ui.res
+                                                                        .stringResource(
+                                                                                R.string
+                                                                                        .office_address
+                                                                        ),
+                                                                profile?.officeAddress ?: "N/A"
+                                                        ),
+                                                        ProfileItem(
+                                                                androidx.compose.ui.res
+                                                                        .stringResource(
+                                                                                R.string
+                                                                                        .contact_number
+                                                                        ),
+                                                                profile?.contactInfo ?: "N/A"
+                                                        )
                                                 )
                                 )
 
                                 Spacer(modifier = Modifier.height(24.dp))
 
                                 Text(
-                                        "Account Settings",
+                                        text =
+                                                androidx.compose.ui.res.stringResource(
+                                                        R.string.account_settings
+                                                ),
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = GnTextPrimary
@@ -154,17 +217,27 @@ fun ProfileScreenContent(
                                 Spacer(modifier = Modifier.height(16.dp))
 
                                 SettingsActionItem(
-                                        title = "Edit Profile Info",
-                                        subtitle = "Update your personal details",
-                                        icon =
-                                                R.drawable
-                                                        .ic_solar_user_id, // matching user identity
+                                        title =
+                                                androidx.compose.ui.res.stringResource(
+                                                        R.string.edit_profile_info
+                                                ),
+                                        subtitle =
+                                                androidx.compose.ui.res.stringResource(
+                                                        R.string.edit_profile_subtitle
+                                                ),
+                                        icon = R.drawable.ic_solar_user_id,
                                         onClick = onNavigateToEditProfile
                                 )
 
                                 SettingsActionItem(
-                                        title = "Security",
-                                        subtitle = "Manage password and authentication",
+                                        title =
+                                                androidx.compose.ui.res.stringResource(
+                                                        R.string.security
+                                                ),
+                                        subtitle =
+                                                androidx.compose.ui.res.stringResource(
+                                                        R.string.security_subtitle
+                                                ),
                                         icon = R.drawable.ic_solar_shield_check,
                                         onClick = {}
                                 )
@@ -191,7 +264,10 @@ fun ProfileScreenContent(
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Text(
-                                                "Logout from System",
+                                                text =
+                                                        androidx.compose.ui.res.stringResource(
+                                                                R.string.logout_system
+                                                        ),
                                                 color = Color(0xFFEF4444),
                                                 fontWeight = FontWeight.Bold
                                         )
@@ -205,11 +281,11 @@ fun ProfileScreenContent(
 
 @Composable
 fun ProfileDetailCard(items: List<ProfileItem>) {
-        Surface(
+        Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(24.dp),
-                color = GnSurface,
-                shadowElevation = 8.dp
+                colors = CardDefaults.cardColors(containerColor = GnSurface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
                 Column(modifier = Modifier.padding(24.dp)) {
                         items.forEachIndexed { index, item ->
@@ -222,20 +298,24 @@ fun ProfileDetailCard(items: List<ProfileItem>) {
                                                 Text(
                                                         item.label,
                                                         color = GnTextSecondary,
-                                                        fontSize = 12.sp
+                                                        fontSize = 12.sp,
+                                                        fontWeight = FontWeight.SemiBold,
+                                                        letterSpacing = 0.5.sp
                                                 )
+                                                Spacer(modifier = Modifier.height(4.dp))
                                                 Text(
                                                         item.value,
                                                         color = GnTextPrimary,
-                                                        fontSize = 16.sp,
-                                                        fontWeight = FontWeight.Medium
+                                                        fontSize = 17.sp,
+                                                        fontWeight = FontWeight.Bold
                                                 )
                                         }
                                 }
                                 if (index < items.size - 1) {
                                         HorizontalDivider(
-                                                modifier = Modifier.padding(vertical = 12.dp),
-                                                color = Color(0xFFF1F5F9)
+                                                modifier = Modifier.padding(vertical = 16.dp),
+                                                color = Color(0xFFF1F5F9),
+                                                thickness = 1.dp
                                         )
                                 }
                         }
@@ -247,13 +327,13 @@ data class ProfileItem(val label: String, val value: String)
 
 @Composable
 fun SettingsActionItem(title: String, subtitle: String, icon: Int, onClick: () -> Unit) {
-        Surface(
+        Card(
                 onClick = onClick,
-                modifier = Modifier.padding(bottom = 12.dp),
+                modifier = Modifier.padding(bottom = 12.dp).fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
-                color = GnSurface,
-                // Using border/shadow might be nice here too, but consistent with design
-                ) {
+                colors = CardDefaults.cardColors(containerColor = GnSurface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
                 Row(
                         modifier = Modifier.padding(16.dp).fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
@@ -262,7 +342,7 @@ fun SettingsActionItem(title: String, subtitle: String, icon: Int, onClick: () -
                                 modifier =
                                         Modifier.size(48.dp)
                                                 .background(
-                                                        Color(0xFFF1F5F9),
+                                                        Color(0xFFF5F8FF),
                                                         RoundedCornerShape(14.dp)
                                                 ),
                                 contentAlignment = Alignment.Center
@@ -278,29 +358,39 @@ fun SettingsActionItem(title: String, subtitle: String, icon: Int, onClick: () -
                         Spacer(modifier = Modifier.width(16.dp))
 
                         Column(modifier = Modifier.weight(1f)) {
-                                Text(title, fontWeight = FontWeight.Bold, color = GnTextPrimary)
-                                Text(subtitle, fontSize = 12.sp, color = GnTextSecondary)
+                                Text(
+                                        title,
+                                        fontWeight = FontWeight.Bold,
+                                        color = GnTextPrimary,
+                                        fontSize = 16.sp
+                                )
+                                Text(
+                                        subtitle,
+                                        fontSize = 12.sp,
+                                        color = GnTextSecondary,
+                                        fontWeight = FontWeight.Medium
+                                )
                         }
 
-                        Icon(
-                                painter = painterResource(id = R.drawable.ic_solar_alt_arrow_right),
-                                contentDescription = null,
-                                tint = GnTextSecondary,
-                                modifier = Modifier.size(20.dp)
-                        )
+                        Box(
+                                modifier =
+                                        Modifier.size(32.dp)
+                                                .background(
+                                                        Color(0xFFF1F5F9),
+                                                        RoundedCornerShape(8.dp)
+                                                ),
+                                contentAlignment = Alignment.Center
+                        ) {
+                                Icon(
+                                        painter =
+                                                painterResource(
+                                                        id = R.drawable.ic_solar_alt_arrow_right
+                                                ),
+                                        contentDescription = null,
+                                        tint = GnTextSecondary,
+                                        modifier = Modifier.size(16.dp)
+                                )
+                        }
                 }
-        }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ProfileScreenPreview() {
-        GNAppTheme {
-                ProfileScreenContent(
-                        fullName = "John Doe-Officer",
-                        division = "North Division - Colombo",
-                        onLogout = {},
-                        onNavigateToEditProfile = {}
-                )
         }
 }

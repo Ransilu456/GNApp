@@ -21,6 +21,7 @@ fun AppNavHost(
         citizenViewModel: CitizenViewModel,
         householdViewModel: HouseholdViewModel,
         requestViewModel: RequestViewModel,
+        snackbarHostState: androidx.compose.material3.SnackbarHostState,
         onOpenDrawer: () -> Unit
 ) {
     val currentUser = authViewModel.currentUser.collectAsState().value
@@ -68,6 +69,7 @@ fun AppNavHost(
                 citizenViewModel = citizenViewModel,
                 householdViewModel = householdViewModel,
                 requestViewModel = requestViewModel,
+                snackbarHostState = snackbarHostState,
                 onOpenDrawer = onOpenDrawer
         )
     }

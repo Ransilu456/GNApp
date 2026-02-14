@@ -19,9 +19,12 @@ data class RequestUiState(
         val requests: List<Request> = emptyList(),
         val requestId: String = "",
         val citizenNic: String = "",
+        val requestType: String = "",
         val certificateType: String = "",
         val purpose: String = "",
         val description: String = "",
+        val approvalNotes: String = "",
+        val documentPath: String = "",
         val citizenNicError: String? = null,
         val certificateTypeError: String? = null,
         val purposeError: String? = null,
@@ -49,12 +52,27 @@ class RequestViewModel(private val repository: FileRepository) : ViewModel() {
     }
 
     fun loadRequestForEdit(request: Request) {
-        // Functionality to load request for editing
-        // For now just logging or simple state update if needed
+        _uiState.update {
+            it.copy(
+                    requestId = request.id,
+                    citizenNic = request.citizenNic,
+                    requestType = request.requestType,
+                    certificateType = request.certificateType,
+                    purpose = request.purpose,
+                    description = request.description,
+                    approvalNotes = request.approvalNotes,
+                    documentPath = request.documentPath,
+                    formStatus = FormStatus.Idle
+            )
+        }
     }
 
     fun onCitizenNicChanged(value: String) {
         _uiState.update { it.copy(citizenNic = value, citizenNicError = null) }
+    }
+
+    fun onRequestTypeChanged(value: String) {
+        _uiState.update { it.copy(requestType = value) }
     }
 
     fun onCertificateTypeChanged(value: String) {
@@ -69,6 +87,14 @@ class RequestViewModel(private val repository: FileRepository) : ViewModel() {
         _uiState.update { it.copy(description = value) }
     }
 
+    fun onApprovalNotesChanged(value: String) {
+        _uiState.update { it.copy(approvalNotes = value) }
+    }
+
+    fun onDocumentPathChanged(value: String) {
+        _uiState.update { it.copy(documentPath = value) }
+    }
+
     fun saveRequest(gnId: String = "admin") {
         if (!validateForm()) return
 
@@ -78,16 +104,22 @@ class RequestViewModel(private val repository: FileRepository) : ViewModel() {
                 val citizen = repository.getCitizens().find { it.nic == _uiState.value.citizenNic }
                 val request =
                         Request(
-                                id = UUID.randomUUID().toString(),
+                                id =
+                                        if (_uiState.value.requestId.isBlank())
+                                                UUID.randomUUID().toString()
+                                        else _uiState.value.requestId,
                                 citizenNic = _uiState.value.citizenNic,
                                 citizenName = citizen?.fullName ?: "Unknown",
+                                requestType = _uiState.value.requestType,
                                 certificateType = _uiState.value.certificateType,
                                 purpose = _uiState.value.purpose,
                                 issuedDate = 0L,
                                 submissionDate = System.currentTimeMillis().toString(),
                                 issuedByGn = gnId,
                                 description = _uiState.value.description,
-                                status = RequestStatus.Pending
+                                status = RequestStatus.Pending,
+                                approvalNotes = _uiState.value.approvalNotes,
+                                documentPath = _uiState.value.documentPath
                         )
                 repository.saveRequest(request)
                 loadRequests()
@@ -121,10 +153,14 @@ class RequestViewModel(private val repository: FileRepository) : ViewModel() {
     fun resetForm() {
         _uiState.update {
             it.copy(
+                    requestId = "",
                     citizenNic = "",
+                    requestType = "",
                     certificateType = "",
                     purpose = "",
                     description = "",
+                    approvalNotes = "",
+                    documentPath = "",
                     citizenNicError = null,
                     certificateTypeError = null,
                     purposeError = null,
@@ -150,6 +186,14 @@ class RequestViewModel(private val repository: FileRepository) : ViewModel() {
                 repository.saveRequests(requests)
                 loadRequests()
             }
+        }
+    }
+
+    fun deleteRequest(requestId: String) {
+        viewModelScope.launch {
+            val requests = repository.getRequests().filter { it.id != requestId }
+            repository.saveRequests(requests)
+            loadRequests()
         }
     }
 }

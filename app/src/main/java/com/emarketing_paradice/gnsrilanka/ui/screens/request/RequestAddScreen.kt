@@ -12,9 +12,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.emarketing_paradice.gnsrilanka.R
 import com.emarketing_paradice.gnsrilanka.ui.theme.AppBackground
 import com.emarketing_paradice.gnsrilanka.ui.theme.BlueGradientStart
 import com.emarketing_paradice.gnsrilanka.ui.theme.GNAppTheme
@@ -23,10 +25,7 @@ import com.emarketing_paradice.gnsrilanka.viewmodel.RequestUiState
 import com.emarketing_paradice.gnsrilanka.viewmodel.RequestViewModel
 
 @Composable
-fun RequestAddScreen(
-        requestViewModel: RequestViewModel,
-        onRequestAdded: () -> Unit
-) {
+fun RequestAddScreen(requestViewModel: RequestViewModel, onRequestAdded: () -> Unit) {
     val uiState by requestViewModel.uiState.collectAsState()
 
     LaunchedEffect(uiState.formStatus) {
@@ -36,21 +35,29 @@ fun RequestAddScreen(
     }
 
     RequestAddScreenContent(
-        uiState = uiState,
-        onCitizenNicChanged = requestViewModel::onCitizenNicChanged,
-        onCertificateTypeChanged = requestViewModel::onCertificateTypeChanged,
-        onPurposeChanged = requestViewModel::onPurposeChanged,
-        onSaveRequest = requestViewModel::saveRequest
+            uiState = uiState,
+            onCitizenNicChanged = requestViewModel::onCitizenNicChanged,
+            onCertificateTypeChanged = requestViewModel::onCertificateTypeChanged,
+            onRequestTypeChanged = requestViewModel::onRequestTypeChanged,
+            onPurposeChanged = requestViewModel::onPurposeChanged,
+            onDescriptionChanged = requestViewModel::onDescriptionChanged,
+            onApprovalNotesChanged = requestViewModel::onApprovalNotesChanged,
+            onDocumentPathChanged = requestViewModel::onDocumentPathChanged,
+            onSaveRequest = requestViewModel::saveRequest
     )
 }
 
 @Composable
 fun RequestAddScreenContent(
-    uiState: RequestUiState,
-    onCitizenNicChanged: (String) -> Unit,
-    onCertificateTypeChanged: (String) -> Unit,
-    onPurposeChanged: (String) -> Unit,
-    onSaveRequest: () -> Unit
+        uiState: RequestUiState,
+        onCitizenNicChanged: (String) -> Unit,
+        onCertificateTypeChanged: (String) -> Unit,
+        onRequestTypeChanged: (String) -> Unit,
+        onPurposeChanged: (String) -> Unit,
+        onDescriptionChanged: (String) -> Unit,
+        onApprovalNotesChanged: (String) -> Unit,
+        onDocumentPathChanged: (String) -> Unit,
+        onSaveRequest: () -> Unit
 ) {
     Column(
             modifier =
@@ -73,7 +80,7 @@ fun RequestAddScreenContent(
                 OutlinedTextField(
                         value = uiState.citizenNic,
                         onValueChange = onCitizenNicChanged,
-                        label = { Text("Citizen NIC") },
+                        label = { Text(stringResource(R.string.nic)) },
                         isError = uiState.citizenNicError != null,
                         supportingText = { uiState.citizenNicError?.let { Text(it) } },
                         modifier = Modifier.fillMaxWidth(),
@@ -83,7 +90,7 @@ fun RequestAddScreenContent(
                 OutlinedTextField(
                         value = uiState.certificateType,
                         onValueChange = onCertificateTypeChanged,
-                        label = { Text("Certificate Type") },
+                        label = { Text(stringResource(R.string.request_type)) },
                         isError = uiState.certificateTypeError != null,
                         supportingText = { uiState.certificateTypeError?.let { Text(it) } },
                         modifier = Modifier.fillMaxWidth(),
@@ -93,11 +100,27 @@ fun RequestAddScreenContent(
                 OutlinedTextField(
                         value = uiState.purpose,
                         onValueChange = onPurposeChanged,
-                        label = { Text("Purpose") },
+                        label = { Text(stringResource(R.string.purpose)) },
                         isError = uiState.purposeError != null,
                         supportingText = { uiState.purposeError?.let { Text(it) } },
                         modifier = Modifier.fillMaxWidth(),
-                        maxLines = 5,
+                        shape = RoundedCornerShape(12.dp)
+                )
+
+                OutlinedTextField(
+                        value = uiState.description,
+                        onValueChange = onDescriptionChanged,
+                        label = { Text(stringResource(R.string.description)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        minLines = 3,
+                        shape = RoundedCornerShape(12.dp)
+                )
+
+                OutlinedTextField(
+                        value = uiState.approvalNotes,
+                        onValueChange = onApprovalNotesChanged,
+                        label = { Text(stringResource(R.string.approval_notes)) },
+                        modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp)
                 )
             }
@@ -116,7 +139,7 @@ fun RequestAddScreenContent(
                 CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
             } else {
                 Text(
-                        "Submit Request",
+                        stringResource(R.string.save),
                         style =
                                 MaterialTheme.typography.titleMedium.copy(
                                         fontWeight = FontWeight.Bold
@@ -132,11 +155,15 @@ fun RequestAddScreenContent(
 fun RequestAddScreenPreview() {
     GNAppTheme {
         RequestAddScreenContent(
-            uiState = RequestUiState(),
-            onCitizenNicChanged = {},
-            onCertificateTypeChanged = {},
-            onPurposeChanged = {},
-            onSaveRequest = {}
+                uiState = RequestUiState(),
+                onCitizenNicChanged = {},
+                onCertificateTypeChanged = {},
+                onRequestTypeChanged = {},
+                onPurposeChanged = {},
+                onDescriptionChanged = {},
+                onApprovalNotesChanged = {},
+                onDocumentPathChanged = {},
+                onSaveRequest = {}
         )
     }
 }

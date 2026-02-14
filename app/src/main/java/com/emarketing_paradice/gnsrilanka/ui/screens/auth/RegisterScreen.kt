@@ -24,15 +24,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emarketing_paradice.gnsrilanka.R
 import com.emarketing_paradice.gnsrilanka.ui.theme.BlueGradientEnd
 import com.emarketing_paradice.gnsrilanka.ui.theme.BlueGradientStart
+import com.emarketing_paradice.gnsrilanka.ui.theme.PreviewData
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthUiState
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthViewModel
 import kotlinx.coroutines.flow.collectLatest
-import androidx.compose.ui.tooling.preview.Preview
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,7 +69,9 @@ fun RegisterScreen(
                 onPasswordChange = { password = it },
                 onConfirmPasswordChange = { confirmPassword = it },
                 onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-                onConfirmPasswordVisibilityChange = { confirmPasswordVisible = !confirmPasswordVisible },
+                onConfirmPasswordVisibilityChange = {
+                        confirmPasswordVisible = !confirmPasswordVisible
+                },
                 onRegister = {
                         focusManager.clearFocus()
                         authViewModel.register(nic, password, confirmPassword)
@@ -222,7 +224,8 @@ fun RegisterScreenContent(
                                                                                         .VisibilityOff
 
                                                                 IconButton(
-                                                                        onClick = onPasswordVisibilityChange
+                                                                        onClick =
+                                                                                onPasswordVisibilityChange
                                                                 ) {
                                                                         Icon(
                                                                                 imageVector = icon,
@@ -290,7 +293,8 @@ fun RegisterScreenContent(
                                                                                         .VisibilityOff
 
                                                                 IconButton(
-                                                                        onClick = onConfirmPasswordVisibilityChange
+                                                                        onClick =
+                                                                                onConfirmPasswordVisibilityChange
                                                                 ) {
                                                                         Icon(
                                                                                 imageVector = icon,
@@ -319,9 +323,7 @@ fun RegisterScreenContent(
                                                                 ),
                                                         keyboardActions =
                                                                 KeyboardActions(
-                                                                        onDone = {
-                                                                                onRegister()
-                                                                        }
+                                                                        onDone = { onRegister() }
                                                                 ),
                                                         singleLine = true,
                                                         colors =
@@ -429,9 +431,9 @@ fun RegisterScreenContent(
 fun RegisterScreenPreview() {
         RegisterScreenContent(
                 uiState = AuthUiState.Idle,
-                nic = "",
-                password = "",
-                confirmPassword = "",
+                nic = PreviewData.sampleUser.nic,
+                password = PreviewData.sampleUser.password,
+                confirmPassword = PreviewData.sampleUser.password,
                 passwordVisible = false,
                 confirmPasswordVisible = false,
                 onNicChange = {},
@@ -443,4 +445,3 @@ fun RegisterScreenPreview() {
                 onNavigateToLogin = {}
         )
 }
-
