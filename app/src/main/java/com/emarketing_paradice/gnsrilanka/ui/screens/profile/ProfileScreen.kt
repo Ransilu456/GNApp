@@ -22,15 +22,15 @@ import com.emarketing_paradice.gnsrilanka.ui.theme.GNAppTheme
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.CitizenViewModel
 
-// --- Theme Colors from premium design ---
 val GnPrimary = Color(0xFF0014A8)
-val GnBackground = Color(0xFFF4F7FE)
 val GnSurface = Color.White
 val GnTextPrimary = Color(0xFF1E293B)
 val GnTextSecondary = Color(0xFF94A3B8)
 
+
 @Composable
 fun ProfileScreen(
+        padding: PaddingValues,
         authViewModel: AuthViewModel,
         citizenViewModel: CitizenViewModel,
         onLogout: () -> Unit,
@@ -40,6 +40,7 @@ fun ProfileScreen(
 
         ProfileScreenContent(
                 profile = officerProfile,
+                padding = padding,
                 onLogout = onLogout,
                 onNavigateToEditProfile = onNavigateToEditProfile
         )
@@ -58,6 +59,7 @@ fun ProfileScreenPreview() {
                                         contactInfo = "011-2345678",
                                         authenticationSettings = "Standard"
                                 ),
+                        padding = PaddingValues(0.dp),
                         onLogout = {},
                         onNavigateToEditProfile = {}
                 )
@@ -67,19 +69,19 @@ fun ProfileScreenPreview() {
 @Composable
 fun ProfileScreenContent(
         profile: com.emarketing_paradice.gnsrilanka.data.model.OfficerProfile?,
+        padding: PaddingValues,
         onLogout: () -> Unit,
         onNavigateToEditProfile: () -> Unit
 ) {
         val fullName = profile?.officerName ?: "Officer"
         val division = profile?.gnDivision ?: "Assigned Division"
 
-        Scaffold(containerColor = GnBackground) { padding ->
-                Column(
-                        modifier =
-                                Modifier.fillMaxSize()
-                                        .verticalScroll(rememberScrollState())
-                                        .padding(bottom = padding.calculateBottomPadding())
-                ) {
+        Column(
+                modifier =
+                        Modifier.fillMaxSize()
+                                .verticalScroll(rememberScrollState())
+                                .padding(bottom = padding.calculateBottomPadding())
+        ) {
                         // Header Section
                         Box(
                                 modifier =
@@ -277,7 +279,6 @@ fun ProfileScreenContent(
                         }
                 }
         }
-}
 
 @Composable
 fun ProfileDetailCard(items: List<ProfileItem>) {
@@ -394,3 +395,4 @@ fun SettingsActionItem(title: String, subtitle: String, icon: Int, onClick: () -
                 }
         }
 }
+

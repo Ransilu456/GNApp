@@ -207,22 +207,6 @@ fun MainScreen(
                                                 )
                                             }
                                         }
-                                        Screen.Profile.route -> {
-                                            IconButton(onClick = { /* Handle Notifications */}) {
-                                                Icon(
-                                                        painter =
-                                                                painterResource(
-                                                                        id =
-                                                                                R.drawable
-                                                                                        .ic_solar_bell
-                                                                ),
-                                                        contentDescription = "Notifications",
-                                                        tint =
-                                                                MaterialTheme.colorScheme
-                                                                        .onBackground
-                                                )
-                                            }
-                                        }
                                         Screen.CitizenAdd.route, Screen.CitizenEdit.route -> {
                                             IconButton(
                                                     onClick = { citizenViewModel.saveCitizen() }
@@ -253,24 +237,7 @@ fun MainScreen(
                                                 )
                                             }
                                         }
-                                    }
-
-                                    // Keep Notifications for list screens
-                                    if (currentRoute in
-                                                    listOf(
-                                                            Screen.CitizenList.route,
-                                                            Screen.HouseholdList.route,
-                                                            Screen.RequestList.route
-                                                    )
-                                    ) {
-                                        IconButton(onClick = { /* Handle notification click */}) {
-                                            BadgedBox(badge = { Badge { Text("8") } }) {
-                                                Icon(
-                                                        Icons.Default.Notifications,
-                                                        contentDescription = "Notifications"
-                                                )
-                                            }
-                                        }
+                                        else -> {}
                                     }
                                 },
                                 colors =
@@ -335,6 +302,7 @@ private fun findTitleByRoute(route: String): String {
         Screen.HouseholdEdit.route -> Screen.HouseholdEdit.title
         Screen.RequestAdd.route -> Screen.RequestAdd.title
         Screen.RequestEdit.route -> Screen.RequestEdit.title
+        Screen.Notifications.route -> Screen.Notifications.title
         else -> "GN App"
     }
 }

@@ -10,6 +10,9 @@ import com.emarketing_paradice.gnsrilanka.ui.screens.household.*
 import com.emarketing_paradice.gnsrilanka.ui.screens.notifications.NotificationsScreen
 import com.emarketing_paradice.gnsrilanka.ui.screens.profile.ProfileScreen
 import com.emarketing_paradice.gnsrilanka.ui.screens.request.*
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.unit.dp
+import com.emarketing_paradice.gnsrilanka.ui.screens.profile.OfficerProfileEditScreen
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.CitizenViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.HouseholdViewModel
@@ -39,8 +42,9 @@ fun NavGraphBuilder.mainNavGraph(
             )
         }
 
-        composable(Screen.Profile.route) {
+        composable(Screen.Profile.route) { backStackEntry ->
             ProfileScreen(
+                    padding = PaddingValues(0.dp), // Managed by global scaffold
                     authViewModel = authViewModel,
                     citizenViewModel = citizenViewModel,
                     onLogout = {
@@ -50,15 +54,7 @@ fun NavGraphBuilder.mainNavGraph(
                         }
                     },
                     onNavigateToEditProfile = {
-                        val currentUser = authViewModel.currentUser.value
-                        val citizen =
-                                citizenViewModel.uiState.value.citizens.find {
-                                    it.nic == currentUser?.nic
-                                }
-                        if (citizen != null) {
-                            citizenViewModel.loadCitizenForEdit(citizen)
-                            navController.navigate(Screen.CitizenEdit.route)
-                        }
+                        navController.navigate(Screen.OfficerProfileEdit.route)
                     }
             )
         }
@@ -190,7 +186,15 @@ fun NavGraphBuilder.mainNavGraph(
         }
 
         composable(Screen.Notifications.route) {
-            NotificationsScreen(onBack = { navController.popBackStack() })
+            NotificationsScreen(padding = PaddingValues(0.dp))
+        }
+
+        composable(Screen.OfficerProfileEdit.route) {
+            OfficerProfileEditScreen(
+                    padding = PaddingValues(0.dp),
+                    authViewModel = authViewModel,
+                    onProfileUpdated = { navController.popBackStack() }
+            )
         }
     }
 }

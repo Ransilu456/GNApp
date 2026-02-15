@@ -39,6 +39,8 @@ sealed class Screen(val route: String, val title: String, val icon: Int? = null)
         object RequestAdd : Screen("request_add", "Add Request")
         object RequestEdit : Screen("request_edit", "Edit Request")
 
+        object OfficerProfileEdit : Screen("officer_profile_edit", "Edit Officer Profile")
+
         object Notifications :
                 Screen(
                         route = "notifications",
