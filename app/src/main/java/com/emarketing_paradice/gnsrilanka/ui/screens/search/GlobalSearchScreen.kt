@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -22,39 +20,21 @@ fun GlobalSearchResultScreen(viewModel: GlobalSearchViewModel, onBack: () -> Uni
     val searchResults by viewModel.searchResults.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
 
-    Scaffold(
-            topBar = {
-                TopAppBar(
-                        title = { Text("Search Results") },
-                        navigationIcon = {
-                            IconButton(onClick = onBack) {
-                                Icon(
-                                        imageVector =
-                                                androidx.compose.material.icons.Icons.AutoMirrored
-                                                        .Filled.ArrowBack,
-                                        contentDescription = "Back"
-                                )
-                            }
-                        }
-                )
-            }
-    ) { padding ->
-        Box(modifier = Modifier.padding(padding).fillMaxSize()) {
-            if (isSearching) {
-                CircularProgressIndicator(
-                        modifier = Modifier.align(androidx.compose.ui.Alignment.Center)
-                )
-            } else if (searchResults.isEmpty()) {
-                Text(
-                        text = "No results found.",
-                        modifier = Modifier.align(androidx.compose.ui.Alignment.Center)
-                )
-            } else {
-                LazyColumn(
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) { items(searchResults) { result -> Citizen360Card(result) } }
-            }
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (isSearching) {
+            CircularProgressIndicator(
+                    modifier = Modifier.align(androidx.compose.ui.Alignment.Center)
+            )
+        } else if (searchResults.isEmpty()) {
+            Text(
+                    text = "No results found.",
+                    modifier = Modifier.align(androidx.compose.ui.Alignment.Center)
+            )
+        } else {
+            LazyColumn(
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) { items(searchResults) { result -> Citizen360Card(result) } }
         }
     }
 }
@@ -84,7 +64,7 @@ fun Citizen360Card(data: Citizen360) {
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-            Divider()
+            HorizontalDivider()
             Spacer(modifier = Modifier.height(8.dp))
 
             // Section: Welfare

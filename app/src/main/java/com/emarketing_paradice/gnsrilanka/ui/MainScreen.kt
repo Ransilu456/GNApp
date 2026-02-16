@@ -386,6 +386,7 @@ private fun findTitleByRoute(route: String): String {
         Screen.PermitAdd.route -> Screen.PermitAdd.title
         Screen.DailyLogAdd.route -> Screen.DailyLogAdd.title
         Screen.Notifications.route -> Screen.Notifications.title
+        Screen.GlobalSearch.route -> "Search Results"
         else -> "GN App"
     }
 }

@@ -2,6 +2,7 @@ package com.emarketing_paradice.gnsrilanka.ui.screens.home
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -10,8 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,7 +41,10 @@ fun HomeScreen(
         onNavigateToHouseholds: () -> Unit,
         onNavigateToRequests: () -> Unit,
         onNavigateToProfile: () -> Unit,
-        onNavigateToGlobalSearch: () -> Unit, // Added
+        onNavigateToGlobalSearch: () -> Unit,
+        onNavigateToLogs: () -> Unit,
+        onNavigateToPermits: () -> Unit,
+        onNavigateToWelfare: () -> Unit,
         onOpenDrawer: () -> Unit
 ) {
         val citizenState by citizenViewModel.uiState.collectAsState()
@@ -58,10 +62,13 @@ fun HomeScreen(
                 onNavigateToHouseholds = onNavigateToHouseholds,
                 onNavigateToRequests = onNavigateToRequests,
                 onNavigateToProfile = onNavigateToProfile,
+                onNavigateToGlobalSearch = onNavigateToGlobalSearch,
+                onNavigateToLogs = onNavigateToLogs,
+                onNavigateToPermits = onNavigateToPermits,
+                onNavigateToWelfare = onNavigateToWelfare,
                 onOpenDrawer = onOpenDrawer,
                 isSearching = globalSearchViewModel.isSearching.collectAsState().value,
-                onSearch = { query -> globalSearchViewModel.search(query) },
-                onNavigateToGlobalSearch = onNavigateToGlobalSearch
+                onSearch = { query -> globalSearchViewModel.search(query) }
         )
 }
 
@@ -80,6 +87,9 @@ fun HomeContent(
         onNavigateToRequests: () -> Unit,
         onNavigateToProfile: () -> Unit,
         onNavigateToGlobalSearch: () -> Unit,
+        onNavigateToLogs: () -> Unit,
+        onNavigateToPermits: () -> Unit,
+        onNavigateToWelfare: () -> Unit,
         onOpenDrawer: () -> Unit
 ) {
         val userName = officerProfile?.officerName?.split(" ")?.firstOrNull() ?: "Officer"
@@ -88,88 +98,91 @@ fun HomeContent(
         Scaffold(
                 containerColor = GnBackground,
                 topBar = {
-                        Box(
-                                modifier =
-                                        Modifier.fillMaxWidth()
-                                                .height(140.dp)
-                                                .background(
-                                                        Brush.verticalGradient(
-                                                                colors =
-                                                                        listOf(
-                                                                                GnPrimary,
-                                                                                Color(0xFF000B5E)
-                                                                        )
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                                // Header Background using SVG/Vector Drawable
+                                Image(
+                                        painter = painterResource(id = R.drawable.bg_home_patterns),
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Crop,
+                                        modifier =
+                                                Modifier.fillMaxWidth()
+                                                        .height(280.dp)
+                                                        .clip(
+                                                                RoundedCornerShape(
+                                                                        bottomStart = 32.dp,
+                                                                        bottomEnd = 32.dp
+                                                                )
                                                         )
-                                                )
-                        ) {
-                                Row(
+                                )
+
+                                // Content Overlay
+                                Column(
                                         modifier =
                                                 Modifier.fillMaxSize()
                                                         .padding(
                                                                 start = 24.dp,
                                                                 end = 24.dp,
-                                                                top = 32.dp
-                                                        ),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
+                                                                top = 48.dp
+                                                        )
                                 ) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                                // User Avatar Placeholder
-                                                Box(
-                                                        modifier =
-                                                                Modifier.size(56.dp)
-                                                                        .clip(CircleShape)
-                                                                        .background(
-                                                                                Color.White.copy(
-                                                                                        alpha = 0.2f
-                                                                                )
-                                                                        ),
-                                                        contentAlignment = Alignment.Center
+                                        Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                                Row(
+                                                        verticalAlignment =
+                                                                Alignment.CenterVertically
                                                 ) {
-                                                        Icon(
-                                                                painter =
-                                                                        painterResource(
-                                                                                id =
-                                                                                        R.drawable
-                                                                                                .ic_solar_user_circle
-                                                                        ),
-                                                                contentDescription = null,
-                                                                tint = Color.White,
-                                                                modifier = Modifier.size(32.dp)
-                                                        )
-                                                }
+                                                        Box(
+                                                                modifier =
+                                                                        Modifier.size(56.dp)
+                                                                                .clip(CircleShape)
+                                                                                .background(
+                                                                                        Color.White
+                                                                                                .copy(
+                                                                                                        alpha =
+                                                                                                                0.2f
+                                                                                                )
+                                                                                ),
+                                                                contentAlignment = Alignment.Center
+                                                        ) {
+                                                                Icon(
+                                                                        painter =
+                                                                                painterResource(
+                                                                                        id =
+                                                                                                R.drawable
+                                                                                                        .ic_solar_user_circle
+                                                                                ),
+                                                                        contentDescription = null,
+                                                                        tint = Color.White,
+                                                                        modifier =
+                                                                                Modifier.size(32.dp)
+                                                                )
+                                                        }
 
-                                                Spacer(modifier = Modifier.width(16.dp))
+                                                        Spacer(modifier = Modifier.width(16.dp))
 
-                                                Column {
-                                                        Text(
-                                                                text =
-                                                                        androidx.compose.ui.res
-                                                                                .stringResource(
-                                                                                        R.string
-                                                                                                .details
-                                                                                ), // "Welcome back"
-                                                                // or similar,
-                                                                // reusing
-                                                                // "Details" for
-                                                                // now if
-                                                                // specific key
-                                                                // missing, but I
-                                                                // added keys
-                                                                color =
-                                                                        Color.White.copy(
-                                                                                alpha = 0.7f
-                                                                        ),
-                                                                fontSize = 14.sp,
-                                                                fontWeight = FontWeight.Medium
-                                                        )
-                                                        Text(
-                                                                userName,
-                                                                color = Color.White,
-                                                                fontSize = 24.sp,
-                                                                fontWeight = FontWeight.ExtraBold,
-                                                                letterSpacing = 0.sp
-                                                        )
+                                                        Column {
+                                                                Text(
+                                                                        text = "Welcome Back,",
+                                                                        color =
+                                                                                Color.White.copy(
+                                                                                        alpha = 0.8f
+                                                                                ),
+                                                                        fontSize = 14.sp,
+                                                                        fontWeight =
+                                                                                FontWeight.Medium
+                                                                )
+                                                                Text(
+                                                                        userName,
+                                                                        color = Color.White,
+                                                                        fontSize = 24.sp,
+                                                                        fontWeight =
+                                                                                FontWeight.Bold,
+                                                                        letterSpacing = 0.5.sp
+                                                                )
+                                                        }
                                                 }
                                                 IconButton(
                                                         onClick = onOpenDrawer,
@@ -177,7 +190,7 @@ fun HomeContent(
                                                                 Modifier.size(48.dp)
                                                                         .clip(
                                                                                 RoundedCornerShape(
-                                                                                        16.dp
+                                                                                        14.dp
                                                                                 )
                                                                         )
                                                                         .background(
@@ -195,68 +208,74 @@ fun HomeContent(
                                                                                                 .ic_solar_bell
                                                                         ),
                                                                 contentDescription =
-                                                                        androidx.compose.ui.res
-                                                                                .stringResource(
-                                                                                        R.string
-                                                                                                .notifications
-                                                                                ),
+                                                                        "Notifications",
                                                                 tint = Color.White,
                                                                 modifier = Modifier.size(24.dp)
                                                         )
                                                 }
                                         }
-                                }
-                                // Search Bar
-                                OutlinedTextField(
-                                        value = searchText,
-                                        onValueChange = { searchText = it },
-                                        placeholder = {
-                                                Text(
-                                                        "Search Name or NIC...",
-                                                        color = Color.White.copy(0.7f)
-                                                )
-                                        },
-                                        modifier =
-                                                Modifier.fillMaxWidth()
-                                                        .padding(
-                                                                horizontal = 24.dp,
-                                                                vertical = 8.dp
+
+                                        Spacer(modifier = Modifier.height(32.dp))
+
+                                        // Search Bar
+                                        OutlinedTextField(
+                                                value = searchText,
+                                                onValueChange = { searchText = it },
+                                                placeholder = {
+                                                        Text(
+                                                                "Search Name or NIC...",
+                                                                color = Color.White.copy(0.7f)
                                                         )
-                                                        .height(50.dp),
-                                        shape = RoundedCornerShape(25.dp),
-                                        colors =
-                                                OutlinedTextFieldDefaults.colors(
-                                                        focusedContainerColor =
-                                                                Color.White.copy(0.2f),
-                                                        unfocusedContainerColor =
-                                                                Color.White.copy(0.2f),
-                                                        focusedTextColor = Color.White,
-                                                        unfocusedTextColor = Color.White,
-                                                        focusedBorderColor = Color.Transparent,
-                                                        unfocusedBorderColor = Color.Transparent,
-                                                        cursorColor = Color.White
-                                                ),
-                                        trailingIcon = {
-                                                IconButton(
-                                                        onClick = {
-                                                                onSearch(searchText)
-                                                                onNavigateToGlobalSearch()
+                                                },
+                                                modifier =
+                                                        Modifier.fillMaxWidth()
+                                                                .height(56.dp)
+                                                                .shadow(
+                                                                        8.dp,
+                                                                        RoundedCornerShape(28.dp),
+                                                                        spotColor =
+                                                                                Color.Black.copy(
+                                                                                        0.2f
+                                                                                )
+                                                                ),
+                                                shape = RoundedCornerShape(28.dp),
+                                                colors =
+                                                        OutlinedTextFieldDefaults.colors(
+                                                                focusedContainerColor =
+                                                                        Color.White.copy(0.15f),
+                                                                unfocusedContainerColor =
+                                                                        Color.White.copy(0.15f),
+                                                                focusedTextColor = Color.White,
+                                                                unfocusedTextColor = Color.White,
+                                                                focusedBorderColor =
+                                                                        Color.White.copy(0.3f),
+                                                                unfocusedBorderColor =
+                                                                        Color.Transparent,
+                                                                cursorColor = Color.White
+                                                        ),
+                                                trailingIcon = {
+                                                        IconButton(
+                                                                onClick = {
+                                                                        onSearch(searchText)
+                                                                        onNavigateToGlobalSearch()
+                                                                }
+                                                        ) {
+                                                                Icon(
+                                                                        painter =
+                                                                                painterResource(
+                                                                                        id =
+                                                                                                R.drawable
+                                                                                                        .ic_solar_magnifer
+                                                                                ),
+                                                                        contentDescription =
+                                                                                "Search",
+                                                                        tint = Color.White
+                                                                )
                                                         }
-                                                ) {
-                                                        Icon(
-                                                                painter =
-                                                                        painterResource(
-                                                                                id =
-                                                                                        R.drawable
-                                                                                                .ic_solar_magnifer
-                                                                        ),
-                                                                contentDescription = "Search",
-                                                                tint = Color.White
-                                                        )
-                                                }
-                                        },
-                                        singleLine = true
-                                )
+                                                },
+                                                singleLine = true
+                                        )
+                                }
                         }
                 }
         ) { padding ->
@@ -265,28 +284,30 @@ fun HomeContent(
                                 Modifier.padding(paddingValues = padding)
                                         .fillMaxSize()
                                         .verticalScroll(rememberScrollState())
-                                        .padding(all = 24.dp)
+                                        .padding(horizontal = 24.dp, vertical = 24.dp)
                 ) {
                         // Stats Row
+                        Text(
+                                text = "Overview",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = GnTextPrimary,
+                                modifier = Modifier.padding(bottom = 16.dp)
+                        )
+
                         Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                                 StatCard(
-                                        title =
-                                                androidx.compose.ui.res.stringResource(
-                                                        R.string.citizens
-                                                ),
+                                        title = "Citizens",
                                         count = citizenState.citizens.size.toString(),
                                         icon = R.drawable.ic_solar_users_group,
                                         modifier = Modifier.weight(1f),
                                         color = Color(0xFFEEF2FF)
                                 )
                                 StatCard(
-                                        title =
-                                                androidx.compose.ui.res.stringResource(
-                                                        R.string.households
-                                                ),
+                                        title = "Households",
                                         count = householdState.households.size.toString(),
                                         icon = R.drawable.ic_solar_home_smile,
                                         modifier = Modifier.weight(1f),
@@ -297,7 +318,7 @@ fun HomeContent(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         StatCard(
-                                title = androidx.compose.ui.res.stringResource(R.string.requests),
+                                title = "Pending Requests",
                                 count = requestState.requests.size.toString(),
                                 icon = R.drawable.ic_solar_documents,
                                 modifier = Modifier.fillMaxWidth(),
@@ -307,12 +328,49 @@ fun HomeContent(
 
                         Spacer(modifier = Modifier.height(32.dp))
 
+                        Spacer(modifier = Modifier.height(32.dp))
+
                         Text(
-                                text =
-                                        androidx.compose.ui.res.stringResource(
-                                                R.string.account_settings
-                                        ), // "Quick Actions" or similar, using "Account Settings"
-                                // for now or I should add specialized key
+                                text = "Official Registries",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = GnTextPrimary
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Registry Actions
+                        LazyRow(
+                                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                                item {
+                                        RegistryCard(
+                                                "Visitor Log",
+                                                R.drawable.ic_registry_log,
+                                                onNavigateToLogs
+                                        )
+                                }
+                                item {
+                                        RegistryCard(
+                                                "Permits",
+                                                R.drawable.ic_registry_permit,
+                                                onNavigateToPermits
+                                        )
+                                }
+                                item {
+                                        RegistryCard(
+                                                "Welfare",
+                                                R.drawable.ic_registry_welfare,
+                                                onNavigateToWelfare
+                                        )
+                                }
+                        }
+
+                        Spacer(modifier = Modifier.height(32.dp))
+
+                        Text(
+                                text = "General Management",
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = GnTextPrimary
@@ -328,7 +386,51 @@ fun HomeContent(
                                 onNavigateToProfile = onNavigateToProfile
                         )
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(32.dp))
+                }
+        }
+}
+
+@Composable
+fun RegistryCard(label: String, icon: Int, onClick: () -> Unit) {
+        Card(
+                modifier =
+                        Modifier.width(160.dp)
+                                .height(120.dp)
+                                .shadow(
+                                        elevation = 6.dp,
+                                        shape = RoundedCornerShape(24.dp),
+                                        spotColor = Color(0x1A000000)
+                                )
+                                .clickable { onClick() },
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+                Column(
+                        modifier = Modifier.fillMaxSize().padding(20.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                        Box(
+                                modifier =
+                                        Modifier.size(44.dp)
+                                                .clip(RoundedCornerShape(14.dp))
+                                                .background(GnBackground),
+                                contentAlignment = Alignment.Center
+                        ) {
+                                Icon(
+                                        painter = painterResource(id = icon),
+                                        contentDescription = null,
+                                        tint = GnPrimary,
+                                        modifier = Modifier.size(24.dp)
+                                )
+                        }
+                        Text(
+                                text = label,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = GnTextPrimary
+                        )
                 }
         }
 }
@@ -494,6 +596,9 @@ fun HomeScreenPreview() {
                         onNavigateToRequests = {},
                         onNavigateToProfile = {},
                         onNavigateToGlobalSearch = {},
+                        onNavigateToLogs = {},
+                        onNavigateToPermits = {},
+                        onNavigateToWelfare = {},
                         onOpenDrawer = {}
                 )
         }

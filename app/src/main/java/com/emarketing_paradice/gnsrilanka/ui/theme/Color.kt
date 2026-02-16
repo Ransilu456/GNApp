@@ -29,3 +29,9 @@ val CardWhite = SurfaceWhite
 val StatusGreen = SuccessGreen
 val StatusYellow = WarningYellow
 val StatusRed = ErrorRed
+
+// Aliases for compatibility
+val GnPrimary = PrimaryBlue
+val GnBackground = AppBackground
+val GnTextPrimary = TextPrimary
+val GnTextSecondary = TextSecondary

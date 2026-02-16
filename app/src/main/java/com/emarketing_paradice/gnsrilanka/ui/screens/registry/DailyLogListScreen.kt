@@ -7,19 +7,23 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.emarketing_paradice.gnsrilanka.R
 import com.emarketing_paradice.gnsrilanka.data.model.DailyLog
-import com.emarketing_paradice.gnsrilanka.ui.components.common.EmptyContent
+import com.emarketing_paradice.gnsrilanka.ui.theme.GnBackground
+import com.emarketing_paradice.gnsrilanka.ui.theme.GnPrimary
+import com.emarketing_paradice.gnsrilanka.ui.theme.GnTextSecondary
 import com.emarketing_paradice.gnsrilanka.viewmodel.GNRegistryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,71 +32,76 @@ fun DailyLogListScreen(viewModel: GNRegistryViewModel, onAddLog: () -> Unit) {
         val logs by viewModel.dailyLogs.collectAsState()
         var searchQuery by remember { mutableStateOf("") }
 
-        val filteredLogs =
-                logs.filter {
-                        searchQuery.isEmpty() ||
-                                it.visitorName.contains(searchQuery, ignoreCase = true) ||
-                                it.purpose.contains(searchQuery, ignoreCase = true) ||
-                                it.date.contains(searchQuery, ignoreCase = true)
+        Scaffold(
+                floatingActionButton = {
+                        FloatingActionButton(
+                                onClick = onAddLog,
+                                containerColor = GnPrimary,
+                                contentColor = Color.White
+                        ) { Icon(Icons.Default.Add, contentDescription = "Add Log") }
                 }
-
-        Column(modifier = Modifier.fillMaxSize()) {
-                // Search Bar
-                Surface(
-                        modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.colorScheme.surface,
-                        tonalElevation = 0.dp,
-                        shadowElevation = 0.1.dp
+        ) { padding ->
+                Column(
+                        modifier =
+                                Modifier.padding(padding)
+                                        .fillMaxSize()
+                                        .background(GnBackground)
+                                        .padding(16.dp)
                 ) {
+                        // Search Bar
                         OutlinedTextField(
                                 value = searchQuery,
                                 onValueChange = { searchQuery = it },
-                                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                                placeholder = { Text("Search by name, purpose, or date...") },
+                                modifier =
+                                        Modifier.fillMaxWidth()
+                                                .padding(bottom = 16.dp)
+                                                .shadow(
+                                                        4.dp,
+                                                        RoundedCornerShape(16.dp),
+                                                        spotColor = Color.Black.copy(0.1f)
+                                                ),
+                                placeholder = { Text("Search logs...", color = GnTextSecondary) },
                                 leadingIcon = {
                                         Icon(
-                                                Icons.Default.Search,
-                                                contentDescription = null,
-                                                tint = Color(0xFF64748B)
+                                                painterResource(id = R.drawable.ic_solar_magnifer),
+                                                contentDescription = "Search",
+                                                tint = GnTextSecondary
                                         )
                                 },
-                                shape = RoundedCornerShape(16.dp),
                                 colors =
                                         OutlinedTextFieldDefaults.colors(
-                                                focusedContainerColor =
-                                                        MaterialTheme.colorScheme.surface,
-                                                unfocusedContainerColor =
-                                                        MaterialTheme.colorScheme.surface,
-                                                disabledContainerColor =
-                                                        MaterialTheme.colorScheme.surface,
+                                                focusedContainerColor = Color.White,
+                                                unfocusedContainerColor = Color.White,
+                                                focusedBorderColor = GnPrimary.copy(alpha = 0.5f),
+                                                unfocusedBorderColor = Color.Transparent
                                         ),
+                                shape = RoundedCornerShape(16.dp),
                                 singleLine = true
                         )
-                }
 
-                if (filteredLogs.isEmpty()) {
-                        Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                        ) {
-                                EmptyContent(
-                                        if (searchQuery.isEmpty()) "No visitor logs found"
-                                        else "No logs match your search",
-                                        Icons.Default.History
-                                )
-                        }
-                } else {
                         LazyColumn(
-                                modifier = Modifier.fillMaxSize(),
                                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                                contentPadding = PaddingValues(16.dp)
-                        ) { items(filteredLogs) { log -> DailyLogItem(log) } }
+                                contentPadding = PaddingValues(bottom = 80.dp)
+                        ) {
+                                items(
+                                        logs.filter {
+                                                it.visitorName.contains(
+                                                        searchQuery,
+                                                        ignoreCase = true
+                                                ) ||
+                                                        it.purpose.contains(
+                                                                searchQuery,
+                                                                ignoreCase = true
+                                                        )
+                                        }
+                                ) { log -> LogItemCard(log) }
+                        }
                 }
         }
 }
 
 @Composable
-fun DailyLogItem(log: DailyLog) {
+fun LogItemCard(log: DailyLog) {
         Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),

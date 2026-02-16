@@ -45,7 +45,10 @@ fun NavGraphBuilder.mainNavGraph(
                     onNavigateToProfile = { navController.navigate(Screen.Profile.route) },
                     onNavigateToGlobalSearch = {
                         navController.navigate(Screen.GlobalSearch.route)
-                    }, // Added
+                    },
+                    onNavigateToLogs = { navController.navigate(Screen.DailyLogList.route) },
+                    onNavigateToPermits = { navController.navigate(Screen.PermitList.route) },
+                    onNavigateToWelfare = { navController.navigate(Screen.WelfareList.route) },
                     onOpenDrawer = onOpenDrawer
             )
         }

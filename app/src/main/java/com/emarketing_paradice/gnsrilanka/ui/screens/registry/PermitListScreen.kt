@@ -8,204 +8,187 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Assignment
+import androidx.compose.material.icons.automirrored.filled.Assignment
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.LocalShipping
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.emarketing_paradice.gnsrilanka.R
 import com.emarketing_paradice.gnsrilanka.data.model.Permit
 import com.emarketing_paradice.gnsrilanka.data.model.PermitType
 import com.emarketing_paradice.gnsrilanka.ui.components.common.EmptyContent
 import com.emarketing_paradice.gnsrilanka.ui.theme.BlueGradientStart
+import com.emarketing_paradice.gnsrilanka.ui.theme.GnBackground
+import com.emarketing_paradice.gnsrilanka.ui.theme.GnPrimary
+import com.emarketing_paradice.gnsrilanka.ui.theme.GnTextSecondary
 import com.emarketing_paradice.gnsrilanka.viewmodel.GNRegistryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PermitListScreen(viewModel: GNRegistryViewModel, onAddPermit: (PermitType) -> Unit) {
+fun PermitListScreen(viewModel: GNRegistryViewModel, onAddPermit: () -> Unit) {
         val permits by viewModel.permits.collectAsState()
         var searchQuery by remember { mutableStateOf("") }
-        var selectedType by remember { mutableStateOf<PermitType?>(null) }
+        var selectedType by remember { mutableStateOf<PermitType?>(null) } // Filter by Type
 
         val filteredPermits =
-                permits.filter {
+                permits.filter { permit ->
                         val matchesSearch =
-                                searchQuery.isEmpty() ||
-                                        it.applicantName.contains(searchQuery, ignoreCase = true) ||
-                                        it.nic.contains(searchQuery, ignoreCase = true) ||
-                                        it.businessName?.contains(searchQuery, ignoreCase = true) ==
-                                                true
-
-                        val matchesType = selectedType == null || it.type == selectedType
-
+                                permit.applicantName.contains(searchQuery, ignoreCase = true) ||
+                                        permit.type.name.contains(searchQuery, ignoreCase = true)
+                        val matchesType = selectedType == null || permit.type == selectedType
                         matchesSearch && matchesType
                 }
 
-        Column(modifier = Modifier.fillMaxSize()) {
-                // Search Bar
-                Surface(
-                        modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.colorScheme.surface,
-                        tonalElevation = 0.dp,
-                        shadowElevation = 0.1.dp
+        Scaffold(
+                floatingActionButton = {
+                        FloatingActionButton(
+                                onClick = onAddPermit,
+                                containerColor = GnPrimary,
+                                contentColor = Color.White
+                        ) { Icon(Icons.Default.Add, contentDescription = "Add Permit") }
+                }
+        ) { padding ->
+                Column(
+                        modifier =
+                                Modifier.padding(padding)
+                                        .fillMaxSize()
+                                        .background(GnBackground)
+                                        .padding(16.dp)
                 ) {
-                        Column {
-                                OutlinedTextField(
-                                        value = searchQuery,
-                                        onValueChange = { searchQuery = it },
-                                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                                        placeholder = {
-                                                Text("Search by name, NIC, or business...")
-                                        },
-                                        leadingIcon = {
-                                                Icon(
-                                                        Icons.Default.Search,
-                                                        contentDescription = null,
-                                                        tint = Color(0xFF64748B)
-                                                )
-                                        },
-                                        shape = RoundedCornerShape(16.dp),
-                                        colors =
-                                                OutlinedTextFieldDefaults.colors(
-                                                        focusedContainerColor =
-                                                                MaterialTheme.colorScheme.surface,
-                                                        unfocusedContainerColor =
-                                                                MaterialTheme.colorScheme.surface,
-                                                        disabledContainerColor =
-                                                                MaterialTheme.colorScheme.surface,
+                        // Search Bar
+                        OutlinedTextField(
+                                value = searchQuery,
+                                onValueChange = { searchQuery = it },
+                                modifier =
+                                        Modifier.fillMaxWidth()
+                                                .padding(bottom = 16.dp)
+                                                .shadow(
+                                                        4.dp,
+                                                        RoundedCornerShape(16.dp),
+                                                        spotColor = Color.Black.copy(0.1f)
                                                 ),
-                                        singleLine = true
-                                )
+                                placeholder = {
+                                        Text("Search permits...", color = GnTextSecondary)
+                                },
+                                leadingIcon = {
+                                        Icon(
+                                                painterResource(id = R.drawable.ic_solar_magnifer),
+                                                contentDescription = "Search",
+                                                tint = GnTextSecondary
+                                        )
+                                },
+                                colors =
+                                        OutlinedTextFieldDefaults.colors(
+                                                focusedContainerColor = Color.White,
+                                                unfocusedContainerColor = Color.White,
+                                                focusedBorderColor = GnPrimary.copy(alpha = 0.5f),
+                                                unfocusedBorderColor = Color.Transparent
+                                        ),
+                                shape = RoundedCornerShape(16.dp),
+                                singleLine = true
+                        )
 
-                                // Type Filter Chips
-                                LazyRow(
-                                        modifier =
-                                                Modifier.fillMaxWidth()
-                                                        .padding(
-                                                                horizontal = 16.dp,
-                                                                vertical = 8.dp
+                        // Filter Chips
+                        LazyRow(
+                                modifier = Modifier.padding(bottom = 16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                                item {
+                                        FilterChip(
+                                                selected = selectedType == null,
+                                                onClick = { selectedType = null },
+                                                label = { Text("All") },
+                                                colors =
+                                                        FilterChipDefaults.filterChipColors(
+                                                                selectedContainerColor =
+                                                                        BlueGradientStart,
+                                                                selectedLabelColor = Color.White,
+                                                                containerColor = Color.Transparent,
+                                                                labelColor =
+                                                                        MaterialTheme.colorScheme
+                                                                                .onSurfaceVariant
                                                         ),
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                        item {
-                                                FilterChip(
-                                                        selected = selectedType == null,
-                                                        onClick = { selectedType = null },
-                                                        label = {
-                                                                Text(
-                                                                        "All",
-                                                                        style =
-                                                                                MaterialTheme
-                                                                                        .typography
-                                                                                        .labelMedium
-                                                                )
-                                                        },
-                                                        colors =
-                                                                FilterChipDefaults.filterChipColors(
-                                                                        selectedContainerColor =
-                                                                                BlueGradientStart,
-                                                                        selectedLabelColor =
-                                                                                Color.White,
-                                                                        containerColor =
-                                                                                Color.Transparent,
-                                                                        labelColor =
-                                                                                MaterialTheme
-                                                                                        .colorScheme
-                                                                                        .onSurfaceVariant
-                                                                ),
-                                                        border =
-                                                                FilterChipDefaults.filterChipBorder(
-                                                                        enabled = true,
-                                                                        selected =
-                                                                                selectedType ==
-                                                                                        null,
-                                                                        borderColor =
-                                                                                MaterialTheme
-                                                                                        .colorScheme
-                                                                                        .outline
-                                                                                        .copy(
-                                                                                                alpha =
-                                                                                                        0.3f
-                                                                                        ),
-                                                                        selectedBorderColor =
-                                                                                Color.Transparent
-                                                                )
-                                                )
-                                        }
-                                        items(PermitType.values().toList()) { type ->
-                                                FilterChip(
-                                                        selected = selectedType == type,
-                                                        onClick = { selectedType = type },
-                                                        label = {
-                                                                Text(
-                                                                        type.displayName(),
-                                                                        style =
-                                                                                MaterialTheme
-                                                                                        .typography
-                                                                                        .labelMedium
-                                                                )
-                                                        },
-                                                        colors =
-                                                                FilterChipDefaults.filterChipColors(
-                                                                        selectedContainerColor =
-                                                                                BlueGradientStart,
-                                                                        selectedLabelColor =
-                                                                                Color.White,
-                                                                        containerColor =
-                                                                                Color.Transparent,
-                                                                        labelColor =
-                                                                                MaterialTheme
-                                                                                        .colorScheme
-                                                                                        .onSurfaceVariant
-                                                                ),
-                                                        border =
-                                                                FilterChipDefaults.filterChipBorder(
-                                                                        enabled = true,
-                                                                        selected =
-                                                                                selectedType ==
-                                                                                        type,
-                                                                        borderColor =
-                                                                                MaterialTheme
-                                                                                        .colorScheme
-                                                                                        .outline
-                                                                                        .copy(
-                                                                                                alpha =
-                                                                                                        0.3f
-                                                                                        ),
-                                                                        selectedBorderColor =
-                                                                                Color.Transparent
-                                                                )
-                                                )
-                                        }
+                                                border =
+                                                        FilterChipDefaults.filterChipBorder(
+                                                                enabled = true,
+                                                                selected = selectedType == null,
+                                                                borderColor =
+                                                                        MaterialTheme.colorScheme
+                                                                                .outline.copy(
+                                                                                alpha = 0.3f
+                                                                        ),
+                                                                selectedBorderColor =
+                                                                        Color.Transparent
+                                                        )
+                                        )
+                                }
+                                items(PermitType.values().toList()) { type ->
+                                        FilterChip(
+                                                selected = selectedType == type,
+                                                onClick = { selectedType = type },
+                                                label = {
+                                                        Text(
+                                                                type.displayName(),
+                                                                style =
+                                                                        MaterialTheme.typography
+                                                                                .labelMedium
+                                                        )
+                                                },
+                                                colors =
+                                                        FilterChipDefaults.filterChipColors(
+                                                                selectedContainerColor =
+                                                                        BlueGradientStart,
+                                                                selectedLabelColor = Color.White,
+                                                                containerColor = Color.Transparent,
+                                                                labelColor =
+                                                                        MaterialTheme.colorScheme
+                                                                                .onSurfaceVariant
+                                                        ),
+                                                border =
+                                                        FilterChipDefaults.filterChipBorder(
+                                                                enabled = true,
+                                                                selected = selectedType == type,
+                                                                borderColor =
+                                                                        MaterialTheme.colorScheme
+                                                                                .outline.copy(
+                                                                                alpha = 0.3f
+                                                                        ),
+                                                                selectedBorderColor =
+                                                                        Color.Transparent
+                                                        )
+                                        )
                                 }
                         }
-                }
 
-                if (filteredPermits.isEmpty()) {
-                        Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                        ) {
-                                EmptyContent(
-                                        if (searchQuery.isEmpty() && selectedType == null)
-                                                "No permits found"
-                                        else "No permits match your filters",
-                                        Icons.Default.Assignment
-                                )
+                        if (filteredPermits.isEmpty()) {
+                                Box(
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                ) {
+                                        EmptyContent(
+                                                if (searchQuery.isEmpty() && selectedType == null)
+                                                        "No permits found"
+                                                else "No permits match your filters",
+                                                Icons.AutoMirrored.Filled.Assignment
+                                        )
+                                }
+                        } else {
+                                LazyColumn(
+                                        modifier = Modifier.fillMaxSize(),
+                                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                                        contentPadding = PaddingValues(bottom = 80.dp)
+                                ) { items(filteredPermits) { permit -> PermitItem(permit) } }
                         }
-                } else {
-                        LazyColumn(
-                                modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.spacedBy(12.dp),
-                                contentPadding = PaddingValues(16.dp)
-                        ) { items(filteredPermits) { permit -> PermitItem(permit) } }
                 }
         }
 }
