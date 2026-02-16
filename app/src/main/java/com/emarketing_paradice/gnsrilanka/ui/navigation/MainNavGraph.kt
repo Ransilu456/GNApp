@@ -16,6 +16,7 @@ import com.emarketing_paradice.gnsrilanka.ui.screens.request.*
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.CitizenViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.GNRegistryViewModel
+import com.emarketing_paradice.gnsrilanka.viewmodel.GlobalSearchViewModel // Added
 import com.emarketing_paradice.gnsrilanka.viewmodel.HouseholdViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.RequestViewModel
 
@@ -26,6 +27,7 @@ fun NavGraphBuilder.mainNavGraph(
         householdViewModel: HouseholdViewModel,
         requestViewModel: RequestViewModel,
         registryViewModel: GNRegistryViewModel,
+        globalSearchViewModel: GlobalSearchViewModel, // Added
         snackbarHostState: androidx.compose.material3.SnackbarHostState,
         onOpenDrawer: () -> Unit
 ) {
@@ -36,10 +38,14 @@ fun NavGraphBuilder.mainNavGraph(
                     householdViewModel = householdViewModel,
                     requestViewModel = requestViewModel,
                     authViewModel = authViewModel,
+                    globalSearchViewModel = globalSearchViewModel,
                     onNavigateToCitizens = { navController.navigate(Screen.CitizenList.route) },
                     onNavigateToHouseholds = { navController.navigate(Screen.HouseholdList.route) },
                     onNavigateToRequests = { navController.navigate(Screen.RequestList.route) },
                     onNavigateToProfile = { navController.navigate(Screen.Profile.route) },
+                    onNavigateToGlobalSearch = {
+                        navController.navigate(Screen.GlobalSearch.route)
+                    }, // Added
                     onOpenDrawer = onOpenDrawer
             )
         }
@@ -191,6 +197,13 @@ fun NavGraphBuilder.mainNavGraph(
             NotificationsScreen(padding = PaddingValues(0.dp))
         }
 
+        composable(Screen.GlobalSearch.route) {
+            com.emarketing_paradice.gnsrilanka.ui.screens.search.GlobalSearchResultScreen(
+                    viewModel = globalSearchViewModel,
+                    onBack = { navController.popBackStack() }
+            )
+        }
+
         composable(Screen.OfficerProfileEdit.route) {
             OfficerProfileEditScreen(
                     padding = PaddingValues(0.dp),
@@ -203,21 +216,39 @@ fun NavGraphBuilder.mainNavGraph(
         composable(Screen.DailyLogList.route) {
             com.emarketing_paradice.gnsrilanka.ui.screens.registry.DailyLogListScreen(
                     viewModel = registryViewModel,
-                    onAddLog = { /* TODO: Navigate to add screen */}
+                    onAddLog = { navController.navigate(Screen.DailyLogAdd.route) }
+            )
+        }
+        composable(Screen.DailyLogAdd.route) {
+            com.emarketing_paradice.gnsrilanka.ui.screens.registry.DailyLogAddScreen(
+                    viewModel = registryViewModel,
+                    onLogAdded = { navController.popBackStack() }
             )
         }
 
         composable(Screen.WelfareList.route) {
             com.emarketing_paradice.gnsrilanka.ui.screens.registry.WelfareListScreen(
                     viewModel = registryViewModel,
-                    onAddWelfare = { /* TODO: Navigate to add form screen */}
+                    onAddWelfare = { navController.navigate(Screen.WelfareAdd.route) }
+            )
+        }
+        composable(Screen.WelfareAdd.route) {
+            com.emarketing_paradice.gnsrilanka.ui.screens.registry.WelfareAddScreen(
+                    viewModel = registryViewModel,
+                    onWelfareAdded = { navController.popBackStack() }
             )
         }
 
         composable(Screen.PermitList.route) {
             com.emarketing_paradice.gnsrilanka.ui.screens.registry.PermitListScreen(
                     viewModel = registryViewModel,
-                    onAddPermit = { /* TODO: Navigate to add permit form */}
+                    onAddPermit = { navController.navigate(Screen.PermitAdd.route) }
+            )
+        }
+        composable(Screen.PermitAdd.route) {
+            com.emarketing_paradice.gnsrilanka.ui.screens.registry.PermitAddScreen(
+                    viewModel = registryViewModel,
+                    onPermitAdded = { navController.popBackStack() }
             )
         }
     }

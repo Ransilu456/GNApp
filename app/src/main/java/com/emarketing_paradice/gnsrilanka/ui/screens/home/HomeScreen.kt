@@ -35,10 +35,12 @@ fun HomeScreen(
         householdViewModel: HouseholdViewModel,
         requestViewModel: RequestViewModel,
         authViewModel: AuthViewModel,
+        globalSearchViewModel: GlobalSearchViewModel, // Added
         onNavigateToCitizens: () -> Unit,
         onNavigateToHouseholds: () -> Unit,
         onNavigateToRequests: () -> Unit,
         onNavigateToProfile: () -> Unit,
+        onNavigateToGlobalSearch: () -> Unit, // Added
         onOpenDrawer: () -> Unit
 ) {
         val citizenState by citizenViewModel.uiState.collectAsState()
@@ -56,10 +58,14 @@ fun HomeScreen(
                 onNavigateToHouseholds = onNavigateToHouseholds,
                 onNavigateToRequests = onNavigateToRequests,
                 onNavigateToProfile = onNavigateToProfile,
-                onOpenDrawer = onOpenDrawer
+                onOpenDrawer = onOpenDrawer,
+                isSearching = globalSearchViewModel.isSearching.collectAsState().value,
+                onSearch = { query -> globalSearchViewModel.search(query) },
+                onNavigateToGlobalSearch = onNavigateToGlobalSearch
         )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
         citizenState: CitizenUiState,
@@ -67,13 +73,17 @@ fun HomeContent(
         requestState: RequestUiState,
         currentUser: User?,
         officerProfile: com.emarketing_paradice.gnsrilanka.data.model.OfficerProfile?,
+        isSearching: Boolean,
+        onSearch: (String) -> Unit,
         onNavigateToCitizens: () -> Unit,
         onNavigateToHouseholds: () -> Unit,
         onNavigateToRequests: () -> Unit,
         onNavigateToProfile: () -> Unit,
+        onNavigateToGlobalSearch: () -> Unit,
         onOpenDrawer: () -> Unit
 ) {
         val userName = officerProfile?.officerName?.split(" ")?.firstOrNull() ?: "Officer"
+        var searchText by remember { mutableStateOf("") }
 
         Scaffold(
                 containerColor = GnBackground,
@@ -161,37 +171,92 @@ fun HomeContent(
                                                                 letterSpacing = 0.sp
                                                         )
                                                 }
-                                        }
-
-                                        IconButton(
-                                                onClick = onOpenDrawer,
-                                                modifier =
-                                                        Modifier.size(48.dp)
-                                                                .clip(RoundedCornerShape(16.dp))
-                                                                .background(
-                                                                        Color.White.copy(
-                                                                                alpha = 0.15f
+                                                IconButton(
+                                                        onClick = onOpenDrawer,
+                                                        modifier =
+                                                                Modifier.size(48.dp)
+                                                                        .clip(
+                                                                                RoundedCornerShape(
+                                                                                        16.dp
+                                                                                )
                                                                         )
-                                                                )
-                                        ) {
-                                                Icon(
-                                                        painter =
-                                                                painterResource(
-                                                                        id =
-                                                                                R.drawable
-                                                                                        .ic_solar_bell
-                                                                ),
-                                                        contentDescription =
-                                                                androidx.compose.ui.res
-                                                                        .stringResource(
-                                                                                R.string
-                                                                                        .notifications
+                                                                        .background(
+                                                                                Color.White.copy(
+                                                                                        alpha =
+                                                                                                0.15f
+                                                                                )
+                                                                        )
+                                                ) {
+                                                        Icon(
+                                                                painter =
+                                                                        painterResource(
+                                                                                id =
+                                                                                        R.drawable
+                                                                                                .ic_solar_bell
                                                                         ),
-                                                        tint = Color.White,
-                                                        modifier = Modifier.size(24.dp)
-                                                )
+                                                                contentDescription =
+                                                                        androidx.compose.ui.res
+                                                                                .stringResource(
+                                                                                        R.string
+                                                                                                .notifications
+                                                                                ),
+                                                                tint = Color.White,
+                                                                modifier = Modifier.size(24.dp)
+                                                        )
+                                                }
                                         }
                                 }
+                                // Search Bar
+                                OutlinedTextField(
+                                        value = searchText,
+                                        onValueChange = { searchText = it },
+                                        placeholder = {
+                                                Text(
+                                                        "Search Name or NIC...",
+                                                        color = Color.White.copy(0.7f)
+                                                )
+                                        },
+                                        modifier =
+                                                Modifier.fillMaxWidth()
+                                                        .padding(
+                                                                horizontal = 24.dp,
+                                                                vertical = 8.dp
+                                                        )
+                                                        .height(50.dp),
+                                        shape = RoundedCornerShape(25.dp),
+                                        colors =
+                                                OutlinedTextFieldDefaults.colors(
+                                                        focusedContainerColor =
+                                                                Color.White.copy(0.2f),
+                                                        unfocusedContainerColor =
+                                                                Color.White.copy(0.2f),
+                                                        focusedTextColor = Color.White,
+                                                        unfocusedTextColor = Color.White,
+                                                        focusedBorderColor = Color.Transparent,
+                                                        unfocusedBorderColor = Color.Transparent,
+                                                        cursorColor = Color.White
+                                                ),
+                                        trailingIcon = {
+                                                IconButton(
+                                                        onClick = {
+                                                                onSearch(searchText)
+                                                                onNavigateToGlobalSearch()
+                                                        }
+                                                ) {
+                                                        Icon(
+                                                                painter =
+                                                                        painterResource(
+                                                                                id =
+                                                                                        R.drawable
+                                                                                                .ic_solar_magnifer
+                                                                        ),
+                                                                contentDescription = "Search",
+                                                                tint = Color.White
+                                                        )
+                                                }
+                                        },
+                                        singleLine = true
+                                )
                         }
                 }
         ) { padding ->
@@ -422,10 +487,13 @@ fun HomeScreenPreview() {
                         requestState = RequestUiState(requests = PreviewData.sampleRequests),
                         currentUser = PreviewData.sampleUser,
                         officerProfile = null,
+                        isSearching = false,
+                        onSearch = {},
                         onNavigateToCitizens = {},
                         onNavigateToHouseholds = {},
                         onNavigateToRequests = {},
                         onNavigateToProfile = {},
+                        onNavigateToGlobalSearch = {},
                         onOpenDrawer = {}
                 )
         }

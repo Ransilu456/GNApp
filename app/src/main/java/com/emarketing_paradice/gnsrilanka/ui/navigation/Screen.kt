@@ -63,6 +63,12 @@ sealed class Screen(val route: String, val title: String, val icon: Int? = null)
 
         object OfficerProfileEdit : Screen("officer_profile_edit", "Edit Officer Profile")
 
+        object GlobalSearch : Screen("global_search", "Search")
+
+        object WelfareAdd : Screen("welfare_add", "Add Welfare")
+        object PermitAdd : Screen("permit_add", "Add Permit")
+        object DailyLogAdd : Screen("daily_log_add", "Add Daily Log")
+
         object Notifications :
                 Screen(
                         route = "notifications",

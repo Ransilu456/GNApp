@@ -43,6 +43,7 @@ import com.emarketing_paradice.gnsrilanka.ui.navigation.Screen
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.CitizenViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.GNRegistryViewModel
+import com.emarketing_paradice.gnsrilanka.viewmodel.GlobalSearchViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.HouseholdViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.RequestViewModel
 import kotlinx.coroutines.launch
@@ -54,7 +55,8 @@ fun MainScreen(
         citizenViewModel: CitizenViewModel,
         householdViewModel: HouseholdViewModel,
         requestViewModel: RequestViewModel,
-        registryViewModel: GNRegistryViewModel
+        registryViewModel: GNRegistryViewModel,
+        globalSearchViewModel: GlobalSearchViewModel
 ) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -239,6 +241,80 @@ fun MainScreen(
                                                 )
                                             }
                                         }
+                                        Screen.WelfareAdd.route -> {
+                                            IconButton(
+                                                    onClick = {
+                                                        registryViewModel.saveWelfareProgram()
+                                                    }
+                                            ) {
+                                                Icon(
+                                                        Icons.Default.Check,
+                                                        contentDescription = "Save Welfare"
+                                                )
+                                            }
+                                        }
+                                        Screen.PermitAdd.route -> {
+                                            IconButton(
+                                                    onClick = { registryViewModel.savePermit() }
+                                            ) {
+                                                Icon(
+                                                        Icons.Default.Check,
+                                                        contentDescription = "Save Permit"
+                                                )
+                                            }
+                                        }
+                                        Screen.DailyLogAdd.route -> {
+                                            IconButton(
+                                                    onClick = { registryViewModel.saveDailyLog() }
+                                            ) {
+                                                Icon(
+                                                        Icons.Default.Check,
+                                                        contentDescription = "Save Log"
+                                                )
+                                            }
+                                        }
+                                        Screen.WelfareList.route -> {
+                                            IconButton(
+                                                    onClick = {
+                                                        navController.navigate(
+                                                                Screen.WelfareAdd.route
+                                                        )
+                                                    }
+                                            ) {
+                                                Icon(
+                                                        Icons.Default.Add,
+                                                        contentDescription = "Add Welfare Program"
+                                                )
+                                            }
+                                        }
+                                        Screen.PermitList.route -> {
+                                            IconButton(
+                                                    onClick = {
+                                                        navController.navigate(
+                                                                Screen.PermitAdd.route
+                                                        )
+                                                    }
+                                            ) {
+                                                Icon(
+                                                        Icons.Default.Add,
+                                                        contentDescription = "Add Permit"
+                                                )
+                                            }
+                                        }
+                                        Screen.DailyLogList.route -> {
+                                            IconButton(
+                                                    onClick = {
+                                                        navController.navigate(
+                                                                Screen.DailyLogAdd.route
+                                                        )
+                                                    }
+                                            ) {
+                                                Icon(
+                                                        Icons.Default.Add,
+                                                        contentDescription = "Add Daily Log"
+                                                )
+                                            }
+                                        }
                                         else -> {}
                                     }
                                 },
@@ -285,6 +361,7 @@ fun MainScreen(
                     householdViewModel = householdViewModel,
                     requestViewModel = requestViewModel,
                     registryViewModel = registryViewModel,
+                    globalSearchViewModel = globalSearchViewModel,
                     snackbarHostState = snackbarHostState,
                     onOpenDrawer = { scope.launch { drawerState.open() } }
             )
@@ -305,6 +382,9 @@ private fun findTitleByRoute(route: String): String {
         Screen.HouseholdEdit.route -> Screen.HouseholdEdit.title
         Screen.RequestAdd.route -> Screen.RequestAdd.title
         Screen.RequestEdit.route -> Screen.RequestEdit.title
+        Screen.WelfareAdd.route -> Screen.WelfareAdd.title
+        Screen.PermitAdd.route -> Screen.PermitAdd.title
+        Screen.DailyLogAdd.route -> Screen.DailyLogAdd.title
         Screen.Notifications.route -> Screen.Notifications.title
         else -> "GN App"
     }

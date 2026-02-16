@@ -29,7 +29,7 @@ fun AppBottomBar(currentRoute: String?, onNavigate: (String) -> Unit) {
                 modifier =
                         Modifier.fillMaxWidth()
                                 .shadow(
-                                        elevation = 12.dp,
+                                        elevation = 16.dp,
                                         shape =
                                                 RoundedCornerShape(
                                                         topStart = 24.dp,
@@ -37,15 +37,15 @@ fun AppBottomBar(currentRoute: String?, onNavigate: (String) -> Unit) {
                                                 ),
                                         ambientColor = Color.Black.copy(alpha = 0.1f),
                                         spotColor =
-                                                MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                                                MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
                                 )
                                 .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
                                 .navigationBarsPadding(),
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.surface,
                 tonalElevation = 8.dp
         ) {
                 NavigationBar(
-                        containerColor = Color.Transparent,
+                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
                         modifier = Modifier.height(72.dp),
                         tonalElevation = 0.dp
                 ) {
@@ -89,10 +89,10 @@ fun AppBottomBar(currentRoute: String?, onNavigate: (String) -> Unit) {
                                                                         ),
                                                                 unselectedIconColor =
                                                                         MaterialTheme.colorScheme
-                                                                                .onSurfaceVariant,
+                                                                                .onSurfaceVariant.copy(alpha = 0.7f),
                                                                 unselectedTextColor =
                                                                         MaterialTheme.colorScheme
-                                                                                .onSurfaceVariant
+                                                                                .onSurfaceVariant.copy(alpha = 0.7f)
                                                         )
                                         )
                                 }

@@ -209,4 +209,55 @@ class FileRepository(private val context: Context) {
         permits.add(permit)
         savePermits(permits)
     }
+
+    // Voluntary Organizations
+    fun getVoluntaryOrgs(): List<VoluntaryOrg> {
+        val type = object : TypeToken<List<VoluntaryOrg>>() {}
+        return readFromFile("voluntary_orgs.json", type) ?: emptyList()
+    }
+
+    fun saveVoluntaryOrgs(orgs: List<VoluntaryOrg>) {
+        writeToFile("voluntary_orgs.json", orgs)
+    }
+
+    fun saveVoluntaryOrg(org: VoluntaryOrg) {
+        val orgs = getVoluntaryOrgs().toMutableList()
+        orgs.removeAll { it.id == org.id }
+        orgs.add(org)
+        saveVoluntaryOrgs(orgs)
+    }
+
+    // Pensions
+    fun getPensions(): List<Pension> {
+        val type = object : TypeToken<List<Pension>>() {}
+        return readFromFile("pensions.json", type) ?: emptyList()
+    }
+
+    fun savePensions(pensions: List<Pension>) {
+        writeToFile("pensions.json", pensions)
+    }
+
+    fun savePension(pension: Pension) {
+        val pensions = getPensions().toMutableList()
+        pensions.removeAll { it.id == pension.id }
+        pensions.add(pension)
+        savePensions(pensions)
+    }
+
+    // Elderly IDs
+    fun getElderlyIds(): List<ElderlyId> {
+        val type = object : TypeToken<List<ElderlyId>>() {}
+        return readFromFile("elderly_ids.json", type) ?: emptyList()
+    }
+
+    fun saveElderlyIds(ids: List<ElderlyId>) {
+        writeToFile("elderly_ids.json", ids)
+    }
+
+    fun saveElderlyId(id: ElderlyId) {
+        val ids = getElderlyIds().toMutableList()
+        ids.removeAll { it.id == id.id }
+        ids.add(id)
+        saveElderlyIds(ids)
+    }
 }
