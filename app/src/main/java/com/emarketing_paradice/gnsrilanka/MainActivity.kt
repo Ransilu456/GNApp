@@ -13,6 +13,7 @@ import com.emarketing_paradice.gnsrilanka.ui.MainScreen
 import com.emarketing_paradice.gnsrilanka.ui.theme.GNAppTheme
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.CitizenViewModel
+import com.emarketing_paradice.gnsrilanka.viewmodel.GNRegistryViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.HouseholdViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.RequestViewModel
 
@@ -29,6 +30,7 @@ class MainActivity : ComponentActivity() {
         val citizenViewModel: CitizenViewModel by viewModels { viewModelFactory }
         val householdViewModel: HouseholdViewModel by viewModels { viewModelFactory }
         val requestViewModel: RequestViewModel by viewModels { viewModelFactory }
+        val registryViewModel: GNRegistryViewModel by viewModels { viewModelFactory }
 
         setContent {
             GNAppTheme {
@@ -36,7 +38,8 @@ class MainActivity : ComponentActivity() {
                         authViewModel = authViewModel,
                         citizenViewModel = citizenViewModel,
                         householdViewModel = householdViewModel,
-                        requestViewModel = requestViewModel
+                        requestViewModel = requestViewModel,
+                        registryViewModel = registryViewModel
                 )
             }
         }
@@ -56,6 +59,8 @@ class ViewModelFactory(private val repository: FileRepository, private val conte
                     HouseholdViewModel(repository) as T
             modelClass.isAssignableFrom(RequestViewModel::class.java) ->
                     RequestViewModel(repository) as T
+            modelClass.isAssignableFrom(GNRegistryViewModel::class.java) ->
+                    GNRegistryViewModel(repository) as T
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }

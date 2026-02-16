@@ -1,14 +1,7 @@
 package com.emarketing_paradice.gnsrilanka.data.repository
 
 import android.content.Context
-import com.emarketing_paradice.gnsrilanka.data.model.BirthRecord
-import com.emarketing_paradice.gnsrilanka.data.model.Citizen
-import com.emarketing_paradice.gnsrilanka.data.model.DeathRecord
-import com.emarketing_paradice.gnsrilanka.data.model.Household
-import com.emarketing_paradice.gnsrilanka.data.model.MovementLog
-import com.emarketing_paradice.gnsrilanka.data.model.OfficerProfile
-import com.emarketing_paradice.gnsrilanka.data.model.Request
-import com.emarketing_paradice.gnsrilanka.data.model.User
+import com.emarketing_paradice.gnsrilanka.data.model.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
@@ -164,5 +157,56 @@ class FileRepository(private val context: Context) {
         logs.removeAll { it.logId == log.logId }
         logs.add(log)
         saveMovementLogs(logs)
+    }
+
+    // Daily Logs
+    fun getDailyLogs(): List<DailyLog> {
+        val type = object : TypeToken<List<DailyLog>>() {}
+        return readFromFile("daily_logs.json", type) ?: emptyList()
+    }
+
+    fun saveDailyLogs(logs: List<DailyLog>) {
+        writeToFile("daily_logs.json", logs)
+    }
+
+    fun saveDailyLog(log: DailyLog) {
+        val logs = getDailyLogs().toMutableList()
+        logs.removeAll { it.id == log.id }
+        logs.add(log)
+        saveDailyLogs(logs)
+    }
+
+    // Welfare Programs
+    fun getWelfarePrograms(): List<WelfareProgram> {
+        val type = object : TypeToken<List<WelfareProgram>>() {}
+        return readFromFile("welfare_programs.json", type) ?: emptyList()
+    }
+
+    fun saveWelfarePrograms(programs: List<WelfareProgram>) {
+        writeToFile("welfare_programs.json", programs)
+    }
+
+    fun saveWelfareProgram(program: WelfareProgram) {
+        val programs = getWelfarePrograms().toMutableList()
+        programs.removeAll { it.id == program.id }
+        programs.add(program)
+        saveWelfarePrograms(programs)
+    }
+
+    // Permits
+    fun getPermits(): List<Permit> {
+        val type = object : TypeToken<List<Permit>>() {}
+        return readFromFile("permits.json", type) ?: emptyList()
+    }
+
+    fun savePermits(permits: List<Permit>) {
+        writeToFile("permits.json", permits)
+    }
+
+    fun savePermit(permit: Permit) {
+        val permits = getPermits().toMutableList()
+        permits.removeAll { it.id == permit.id }
+        permits.add(permit)
+        savePermits(permits)
     }
 }

@@ -1,7 +1,6 @@
 package com.emarketing_paradice.gnsrilanka.ui.components.bottombar
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -37,15 +36,17 @@ fun AppBottomBar(currentRoute: String?, onNavigate: (String) -> Unit) {
                                                         topEnd = 24.dp
                                                 ),
                                         ambientColor = Color.Black.copy(alpha = 0.1f),
-                                        spotColor = Color(0xFF0014A8).copy(alpha = 0.1f)
+                                        spotColor =
+                                                MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                                 )
-                                .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-                color = Color.White,
-                tonalElevation = 0.dp
+                                .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+                                .navigationBarsPadding(),
+                color = MaterialTheme.colorScheme.onPrimary,
+                tonalElevation = 8.dp
         ) {
                 NavigationBar(
                         containerColor = Color.Transparent,
-                        modifier = Modifier.height(80.dp),
+                        modifier = Modifier.height(72.dp),
                         tonalElevation = 0.dp
                 ) {
                         items.forEach { screen ->
@@ -59,6 +60,7 @@ fun AppBottomBar(currentRoute: String?, onNavigate: (String) -> Unit) {
                                                                 painter =
                                                                         painterResource(id = icon),
                                                                 contentDescription = screen.title,
+                                                                modifier = Modifier.size(24.dp)
                                                         )
                                                 },
                                                 label = {
@@ -75,16 +77,22 @@ fun AppBottomBar(currentRoute: String?, onNavigate: (String) -> Unit) {
                                                 colors =
                                                         NavigationBarItemDefaults.colors(
                                                                 selectedIconColor =
-                                                                        Color(0xFF0014A8),
+                                                                        MaterialTheme.colorScheme
+                                                                                .primary,
                                                                 selectedTextColor =
-                                                                        Color(0xFF0014A8),
+                                                                        MaterialTheme.colorScheme
+                                                                                .primary,
                                                                 indicatorColor =
-                                                                        Color(0xFF0014A8)
-                                                                                .copy(alpha = 0.1f),
+                                                                        MaterialTheme.colorScheme
+                                                                                .primary.copy(
+                                                                                alpha = 0.12f
+                                                                        ),
                                                                 unselectedIconColor =
-                                                                        Color(0xFF94A3B8),
+                                                                        MaterialTheme.colorScheme
+                                                                                .onSurfaceVariant,
                                                                 unselectedTextColor =
-                                                                        Color(0xFF94A3B8)
+                                                                        MaterialTheme.colorScheme
+                                                                                .onSurfaceVariant
                                                         )
                                         )
                                 }

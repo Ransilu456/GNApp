@@ -17,7 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.emarketing_paradice.gnsrilanka.R
-import com.emarketing_paradice.gnsrilanka.ui.theme.AppBackground
 import com.emarketing_paradice.gnsrilanka.ui.theme.BlueGradientStart
 import com.emarketing_paradice.gnsrilanka.ui.theme.GNAppTheme
 import com.emarketing_paradice.gnsrilanka.viewmodel.CitizenUiState
@@ -66,7 +65,7 @@ fun CitizenAddScreenContent(
         Column(
                 modifier =
                         Modifier.fillMaxSize()
-                                .background(AppBackground)
+                                .background(MaterialTheme.colorScheme.background)
                                 .verticalScroll(rememberScrollState())
                                 .padding(24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -74,7 +73,10 @@ fun CitizenAddScreenContent(
                 Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(24.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        colors =
+                                CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.surface
+                                ),
                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
                         Column(
@@ -85,6 +87,7 @@ fun CitizenAddScreenContent(
                                         value = uiState.nic,
                                         onValueChange = onNicChanged,
                                         label = { Text(stringResource(R.string.nic)) },
+                                        placeholder = { Text("e.g. 199012345678 or 901234567V") },
                                         isError = uiState.nicError != null,
                                         supportingText = { uiState.nicError?.let { Text(it) } },
                                         modifier = Modifier.fillMaxWidth(),
@@ -95,6 +98,7 @@ fun CitizenAddScreenContent(
                                         value = uiState.fullName,
                                         onValueChange = onFullNameChanged,
                                         label = { Text(stringResource(R.string.full_name)) },
+                                        placeholder = { Text("Enter full name") },
                                         isError = uiState.fullNameError != null,
                                         supportingText = {
                                                 uiState.fullNameError?.let { Text(it) }
@@ -107,6 +111,7 @@ fun CitizenAddScreenContent(
                                         value = uiState.dateOfBirth,
                                         onValueChange = onDobChanged,
                                         label = { Text(stringResource(R.string.dob)) },
+                                        placeholder = { Text("YYYY-MM-DD") },
                                         isError = uiState.dobError != null,
                                         supportingText = { uiState.dobError?.let { Text(it) } },
                                         modifier = Modifier.fillMaxWidth(),
@@ -117,6 +122,7 @@ fun CitizenAddScreenContent(
                                         value = uiState.gender,
                                         onValueChange = onGenderChanged,
                                         label = { Text(stringResource(R.string.gender)) },
+                                        placeholder = { Text("Male/Female/Other") },
                                         modifier = Modifier.fillMaxWidth(),
                                         shape = RoundedCornerShape(12.dp)
                                 )
@@ -125,6 +131,7 @@ fun CitizenAddScreenContent(
                                         value = uiState.occupation,
                                         onValueChange = onOccupationChanged,
                                         label = { Text(stringResource(R.string.occupation)) },
+                                        placeholder = { Text("e.g. Farmer, Teacher") },
                                         modifier = Modifier.fillMaxWidth(),
                                         shape = RoundedCornerShape(12.dp)
                                 )
@@ -133,6 +140,7 @@ fun CitizenAddScreenContent(
                                         value = uiState.householdId,
                                         onValueChange = onHouseholdIdChanged,
                                         label = { Text(stringResource(R.string.household_id)) },
+                                        placeholder = { Text("Enter household ID") },
                                         isError = uiState.householdIdError != null,
                                         supportingText = {
                                                 uiState.householdIdError?.let { Text(it) }
@@ -145,6 +153,7 @@ fun CitizenAddScreenContent(
                                         value = uiState.address,
                                         onValueChange = onAddressChanged,
                                         label = { Text(stringResource(R.string.address)) },
+                                        placeholder = { Text("Enter residential address") },
                                         modifier = Modifier.fillMaxWidth(),
                                         shape = RoundedCornerShape(12.dp)
                                 )
@@ -153,6 +162,7 @@ fun CitizenAddScreenContent(
                                         value = uiState.contactNumber,
                                         onValueChange = onContactNumberChanged,
                                         label = { Text(stringResource(R.string.contact_number)) },
+                                        placeholder = { Text("e.g. 0771234567") },
                                         modifier = Modifier.fillMaxWidth(),
                                         shape = RoundedCornerShape(12.dp)
                                 )

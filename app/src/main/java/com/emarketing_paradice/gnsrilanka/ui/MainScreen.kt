@@ -42,6 +42,7 @@ import com.emarketing_paradice.gnsrilanka.ui.navigation.AppNavHost
 import com.emarketing_paradice.gnsrilanka.ui.navigation.Screen
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.CitizenViewModel
+import com.emarketing_paradice.gnsrilanka.viewmodel.GNRegistryViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.HouseholdViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.RequestViewModel
 import kotlinx.coroutines.launch
@@ -52,7 +53,8 @@ fun MainScreen(
         authViewModel: AuthViewModel,
         citizenViewModel: CitizenViewModel,
         householdViewModel: HouseholdViewModel,
-        requestViewModel: RequestViewModel
+        requestViewModel: RequestViewModel,
+        registryViewModel: GNRegistryViewModel
 ) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -282,6 +284,7 @@ fun MainScreen(
                     citizenViewModel = citizenViewModel,
                     householdViewModel = householdViewModel,
                     requestViewModel = requestViewModel,
+                    registryViewModel = registryViewModel,
                     snackbarHostState = snackbarHostState,
                     onOpenDrawer = { scope.launch { drawerState.open() } }
             )

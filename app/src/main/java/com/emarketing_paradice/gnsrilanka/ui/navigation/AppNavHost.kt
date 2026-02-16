@@ -10,6 +10,7 @@ import com.emarketing_paradice.gnsrilanka.ui.screens.auth.LoginScreen
 import com.emarketing_paradice.gnsrilanka.ui.screens.auth.RegisterScreen
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.CitizenViewModel
+import com.emarketing_paradice.gnsrilanka.viewmodel.GNRegistryViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.HouseholdViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.RequestViewModel
 
@@ -21,6 +22,7 @@ fun AppNavHost(
         citizenViewModel: CitizenViewModel,
         householdViewModel: HouseholdViewModel,
         requestViewModel: RequestViewModel,
+        registryViewModel: GNRegistryViewModel,
         snackbarHostState: androidx.compose.material3.SnackbarHostState,
         onOpenDrawer: () -> Unit
 ) {
@@ -69,6 +71,7 @@ fun AppNavHost(
                 citizenViewModel = citizenViewModel,
                 householdViewModel = householdViewModel,
                 requestViewModel = requestViewModel,
+                registryViewModel = registryViewModel,
                 snackbarHostState = snackbarHostState,
                 onOpenDrawer = onOpenDrawer
         )

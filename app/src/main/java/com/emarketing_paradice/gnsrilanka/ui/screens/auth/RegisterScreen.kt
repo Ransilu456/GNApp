@@ -149,7 +149,8 @@ fun RegisterScreenContent(
                                         shape = RoundedCornerShape(24.dp),
                                         colors =
                                                 CardDefaults.cardColors(
-                                                        containerColor = Color.White
+                                                        containerColor =
+                                                                MaterialTheme.colorScheme.surface
                                                 ),
                                         elevation =
                                                 CardDefaults.cardElevation(defaultElevation = 8.dp),
@@ -163,6 +164,11 @@ fun RegisterScreenContent(
                                                         value = nic,
                                                         onValueChange = onNicChange,
                                                         label = { Text("NIC Number") },
+                                                        placeholder = {
+                                                                Text(
+                                                                        "Enter your NIC (e.g., 123456789V)"
+                                                                )
+                                                        },
                                                         leadingIcon = {
                                                                 Icon(
                                                                         painter =
@@ -187,13 +193,29 @@ fun RegisterScreenContent(
                                                         colors =
                                                                 OutlinedTextFieldDefaults.colors(
                                                                         focusedBorderColor =
-                                                                                BlueGradientStart,
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .primary,
                                                                         focusedLabelColor =
-                                                                                BlueGradientStart,
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .primary,
                                                                         focusedContainerColor =
-                                                                                Color(0xFFF8FAFC),
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .surfaceVariant
+                                                                                        .copy(
+                                                                                                alpha =
+                                                                                                        0.5f
+                                                                                        ),
                                                                         unfocusedContainerColor =
-                                                                                Color(0xFFF8FAFC)
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .surfaceVariant
+                                                                                        .copy(
+                                                                                                alpha =
+                                                                                                        0.3f
+                                                                                        )
                                                                 )
                                                 )
 
@@ -201,6 +223,9 @@ fun RegisterScreenContent(
                                                         value = password,
                                                         onValueChange = onPasswordChange,
                                                         label = { Text("Password") },
+                                                        placeholder = {
+                                                                Text("Enter your password")
+                                                        },
                                                         leadingIcon = {
                                                                 Icon(
                                                                         painter =
@@ -222,7 +247,6 @@ fun RegisterScreenContent(
                                                                         else
                                                                                 Icons.Filled
                                                                                         .VisibilityOff
-
                                                                 IconButton(
                                                                         onClick =
                                                                                 onPasswordVisibilityChange
@@ -256,13 +280,29 @@ fun RegisterScreenContent(
                                                         colors =
                                                                 OutlinedTextFieldDefaults.colors(
                                                                         focusedBorderColor =
-                                                                                BlueGradientStart,
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .primary,
                                                                         focusedLabelColor =
-                                                                                BlueGradientStart,
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .primary,
                                                                         focusedContainerColor =
-                                                                                Color(0xFFF8FAFC),
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .surfaceVariant
+                                                                                        .copy(
+                                                                                                alpha =
+                                                                                                        0.5f
+                                                                                        ),
                                                                         unfocusedContainerColor =
-                                                                                Color(0xFFF8FAFC)
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .surfaceVariant
+                                                                                        .copy(
+                                                                                                alpha =
+                                                                                                        0.3f
+                                                                                        )
                                                                 )
                                                 )
 
@@ -270,6 +310,9 @@ fun RegisterScreenContent(
                                                         value = confirmPassword,
                                                         onValueChange = onConfirmPasswordChange,
                                                         label = { Text("Confirm Password") },
+                                                        placeholder = {
+                                                                Text("Confirm your password")
+                                                        },
                                                         leadingIcon = {
                                                                 Icon(
                                                                         painter =
@@ -291,7 +334,6 @@ fun RegisterScreenContent(
                                                                         else
                                                                                 Icons.Filled
                                                                                         .VisibilityOff
-
                                                                 IconButton(
                                                                         onClick =
                                                                                 onConfirmPasswordVisibilityChange
@@ -329,13 +371,29 @@ fun RegisterScreenContent(
                                                         colors =
                                                                 OutlinedTextFieldDefaults.colors(
                                                                         focusedBorderColor =
-                                                                                BlueGradientStart,
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .primary,
                                                                         focusedLabelColor =
-                                                                                BlueGradientStart,
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .primary,
                                                                         focusedContainerColor =
-                                                                                Color(0xFFF8FAFC),
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .surfaceVariant
+                                                                                        .copy(
+                                                                                                alpha =
+                                                                                                        0.5f
+                                                                                        ),
                                                                         unfocusedContainerColor =
-                                                                                Color(0xFFF8FAFC)
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .surfaceVariant
+                                                                                        .copy(
+                                                                                                alpha =
+                                                                                                        0.3f
+                                                                                        )
                                                                 )
                                                 )
 

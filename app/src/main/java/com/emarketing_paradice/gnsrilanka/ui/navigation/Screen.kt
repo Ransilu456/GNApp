@@ -31,6 +31,28 @@ sealed class Screen(val route: String, val title: String, val icon: Int? = null)
         object Profile :
                 Screen(route = "profile", title = "System", icon = R.drawable.ic_solar_settings)
 
+        // Registries
+        object DailyLogList :
+                Screen(
+                        route = "daily_log_list",
+                        title = "Visitor Log",
+                        icon = R.drawable.ic_solar_document_text
+                )
+
+        object WelfareList :
+                Screen(
+                        route = "welfare_list",
+                        title = "Welfare",
+                        icon = R.drawable.ic_solar_medal_ribbon_star
+                )
+
+        object PermitList :
+                Screen(
+                        route = "permit_list",
+                        title = "Permits",
+                        icon = R.drawable.ic_baseline_assignment
+                )
+
         // Detail / Form screens (NO bottom bar)
         object CitizenAdd : Screen("citizen_add", "Add Citizen")
         object CitizenEdit : Screen("citizen_edit", "Edit Citizen")

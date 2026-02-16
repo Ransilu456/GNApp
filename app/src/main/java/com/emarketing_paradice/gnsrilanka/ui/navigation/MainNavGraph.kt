@@ -1,5 +1,7 @@
 package com.emarketing_paradice.gnsrilanka.ui.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -8,13 +10,12 @@ import com.emarketing_paradice.gnsrilanka.ui.screens.citizen.*
 import com.emarketing_paradice.gnsrilanka.ui.screens.home.HomeScreen
 import com.emarketing_paradice.gnsrilanka.ui.screens.household.*
 import com.emarketing_paradice.gnsrilanka.ui.screens.notifications.NotificationsScreen
+import com.emarketing_paradice.gnsrilanka.ui.screens.profile.OfficerProfileEditScreen
 import com.emarketing_paradice.gnsrilanka.ui.screens.profile.ProfileScreen
 import com.emarketing_paradice.gnsrilanka.ui.screens.request.*
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.ui.unit.dp
-import com.emarketing_paradice.gnsrilanka.ui.screens.profile.OfficerProfileEditScreen
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.CitizenViewModel
+import com.emarketing_paradice.gnsrilanka.viewmodel.GNRegistryViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.HouseholdViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.RequestViewModel
 
@@ -24,6 +25,7 @@ fun NavGraphBuilder.mainNavGraph(
         citizenViewModel: CitizenViewModel,
         householdViewModel: HouseholdViewModel,
         requestViewModel: RequestViewModel,
+        registryViewModel: GNRegistryViewModel,
         snackbarHostState: androidx.compose.material3.SnackbarHostState,
         onOpenDrawer: () -> Unit
 ) {
@@ -194,6 +196,28 @@ fun NavGraphBuilder.mainNavGraph(
                     padding = PaddingValues(0.dp),
                     authViewModel = authViewModel,
                     onProfileUpdated = { navController.popBackStack() }
+            )
+        }
+
+        // Registry Screens
+        composable(Screen.DailyLogList.route) {
+            com.emarketing_paradice.gnsrilanka.ui.screens.registry.DailyLogListScreen(
+                    viewModel = registryViewModel,
+                    onAddLog = { /* TODO: Navigate to add screen */}
+            )
+        }
+
+        composable(Screen.WelfareList.route) {
+            com.emarketing_paradice.gnsrilanka.ui.screens.registry.WelfareListScreen(
+                    viewModel = registryViewModel,
+                    onAddWelfare = { /* TODO: Navigate to add form screen */}
+            )
+        }
+
+        composable(Screen.PermitList.route) {
+            com.emarketing_paradice.gnsrilanka.ui.screens.registry.PermitListScreen(
+                    viewModel = registryViewModel,
+                    onAddPermit = { /* TODO: Navigate to add permit form */}
             )
         }
     }

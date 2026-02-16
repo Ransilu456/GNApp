@@ -36,6 +36,9 @@ fun AppDrawer(
                         Screen.CitizenList,
                         Screen.HouseholdList,
                         Screen.RequestList,
+                        Screen.DailyLogList,
+                        Screen.WelfareList,
+                        Screen.PermitList,
                         Screen.Profile
                 )
 
@@ -182,8 +185,7 @@ fun AppDrawer(
 fun AppDrawerPreview() {
         com.emarketing_paradice.gnsrilanka.ui.theme.GNAppTheme {
                 AppDrawer(
-                        currentRoute =
-                                Screen.Home.route,
+                        currentRoute = Screen.Home.route,
                         officerProfile = null,
                         onNavigate = {},
                         onLogout = {},
