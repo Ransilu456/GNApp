@@ -11,22 +11,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.emarketing_paradice.gnsrilanka.R
 import com.emarketing_paradice.gnsrilanka.ui.theme.GNAppTheme
 import com.emarketing_paradice.gnsrilanka.viewmodel.AuthViewModel
 import com.emarketing_paradice.gnsrilanka.viewmodel.CitizenViewModel
 
-val GnPrimary = Color(0xFF0014A8)
-val GnSurface = Color.White
-val GnTextPrimary = Color(0xFF1E293B)
-val GnTextSecondary = Color(0xFF94A3B8)
-
+// Theme-based colors are used directly from MaterialTheme.colorScheme
 
 @Composable
 fun ProfileScreen(
@@ -82,213 +76,213 @@ fun ProfileScreenContent(
                                 .verticalScroll(rememberScrollState())
                                 .padding(bottom = padding.calculateBottomPadding())
         ) {
-                        // Header Section
-                        Box(
-                                modifier =
-                                        Modifier.fillMaxWidth()
-                                                .height(260.dp)
-                                                .background(
-                                                        Brush.verticalGradient(
-                                                                colors =
-                                                                        listOf(
-                                                                                GnPrimary,
-                                                                                Color(0xFF000B5E)
-                                                                        )
+                // Header Section
+                Box(
+                        modifier =
+                                Modifier.fillMaxWidth()
+                                        .height(280.dp)
+                                        .background(
+                                                Brush.verticalGradient(
+                                                        colors =
+                                                                listOf(
+                                                                        MaterialTheme.colorScheme
+                                                                                .primary,
+                                                                        MaterialTheme.colorScheme
+                                                                                .primaryContainer
+                                                                )
+                                                )
+                                        )
+                ) {
+                        Column(
+                                modifier = Modifier.fillMaxSize().padding(bottom = 20.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                        ) {
+                                // Profile Image Placeholder
+                                Surface(
+                                        modifier = Modifier.size(120.dp),
+                                        shape = RoundedCornerShape(40.dp),
+                                        color =
+                                                MaterialTheme.colorScheme.onPrimary.copy(
+                                                        alpha = 0.2f
+                                                ),
+                                        border =
+                                                BorderStroke(
+                                                        2.dp,
+                                                        MaterialTheme.colorScheme.onPrimary.copy(
+                                                                alpha = 0.4f
                                                         )
                                                 )
-                        ) {
-                                Column(
-                                        modifier = Modifier.fillMaxSize().padding(bottom = 40.dp),
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center
                                 ) {
-                                        // Profile Image Placeholder
-                                        Surface(
-                                                modifier = Modifier.size(110.dp),
-                                                shape = RoundedCornerShape(36.dp),
-                                                color = Color.White.copy(alpha = 0.15f),
-                                                border =
-                                                        BorderStroke(
-                                                                2.dp,
-                                                                Color.White.copy(alpha = 0.3f)
-                                                        )
-                                        ) {
-                                                Box(contentAlignment = Alignment.Center) {
-                                                        Icon(
-                                                                painter =
-                                                                        painterResource(
-                                                                                id =
-                                                                                        R.drawable
-                                                                                                .ic_solar_user_circle
-                                                                        ),
-                                                                contentDescription = null,
-                                                                modifier = Modifier.size(60.dp),
-                                                                tint = Color.White
-                                                        )
-                                                }
-                                        }
-
-                                        Spacer(modifier = Modifier.height(20.dp))
-
-                                        Text(
-                                                text = fullName,
-                                                color = Color.White,
-                                                fontSize = 26.sp,
-                                                fontWeight = FontWeight.ExtraBold,
-                                                letterSpacing = 0.5.sp
-                                        )
-
-                                        Spacer(modifier = Modifier.height(4.dp))
-
-                                        Surface(
-                                                color = Color.White.copy(alpha = 0.15f),
-                                                shape = RoundedCornerShape(8.dp)
-                                        ) {
-                                                Text(
-                                                        text =
-                                                                androidx.compose.ui.res
-                                                                        .stringResource(
-                                                                                R.string
-                                                                                        .officer_title
-                                                                        ),
-                                                        color = Color.White,
-                                                        fontSize = 12.sp,
-                                                        fontWeight = FontWeight.Medium,
-                                                        modifier =
-                                                                Modifier.padding(
-                                                                        horizontal = 12.dp,
-                                                                        vertical = 4.dp
-                                                                )
+                                        Box(contentAlignment = Alignment.Center) {
+                                                Icon(
+                                                        painter =
+                                                                painterResource(
+                                                                        id =
+                                                                                R.drawable
+                                                                                        .ic_solar_user_circle
+                                                                ),
+                                                        contentDescription = null,
+                                                        modifier = Modifier.size(70.dp),
+                                                        tint = MaterialTheme.colorScheme.onPrimary
                                                 )
                                         }
                                 }
-                        }
-
-                        // Info Section
-                        Column(
-                                modifier = Modifier.padding(horizontal = 24.dp).offset(y = (-40).dp)
-                        ) {
-                                ProfileDetailCard(
-                                        items =
-                                                listOf(
-                                                        ProfileItem(
-                                                                androidx.compose.ui.res
-                                                                        .stringResource(
-                                                                                R.string.full_name
-                                                                        ),
-                                                                fullName
-                                                        ),
-                                                        ProfileItem(
-                                                                androidx.compose.ui.res
-                                                                        .stringResource(
-                                                                                R.string.gn_division
-                                                                        ),
-                                                                division
-                                                        ),
-                                                        ProfileItem(
-                                                                androidx.compose.ui.res
-                                                                        .stringResource(
-                                                                                R.string
-                                                                                        .office_address
-                                                                        ),
-                                                                profile?.officeAddress ?: "N/A"
-                                                        ),
-                                                        ProfileItem(
-                                                                androidx.compose.ui.res
-                                                                        .stringResource(
-                                                                                R.string
-                                                                                        .contact_number
-                                                                        ),
-                                                                profile?.contactInfo ?: "N/A"
-                                                        )
-                                                )
-                                )
-
-                                Spacer(modifier = Modifier.height(24.dp))
-
-                                Text(
-                                        text =
-                                                androidx.compose.ui.res.stringResource(
-                                                        R.string.account_settings
-                                                ),
-                                        fontSize = 18.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = GnTextPrimary
-                                )
 
                                 Spacer(modifier = Modifier.height(16.dp))
 
-                                SettingsActionItem(
-                                        title =
-                                                androidx.compose.ui.res.stringResource(
-                                                        R.string.edit_profile_info
-                                                ),
-                                        subtitle =
-                                                androidx.compose.ui.res.stringResource(
-                                                        R.string.edit_profile_subtitle
-                                                ),
-                                        icon = R.drawable.ic_solar_user_id,
-                                        onClick = onNavigateToEditProfile
+                                Text(
+                                        text = fullName,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                        style = MaterialTheme.typography.headlineMedium,
+                                        fontWeight = FontWeight.Bold
                                 )
 
-                                SettingsActionItem(
-                                        title =
-                                                androidx.compose.ui.res.stringResource(
-                                                        R.string.security
-                                                ),
-                                        subtitle =
-                                                androidx.compose.ui.res.stringResource(
-                                                        R.string.security_subtitle
-                                                ),
-                                        icon = R.drawable.ic_solar_shield_check,
-                                        onClick = {}
-                                )
+                                Spacer(modifier = Modifier.height(8.dp))
 
-                                Spacer(modifier = Modifier.height(24.dp))
-
-                                Button(
-                                        onClick = onLogout,
-                                        modifier = Modifier.fillMaxWidth().height(60.dp),
-                                        colors =
-                                                ButtonDefaults.buttonColors(
-                                                        containerColor = Color(0xFFFFF1F1)
+                                Surface(
+                                        color =
+                                                MaterialTheme.colorScheme.onPrimary.copy(
+                                                        alpha = 0.15f
                                                 ),
-                                        shape = RoundedCornerShape(16.dp),
-                                        elevation = ButtonDefaults.buttonElevation(0.dp)
+                                        shape = RoundedCornerShape(12.dp)
                                 ) {
-                                        Icon(
-                                                painter =
-                                                        painterResource(
-                                                                id = R.drawable.ic_solar_logout
-                                                        ),
-                                                contentDescription = null,
-                                                tint = Color(0xFFEF4444)
-                                        )
-                                        Spacer(modifier = Modifier.width(8.dp))
                                         Text(
                                                 text =
                                                         androidx.compose.ui.res.stringResource(
-                                                                R.string.logout_system
+                                                                R.string.officer_title
                                                         ),
-                                                color = Color(0xFFEF4444),
-                                                fontWeight = FontWeight.Bold
+                                                color = MaterialTheme.colorScheme.onPrimary,
+                                                style = MaterialTheme.typography.labelMedium,
+                                                modifier =
+                                                        Modifier.padding(
+                                                                horizontal = 16.dp,
+                                                                vertical = 6.dp
+                                                        )
                                         )
                                 }
-
-                                Spacer(modifier = Modifier.height(40.dp))
                         }
                 }
+
+                // Info Section
+                Column(modifier = Modifier.padding(horizontal = 24.dp).offset(y = (-40).dp)) {
+                        ProfileDetailCard(
+                                items =
+                                        listOf(
+                                                ProfileItem(
+                                                        androidx.compose.ui.res.stringResource(
+                                                                R.string.full_name
+                                                        ),
+                                                        fullName
+                                                ),
+                                                ProfileItem(
+                                                        androidx.compose.ui.res.stringResource(
+                                                                R.string.gn_division
+                                                        ),
+                                                        division
+                                                ),
+                                                ProfileItem(
+                                                        androidx.compose.ui.res.stringResource(
+                                                                R.string.office_address
+                                                        ),
+                                                        profile?.officeAddress ?: "N/A"
+                                                ),
+                                                ProfileItem(
+                                                        androidx.compose.ui.res.stringResource(
+                                                                R.string.contact_number
+                                                        ),
+                                                        profile?.contactInfo ?: "N/A"
+                                                )
+                                        )
+                        )
+
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        Text(
+                                text =
+                                        androidx.compose.ui.res.stringResource(
+                                                R.string.account_settings
+                                        ),
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onBackground
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        SettingsActionItem(
+                                title =
+                                        androidx.compose.ui.res.stringResource(
+                                                R.string.edit_profile_info
+                                        ),
+                                subtitle =
+                                        androidx.compose.ui.res.stringResource(
+                                                R.string.edit_profile_subtitle
+                                        ),
+                                icon = R.drawable.ic_solar_user_id,
+                                onClick = onNavigateToEditProfile
+                        )
+
+                        SettingsActionItem(
+                                title = androidx.compose.ui.res.stringResource(R.string.security),
+                                subtitle =
+                                        androidx.compose.ui.res.stringResource(
+                                                R.string.security_subtitle
+                                        ),
+                                icon = R.drawable.ic_solar_shield_check,
+                                onClick = {}
+                        )
+
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        Button(
+                                onClick = onLogout,
+                                modifier = Modifier.fillMaxWidth().height(56.dp),
+                                colors =
+                                        ButtonDefaults.buttonColors(
+                                                containerColor =
+                                                        MaterialTheme.colorScheme.errorContainer
+                                                                .copy(alpha = 0.4f),
+                                                contentColor = MaterialTheme.colorScheme.error
+                                        ),
+                                shape = RoundedCornerShape(16.dp),
+                                elevation = ButtonDefaults.buttonElevation(0.dp)
+                        ) {
+                                Icon(
+                                        painter = painterResource(id = R.drawable.ic_solar_logout),
+                                        contentDescription = null
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                        text =
+                                                androidx.compose.ui.res.stringResource(
+                                                        R.string.logout_system
+                                                ),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold
+                                )
+                        }
+
+                        Spacer(modifier = Modifier.height(40.dp))
+                }
         }
+}
 
 @Composable
 fun ProfileDetailCard(items: List<ProfileItem>) {
         Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = GnSurface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                colors =
+                        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                border =
+                        BorderStroke(
+                                1.dp,
+                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        )
         ) {
-                Column(modifier = Modifier.padding(24.dp)) {
+                Column(modifier = Modifier.padding(20.dp)) {
                         items.forEachIndexed { index, item ->
                                 Row(
                                         modifier = Modifier.fillMaxWidth(),
@@ -298,24 +292,29 @@ fun ProfileDetailCard(items: List<ProfileItem>) {
                                         Column {
                                                 Text(
                                                         item.label,
-                                                        color = GnTextSecondary,
-                                                        fontSize = 12.sp,
-                                                        fontWeight = FontWeight.SemiBold,
-                                                        letterSpacing = 0.5.sp
+                                                        color =
+                                                                MaterialTheme.colorScheme
+                                                                        .onSurfaceVariant,
+                                                        style =
+                                                                MaterialTheme.typography
+                                                                        .labelMedium,
+                                                        fontWeight = FontWeight.SemiBold
                                                 )
                                                 Spacer(modifier = Modifier.height(4.dp))
                                                 Text(
                                                         item.value,
-                                                        color = GnTextPrimary,
-                                                        fontSize = 17.sp,
+                                                        color = MaterialTheme.colorScheme.onSurface,
+                                                        style = MaterialTheme.typography.bodyLarge,
                                                         fontWeight = FontWeight.Bold
                                                 )
                                         }
                                 }
                                 if (index < items.size - 1) {
                                         HorizontalDivider(
-                                                modifier = Modifier.padding(vertical = 16.dp),
-                                                color = Color(0xFFF1F5F9),
+                                                modifier = Modifier.padding(vertical = 12.dp),
+                                                color =
+                                                        MaterialTheme.colorScheme.outlineVariant
+                                                                .copy(alpha = 0.5f),
                                                 thickness = 1.dp
                                         )
                                 }
@@ -332,8 +331,14 @@ fun SettingsActionItem(title: String, subtitle: String, icon: Int, onClick: () -
                 onClick = onClick,
                 modifier = Modifier.padding(bottom = 12.dp).fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = GnSurface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                colors =
+                        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                border =
+                        BorderStroke(
+                                1.dp,
+                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+                        )
         ) {
                 Row(
                         modifier = Modifier.padding(16.dp).fillMaxWidth(),
@@ -343,7 +348,9 @@ fun SettingsActionItem(title: String, subtitle: String, icon: Int, onClick: () -
                                 modifier =
                                         Modifier.size(48.dp)
                                                 .background(
-                                                        Color(0xFFF5F8FF),
+                                                        MaterialTheme.colorScheme.primary.copy(
+                                                                alpha = 0.1f
+                                                        ),
                                                         RoundedCornerShape(14.dp)
                                                 ),
                                 contentAlignment = Alignment.Center
@@ -351,7 +358,7 @@ fun SettingsActionItem(title: String, subtitle: String, icon: Int, onClick: () -
                                 Icon(
                                         painter = painterResource(id = icon),
                                         contentDescription = null,
-                                        tint = GnPrimary,
+                                        tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.size(24.dp)
                                 )
                         }
@@ -361,15 +368,14 @@ fun SettingsActionItem(title: String, subtitle: String, icon: Int, onClick: () -
                         Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                         title,
+                                        style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold,
-                                        color = GnTextPrimary,
-                                        fontSize = 16.sp
+                                        color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
                                         subtitle,
-                                        fontSize = 12.sp,
-                                        color = GnTextSecondary,
-                                        fontWeight = FontWeight.Medium
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                         }
 
@@ -377,8 +383,9 @@ fun SettingsActionItem(title: String, subtitle: String, icon: Int, onClick: () -
                                 modifier =
                                         Modifier.size(32.dp)
                                                 .background(
-                                                        Color(0xFFF1F5F9),
-                                                        RoundedCornerShape(8.dp)
+                                                        MaterialTheme.colorScheme.outlineVariant
+                                                                .copy(alpha = 0.3f),
+                                                        RoundedCornerShape(10.dp)
                                                 ),
                                 contentAlignment = Alignment.Center
                         ) {
@@ -388,11 +395,10 @@ fun SettingsActionItem(title: String, subtitle: String, icon: Int, onClick: () -
                                                         id = R.drawable.ic_solar_alt_arrow_right
                                                 ),
                                         contentDescription = null,
-                                        tint = GnTextSecondary,
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.size(16.dp)
                                 )
                         }
                 }
         }
 }
-

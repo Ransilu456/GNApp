@@ -57,8 +57,10 @@ fun AppDrawer(
                                                 Brush.verticalGradient(
                                                         colors =
                                                                 listOf(
-                                                                        Color(0xFF0014A8),
-                                                                        Color(0xFF000B5E)
+                                                                        MaterialTheme.colorScheme
+                                                                                .primary,
+                                                                        MaterialTheme.colorScheme
+                                                                                .primaryContainer
                                                                 )
                                                 )
                                         )
@@ -69,7 +71,10 @@ fun AppDrawer(
                                         modifier =
                                                 Modifier.size(64.dp)
                                                         .clip(RoundedCornerShape(20.dp))
-                                                        .background(Color.White.copy(alpha = 0.2f)),
+                                                        .background(
+                                                                MaterialTheme.colorScheme.onPrimary
+                                                                        .copy(alpha = 0.2f)
+                                                        ),
                                         contentAlignment = Alignment.Center
                                 ) {
                                         Icon(
@@ -79,7 +84,7 @@ fun AppDrawer(
                                                         ),
                                                 contentDescription = null,
                                                 modifier = Modifier.size(32.dp),
-                                                tint = Color.White
+                                                tint = MaterialTheme.colorScheme.onPrimary
                                         )
                                 }
                                 Spacer(Modifier.height(16.dp))
@@ -87,12 +92,15 @@ fun AppDrawer(
                                         officerProfile?.officerName ?: "Digital Assistant",
                                         style = MaterialTheme.typography.titleLarge,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color.White
+                                        color = MaterialTheme.colorScheme.onPrimary
                                 )
                                 Text(
                                         officerProfile?.gnDivision ?: "Grama Niladhari - Sri Lanka",
                                         style = MaterialTheme.typography.bodySmall,
-                                        color = Color.White.copy(alpha = 0.6f)
+                                        color =
+                                                MaterialTheme.colorScheme.onPrimary.copy(
+                                                        alpha = 0.7f
+                                                )
                                 )
                         }
                 }
@@ -178,13 +186,13 @@ fun AppDrawer(
                                                                 id = R.drawable.ic_solar_logout
                                                         ),
                                                 contentDescription = "Logout",
-                                                tint = Color(0xFFE11D48)
+                                                tint = MaterialTheme.colorScheme.error
                                         )
                                 },
                                 label = {
                                         Text(
                                                 "Logout",
-                                                color = Color(0xFFE11D48),
+                                                color = MaterialTheme.colorScheme.error,
                                                 fontWeight = FontWeight.Bold
                                         )
                                 },

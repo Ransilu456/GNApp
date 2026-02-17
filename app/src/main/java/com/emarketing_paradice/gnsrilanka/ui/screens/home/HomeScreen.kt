@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,7 +18,6 @@ import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.text.font.*
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.*
 import androidx.compose.ui.unit.*
 import com.emarketing_paradice.gnsrilanka.R
@@ -239,7 +236,8 @@ fun HomeContent(
                                 // Search Bar - Anchored near bottom of header
                                 OutlinedTextField(
                                         value = searchText,
-                                        onValueChange = { searchText = it },
+                                        onValueChange = {},
+                                        readOnly = true,
                                         placeholder = {
                                                 Text(
                                                         "Search Name or NIC...",
@@ -256,7 +254,8 @@ fun HomeContent(
                                                                 12.dp,
                                                                 RoundedCornerShape(16.dp),
                                                                 spotColor = Color.Black.copy(0.3f)
-                                                        ),
+                                                        )
+                                                        .clickable { onNavigateToGlobalSearch() },
                                         shape = RoundedCornerShape(16.dp),
                                         colors =
                                                 OutlinedTextFieldDefaults.colors(
@@ -277,41 +276,20 @@ fun HomeContent(
                                                                 MaterialTheme.colorScheme.primary
                                                 ),
                                         trailingIcon = {
-                                                IconButton(
-                                                        onClick = {
-                                                                if (searchText.isNotBlank()) {
-                                                                        onSearch(searchText)
-                                                                        onNavigateToGlobalSearch()
-                                                                }
-                                                        }
-                                                ) {
-                                                        Icon(
-                                                                painter =
-                                                                        painterResource(
-                                                                                id =
-                                                                                        R.drawable
-                                                                                                .ic_solar_magnifer
-                                                                        ),
-                                                                contentDescription = "Search",
-                                                                tint =
-                                                                        MaterialTheme.colorScheme
-                                                                                .primary
-                                                        )
-                                                }
+                                                Icon(
+                                                        painter =
+                                                                painterResource(
+                                                                        id =
+                                                                                R.drawable
+                                                                                        .ic_solar_magnifer
+                                                                ),
+                                                        contentDescription = "Search",
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                )
                                         },
-                                        keyboardOptions =
-                                                KeyboardOptions(imeAction = ImeAction.Search),
-                                        keyboardActions =
-                                                KeyboardActions(
-                                                        onSearch = {
-                                                                if (searchText.isNotBlank()) {
-                                                                        onSearch(searchText)
-                                                                        onNavigateToGlobalSearch()
-                                                                }
-                                                        }
-                                                ),
-                                        singleLine = true
-                                )
+                                        enabled = false // Disable interaction but keep styling via
+                                        // colors
+                                        )
                         }
                 }
 
