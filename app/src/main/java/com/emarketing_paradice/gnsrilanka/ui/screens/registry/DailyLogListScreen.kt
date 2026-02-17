@@ -21,9 +21,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.emarketing_paradice.gnsrilanka.R
 import com.emarketing_paradice.gnsrilanka.data.model.DailyLog
-import com.emarketing_paradice.gnsrilanka.ui.theme.GnBackground
-import com.emarketing_paradice.gnsrilanka.ui.theme.GnPrimary
-import com.emarketing_paradice.gnsrilanka.ui.theme.GnTextSecondary
 import com.emarketing_paradice.gnsrilanka.viewmodel.GNRegistryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,8 +33,8 @@ fun DailyLogListScreen(viewModel: GNRegistryViewModel, onAddLog: () -> Unit) {
                 floatingActionButton = {
                         FloatingActionButton(
                                 onClick = onAddLog,
-                                containerColor = GnPrimary,
-                                contentColor = Color.White
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
                         ) { Icon(Icons.Default.Add, contentDescription = "Add Log") }
                 }
         ) { padding ->
@@ -45,7 +42,7 @@ fun DailyLogListScreen(viewModel: GNRegistryViewModel, onAddLog: () -> Unit) {
                         modifier =
                                 Modifier.padding(padding)
                                         .fillMaxSize()
-                                        .background(GnBackground)
+                                        .background(MaterialTheme.colorScheme.background)
                                         .padding(16.dp)
                 ) {
                         // Search Bar
@@ -60,19 +57,29 @@ fun DailyLogListScreen(viewModel: GNRegistryViewModel, onAddLog: () -> Unit) {
                                                         RoundedCornerShape(16.dp),
                                                         spotColor = Color.Black.copy(0.1f)
                                                 ),
-                                placeholder = { Text("Search logs...", color = GnTextSecondary) },
+                                placeholder = {
+                                        Text(
+                                                "Search logs...",
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                },
                                 leadingIcon = {
                                         Icon(
                                                 painterResource(id = R.drawable.ic_solar_magnifer),
                                                 contentDescription = "Search",
-                                                tint = GnTextSecondary
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                 },
                                 colors =
                                         OutlinedTextFieldDefaults.colors(
-                                                focusedContainerColor = Color.White,
-                                                unfocusedContainerColor = Color.White,
-                                                focusedBorderColor = GnPrimary.copy(alpha = 0.5f),
+                                                focusedContainerColor =
+                                                        MaterialTheme.colorScheme.surface,
+                                                unfocusedContainerColor =
+                                                        MaterialTheme.colorScheme.surface,
+                                                focusedBorderColor =
+                                                        MaterialTheme.colorScheme.primary.copy(
+                                                                alpha = 0.5f
+                                                        ),
                                                 unfocusedBorderColor = Color.Transparent
                                         ),
                                 shape = RoundedCornerShape(16.dp),

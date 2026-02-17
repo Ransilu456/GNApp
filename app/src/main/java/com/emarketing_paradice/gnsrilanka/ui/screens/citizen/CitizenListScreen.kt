@@ -101,7 +101,9 @@ fun CitizenListScreenContent(
                                         placeholder = {
                                                 Text(
                                                         stringResource(R.string.search_placeholder),
-                                                        color = Color(0xFF64748B)
+                                                        color =
+                                                                MaterialTheme.colorScheme
+                                                                        .onSurfaceVariant
                                                 )
                                         },
                                         leadingIcon = {
@@ -114,7 +116,9 @@ fun CitizenListScreenContent(
                                                                 ),
                                                         contentDescription = null,
                                                         modifier = Modifier.size(20.dp),
-                                                        tint = Color(0xFF64748B)
+                                                        tint =
+                                                                MaterialTheme.colorScheme
+                                                                        .onSurfaceVariant
                                                 )
                                         },
                                         modifier =
@@ -126,7 +130,8 @@ fun CitizenListScreenContent(
                                         shape = RoundedCornerShape(16.dp),
                                         colors =
                                                 SearchBarDefaults.colors(
-                                                        containerColor = Color.White,
+                                                        containerColor =
+                                                                MaterialTheme.colorScheme.surface,
                                                         dividerColor = Color.Transparent
                                                 ),
                                         tonalElevation = 1.dp
@@ -183,7 +188,8 @@ fun FilterSection(selectedFilter: String, onFilterSelected: (String) -> Unit) {
                                 colors =
                                         FilterChipDefaults.filterChipColors(
                                                 selectedContainerColor = BlueGradientStart,
-                                                selectedLabelColor = Color.White,
+                                                selectedLabelColor =
+                                                        MaterialTheme.colorScheme.onPrimary,
                                                 containerColor = Color.Transparent,
                                                 labelColor =
                                                         MaterialTheme.colorScheme.onSurfaceVariant
@@ -216,7 +222,8 @@ fun CitizenListItem(citizen: Citizen, onItemClick: () -> Unit, onDeleteClick: ()
         Card(
                 modifier = Modifier.fillMaxWidth().clickable { onItemClick() },
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors =
+                        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
                 Row(

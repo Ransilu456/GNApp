@@ -23,7 +23,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -111,7 +110,9 @@ fun RequestListScreenContent(
                                         placeholder = {
                                                 Text(
                                                         stringResource(R.string.search_placeholder),
-                                                        color = Color(0xFF64748B)
+                                                        color =
+                                                                MaterialTheme.colorScheme
+                                                                        .onSurfaceVariant
                                                 )
                                         },
                                         leadingIcon = {
@@ -124,7 +125,9 @@ fun RequestListScreenContent(
                                                                 ),
                                                         contentDescription = null,
                                                         modifier = Modifier.size(20.dp),
-                                                        tint = Color(0xFF64748B)
+                                                        tint =
+                                                                MaterialTheme.colorScheme
+                                                                        .onSurfaceVariant
                                                 )
                                         },
                                         modifier =
@@ -136,7 +139,8 @@ fun RequestListScreenContent(
                                         shape = RoundedCornerShape(16.dp),
                                         colors =
                                                 SearchBarDefaults.colors(
-                                                        containerColor = Color.White
+                                                        containerColor =
+                                                                MaterialTheme.colorScheme.surface
                                                 ),
                                         tonalElevation = 1.dp
                                 ) {}
@@ -181,7 +185,8 @@ fun RequestListItem(request: Request, onItemClick: () -> Unit, onDeleteClick: ()
         Card(
                 modifier = Modifier.fillMaxWidth().clickable { onItemClick() },
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors =
+                        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -199,7 +204,7 @@ fun RequestListItem(request: Request, onItemClick: () -> Unit, onDeleteClick: ()
                                         Text(
                                                 text = "NIC: ${request.citizenNic ?: "N/A"}",
                                                 style = MaterialTheme.typography.bodySmall,
-                                                color = Color.Gray
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                 }
 
@@ -226,14 +231,20 @@ fun RequestListItem(request: Request, onItemClick: () -> Unit, onDeleteClick: ()
                                         Icon(
                                                 Icons.Default.Delete,
                                                 contentDescription = "Delete",
-                                                tint = Color.Red.copy(alpha = 0.6f),
+                                                tint =
+                                                        MaterialTheme.colorScheme.error.copy(
+                                                                alpha = 0.6f
+                                                        ),
                                                 modifier = Modifier.size(18.dp)
                                         )
                                 }
                         }
 
                         Spacer(modifier = Modifier.height(12.dp))
-                        HorizontalDivider(color = AppBackground, thickness = 1.dp)
+                        HorizontalDivider(
+                                color = MaterialTheme.colorScheme.outlineVariant,
+                                thickness = 1.dp
+                        )
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Row(
@@ -243,14 +254,14 @@ fun RequestListItem(request: Request, onItemClick: () -> Unit, onDeleteClick: ()
                                 Icon(
                                         Icons.Default.CalendarToday,
                                         contentDescription = null,
-                                        tint = Color.Gray,
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                         text = "Submitted: ${request.submissionDate ?: "N/A"}",
                                         style = MaterialTheme.typography.bodySmall,
-                                        color = Color.Gray
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
 
                                 Spacer(modifier = Modifier.weight(1f))

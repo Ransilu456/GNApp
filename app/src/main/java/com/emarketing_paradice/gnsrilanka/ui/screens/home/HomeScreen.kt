@@ -1,34 +1,33 @@
 package com.emarketing_paradice.gnsrilanka.ui.screens.home
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.draw.*
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.layout.*
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.font.*
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.*
+import androidx.compose.ui.unit.*
 import com.emarketing_paradice.gnsrilanka.R
 import com.emarketing_paradice.gnsrilanka.data.model.User
 import com.emarketing_paradice.gnsrilanka.ui.theme.GNAppTheme
 import com.emarketing_paradice.gnsrilanka.ui.theme.PreviewData
 import com.emarketing_paradice.gnsrilanka.viewmodel.*
-
-// --- Theme Colors ---
-val GnPrimary = Color(0xFF0014A8)
-val GnBackground = Color(0xFFF4F7FE)
-val GnTextPrimary = Color(0xFF1E293B)
-val GnTextSecondary = Color(0xFF94A3B8)
 
 @Composable
 fun HomeScreen(
@@ -96,9 +95,27 @@ fun HomeContent(
         val userName = officerProfile?.officerName?.split(" ")?.firstOrNull() ?: "Officer"
         var searchText by remember { mutableStateOf("") }
 
+        val scrollState = rememberScrollState()
+        val headerHeight = 280.dp
+        val headerHeightPx = with(LocalDensity.current) { headerHeight.toPx() }
+
+        // Calculate header visibility/collapse based on scroll
+        val headerAlpha = (1f - (scrollState.value / (headerHeightPx * 0.6f))).coerceIn(0f, 1f)
+        val headerOffset = -(scrollState.value * 0.5f).coerceAtMost(headerHeightPx)
+
         Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-                // Header section - Fixed at the top
-                Box(modifier = Modifier.fillMaxWidth().height(260.dp)) {
+                // --- Collapsing Header Background ---
+                Box(
+                        modifier =
+                                Modifier.fillMaxWidth()
+                                        .height(headerHeight)
+                                        .offset(
+                                                y =
+                                                        with(LocalDensity.current) {
+                                                                headerOffset.toDp()
+                                                        }
+                                        )
+                ) {
                         Image(
                                 painter = painterResource(id = R.drawable.bg_home_patterns),
                                 contentDescription = null,
@@ -113,14 +130,36 @@ fun HomeContent(
                                                 )
                         )
 
+                        // Gradient Overlay for readability
+                        Box(
+                                modifier =
+                                        Modifier.fillMaxSize()
+                                                .background(
+                                                        Brush.verticalGradient(
+                                                                colors =
+                                                                        listOf(
+                                                                                Color.Black.copy(
+                                                                                        alpha = 0.4f
+                                                                                ),
+                                                                                Color.Transparent
+                                                                        )
+                                                        )
+                                                )
+                        )
+
                         Column(
                                 modifier =
                                         Modifier.fillMaxSize()
                                                 .statusBarsPadding()
-                                                .padding(horizontal = 24.dp, vertical = 16.dp)
+                                                .padding(horizontal = 24.dp, vertical = 16.dp),
+                                verticalArrangement = Arrangement.SpaceBetween
                         ) {
+                                // Top Bar Content
                                 Row(
-                                        modifier = Modifier.fillMaxWidth(),
+                                        modifier =
+                                                Modifier.fillMaxWidth().graphicsLayer {
+                                                        alpha = headerAlpha
+                                                },
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically
                                 ) {
@@ -128,7 +167,11 @@ fun HomeContent(
                                                 Box(
                                                         modifier =
                                                                 Modifier.size(52.dp)
-                                                                        .clip(CircleShape)
+                                                                        .clip(
+                                                                                RoundedCornerShape(
+                                                                                        16.dp
+                                                                                )
+                                                                        )
                                                                         .background(
                                                                                 Color.White.copy(
                                                                                         alpha = 0.2f
@@ -193,38 +236,45 @@ fun HomeContent(
                                         }
                                 }
 
-                                Spacer(modifier = Modifier.height(24.dp))
-
-                                // Search Bar
+                                // Search Bar - Anchored near bottom of header
                                 OutlinedTextField(
                                         value = searchText,
                                         onValueChange = { searchText = it },
                                         placeholder = {
                                                 Text(
                                                         "Search Name or NIC...",
-                                                        color = Color.White.copy(0.6f)
+                                                        color =
+                                                                MaterialTheme.colorScheme.onSurface
+                                                                        .copy(0.6f),
+                                                        style = MaterialTheme.typography.bodyLarge
                                                 )
                                         },
                                         modifier =
                                                 Modifier.fillMaxWidth()
-                                                        .height(56.dp)
+                                                        .padding(bottom = 8.dp)
                                                         .shadow(
                                                                 12.dp,
-                                                                RoundedCornerShape(28.dp),
-                                                                spotColor = Color.Black.copy(0.2f)
+                                                                RoundedCornerShape(16.dp),
+                                                                spotColor = Color.Black.copy(0.3f)
                                                         ),
-                                        shape = RoundedCornerShape(28.dp),
+                                        shape = RoundedCornerShape(16.dp),
                                         colors =
                                                 OutlinedTextFieldDefaults.colors(
                                                         focusedContainerColor =
-                                                                Color.White.copy(0.15f),
+                                                                MaterialTheme.colorScheme.surface
+                                                                        .copy(0.95f),
                                                         unfocusedContainerColor =
-                                                                Color.White.copy(0.15f),
-                                                        focusedTextColor = Color.White,
-                                                        unfocusedTextColor = Color.White,
-                                                        focusedBorderColor = Color.White.copy(0.3f),
+                                                                MaterialTheme.colorScheme.surface
+                                                                        .copy(0.9f),
+                                                        focusedTextColor =
+                                                                MaterialTheme.colorScheme.onSurface,
+                                                        unfocusedTextColor =
+                                                                MaterialTheme.colorScheme.onSurface,
+                                                        focusedBorderColor =
+                                                                MaterialTheme.colorScheme.primary,
                                                         unfocusedBorderColor = Color.Transparent,
-                                                        cursorColor = Color.White
+                                                        cursorColor =
+                                                                MaterialTheme.colorScheme.primary
                                                 ),
                                         trailingIcon = {
                                                 IconButton(
@@ -243,26 +293,43 @@ fun HomeContent(
                                                                                                 .ic_solar_magnifer
                                                                         ),
                                                                 contentDescription = "Search",
-                                                                tint = Color.White
+                                                                tint =
+                                                                        MaterialTheme.colorScheme
+                                                                                .primary
                                                         )
                                                 }
                                         },
+                                        keyboardOptions =
+                                                KeyboardOptions(imeAction = ImeAction.Search),
+                                        keyboardActions =
+                                                KeyboardActions(
+                                                        onSearch = {
+                                                                if (searchText.isNotBlank()) {
+                                                                        onSearch(searchText)
+                                                                        onNavigateToGlobalSearch()
+                                                                }
+                                                        }
+                                                ),
                                         singleLine = true
                                 )
                         }
                 }
 
-                // Scrollable Content
+                // --- Scrollable Content ---
                 Column(
                         modifier =
                                 Modifier.fillMaxSize()
-                                        .padding(top = 240.dp) // Start below the header
-                                        .verticalScroll(rememberScrollState())
+                                        .verticalScroll(scrollState)
+                                        .padding(
+                                                top = headerHeight - 16.dp
+                                        ) // Slight overlap for rounded look
+                                        .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
+                                        .background(MaterialTheme.colorScheme.background)
                                         .padding(horizontal = 24.dp, vertical = 24.dp)
                 ) {
                         Text(
                                 text = "Overview",
-                                fontSize = 18.sp,
+                                style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.padding(bottom = 16.dp)
@@ -277,10 +344,7 @@ fun HomeContent(
                                         count = citizenState.citizens.size.toString(),
                                         icon = R.drawable.ic_solar_users_group,
                                         modifier = Modifier.weight(1f),
-                                        color =
-                                                MaterialTheme.colorScheme.primaryContainer.copy(
-                                                        alpha = 0.1f
-                                                )
+                                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                                 )
                                 StatCard(
                                         title = "Households",
@@ -288,7 +352,7 @@ fun HomeContent(
                                         icon = R.drawable.ic_solar_home_smile,
                                         modifier = Modifier.weight(1f),
                                         color =
-                                                MaterialTheme.colorScheme.secondaryContainer.copy(
+                                                MaterialTheme.colorScheme.secondary.copy(
                                                         alpha = 0.1f
                                                 )
                                 )
@@ -310,18 +374,12 @@ fun HomeContent(
                                                 .toString(),
                                 icon = R.drawable.ic_solar_documents,
                                 modifier = Modifier.fillMaxWidth(),
-                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                                color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.1f)
                         )
 
                         Spacer(modifier = Modifier.height(32.dp))
 
-                        Text(
-                                text = "Official Registries",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onBackground
-                        )
-
+                        SectionHeader("Official Registries", onViewAll = null)
                         Spacer(modifier = Modifier.height(16.dp))
 
                         LazyRow(
@@ -353,13 +411,7 @@ fun HomeContent(
 
                         Spacer(modifier = Modifier.height(32.dp))
 
-                        Text(
-                                text = "General Management",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onBackground
-                        )
-
+                        SectionHeader("Management", onViewAll = null)
                         Spacer(modifier = Modifier.height(16.dp))
 
                         ActionGrid(
@@ -371,36 +423,22 @@ fun HomeContent(
 
                         Spacer(modifier = Modifier.height(32.dp))
 
-                        Text(
-                                text = "Recent Activity",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onBackground
-                        )
-
+                        SectionHeader("Recent Activity", onViewAll = onNavigateToRequests)
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Card(
-                                modifier =
-                                        Modifier.fillMaxWidth()
-                                                .shadow(4.dp, RoundedCornerShape(24.dp)),
+                                modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(24.dp),
                                 colors =
                                         CardDefaults.cardColors(
                                                 containerColor = MaterialTheme.colorScheme.surface
-                                        )
+                                        ),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                         ) {
                                 Column(modifier = Modifier.padding(12.dp)) {
                                         val recentRequests = requestState.requests.take(3)
                                         if (recentRequests.isEmpty()) {
-                                                Text(
-                                                        "No recent requests",
-                                                        modifier = Modifier.padding(16.dp),
-                                                        color =
-                                                                MaterialTheme.colorScheme
-                                                                        .onSurfaceVariant,
-                                                        fontSize = 14.sp
-                                                )
+                                                EmptyStateItem("No recent requests available")
                                         } else {
                                                 recentRequests.forEachIndexed { index, request ->
                                                         RecentRequestItem(
@@ -425,8 +463,47 @@ fun HomeContent(
                                         }
                                 }
                         }
-                        Spacer(modifier = Modifier.height(32.dp))
+                        Spacer(modifier = Modifier.height(100.dp)) // Extra space for bottom bar
                 }
+        }
+}
+
+@Composable
+fun SectionHeader(title: String, onViewAll: (() -> Unit)? = null) {
+        Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+        ) {
+                Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                )
+                if (onViewAll != null) {
+                        TextButton(onClick = onViewAll) {
+                                Text(
+                                        "View All",
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.SemiBold
+                                )
+                        }
+                }
+        }
+}
+
+@Composable
+fun EmptyStateItem(message: String) {
+        Box(
+                modifier = Modifier.fillMaxWidth().padding(32.dp),
+                contentAlignment = Alignment.Center
+        ) {
+                Text(
+                        text = message,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 14.sp
+                )
         }
 }
 

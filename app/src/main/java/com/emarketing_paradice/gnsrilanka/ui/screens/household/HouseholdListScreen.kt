@@ -25,7 +25,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -107,7 +106,7 @@ fun HouseholdListScreenContent(
                                 placeholder = {
                                         Text(
                                                 stringResource(R.string.search_placeholder),
-                                                color = Color(0xFF64748B)
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                 },
                                 leadingIcon = {
@@ -118,14 +117,17 @@ fun HouseholdListScreenContent(
                                                         ),
                                                 contentDescription = null,
                                                 modifier = Modifier.size(20.dp),
-                                                tint = Color(0xFF64748B)
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                 },
                                 modifier =
                                         Modifier.fillMaxWidth()
                                                 .padding(horizontal = 16.dp, vertical = 8.dp),
                                 shape = RoundedCornerShape(16.dp),
-                                colors = SearchBarDefaults.colors(containerColor = Color.White),
+                                colors =
+                                        SearchBarDefaults.colors(
+                                                containerColor = MaterialTheme.colorScheme.surface
+                                        ),
                                 tonalElevation = 1.dp
                         ) {}
                         Spacer(modifier = Modifier.height(8.dp))
@@ -161,7 +163,8 @@ fun HouseholdListItem(household: Household, onItemClick: () -> Unit, onDeleteCli
         Card(
                 modifier = Modifier.fillMaxWidth().clickable { onItemClick() },
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors =
+                        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
                 Row(
@@ -198,7 +201,7 @@ fun HouseholdListItem(household: Household, onItemClick: () -> Unit, onDeleteCli
                                 Text(
                                         text = "Head NIC: ${household.headNic ?: "N/A"}",
                                         style = MaterialTheme.typography.bodySmall,
-                                        color = Color.Gray
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                         }
 
@@ -206,7 +209,7 @@ fun HouseholdListItem(household: Household, onItemClick: () -> Unit, onDeleteCli
                                 Icon(
                                         Icons.Default.Delete,
                                         contentDescription = "Delete",
-                                        tint = Color.Red.copy(alpha = 0.6f),
+                                        tint = MaterialTheme.colorScheme.error.copy(alpha = 0.6f),
                                         modifier = Modifier.size(20.dp)
                                 )
                         }
@@ -216,7 +219,7 @@ fun HouseholdListItem(household: Household, onItemClick: () -> Unit, onDeleteCli
                         Icon(
                                 painter = painterResource(id = R.drawable.ic_solar_alt_arrow_right),
                                 contentDescription = null,
-                                tint = Color.Gray,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(24.dp)
                         )
                 }

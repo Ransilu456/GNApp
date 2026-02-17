@@ -155,7 +155,14 @@ fun MainScreen(
                                                     Badge(
                                                             containerColor =
                                                                     MaterialTheme.colorScheme.error
-                                                    ) { Text("3", color = Color.White) }
+                                                    ) {
+                                                        Text(
+                                                                "3",
+                                                                color =
+                                                                        MaterialTheme.colorScheme
+                                                                                .onError
+                                                        )
+                                                    }
                                                 }
                                         ) {
                                             Icon(

@@ -22,9 +22,6 @@ import com.emarketing_paradice.gnsrilanka.R
 import com.emarketing_paradice.gnsrilanka.data.model.WelfareProgram
 import com.emarketing_paradice.gnsrilanka.ui.components.common.EmptyContent
 import com.emarketing_paradice.gnsrilanka.ui.theme.BlueGradientStart
-import com.emarketing_paradice.gnsrilanka.ui.theme.GnBackground
-import com.emarketing_paradice.gnsrilanka.ui.theme.GnPrimary
-import com.emarketing_paradice.gnsrilanka.ui.theme.GnTextSecondary
 import com.emarketing_paradice.gnsrilanka.viewmodel.GNRegistryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,8 +47,8 @@ fun WelfareListScreen(viewModel: GNRegistryViewModel, onAddWelfare: () -> Unit) 
                 floatingActionButton = {
                         FloatingActionButton(
                                 onClick = onAddWelfare,
-                                containerColor = GnPrimary,
-                                contentColor = Color.White
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
                         ) { Icon(Icons.Default.Add, contentDescription = "Add Welfare") }
                 }
         ) { padding ->
@@ -59,7 +56,7 @@ fun WelfareListScreen(viewModel: GNRegistryViewModel, onAddWelfare: () -> Unit) 
                         modifier =
                                 Modifier.padding(padding)
                                         .fillMaxSize()
-                                        .background(GnBackground)
+                                        .background(MaterialTheme.colorScheme.background)
                                         .padding(16.dp)
                 ) {
                         // Search Bar
@@ -75,20 +72,28 @@ fun WelfareListScreen(viewModel: GNRegistryViewModel, onAddWelfare: () -> Unit) 
                                                         spotColor = Color.Black.copy(0.1f)
                                                 ),
                                 placeholder = {
-                                        Text("Search welfare...", color = GnTextSecondary)
+                                        Text(
+                                                "Search welfare...",
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
                                 },
                                 leadingIcon = {
                                         Icon(
                                                 painterResource(id = R.drawable.ic_solar_magnifer),
                                                 contentDescription = "Search",
-                                                tint = GnTextSecondary
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                 },
                                 colors =
                                         OutlinedTextFieldDefaults.colors(
-                                                focusedContainerColor = Color.White,
-                                                unfocusedContainerColor = Color.White,
-                                                focusedBorderColor = GnPrimary.copy(alpha = 0.5f),
+                                                focusedContainerColor =
+                                                        MaterialTheme.colorScheme.surface,
+                                                unfocusedContainerColor =
+                                                        MaterialTheme.colorScheme.surface,
+                                                focusedBorderColor =
+                                                        MaterialTheme.colorScheme.primary.copy(
+                                                                alpha = 0.5f
+                                                        ),
                                                 unfocusedBorderColor = Color.Transparent
                                         ),
                                 shape = RoundedCornerShape(16.dp),
@@ -109,7 +114,9 @@ fun WelfareListScreen(viewModel: GNRegistryViewModel, onAddWelfare: () -> Unit) 
                                                         FilterChipDefaults.filterChipColors(
                                                                 selectedContainerColor =
                                                                         BlueGradientStart,
-                                                                selectedLabelColor = Color.White,
+                                                                selectedLabelColor =
+                                                                        MaterialTheme.colorScheme
+                                                                                .onPrimary,
                                                                 containerColor = Color.Transparent,
                                                                 labelColor =
                                                                         MaterialTheme.colorScheme
@@ -142,7 +149,9 @@ fun WelfareListScreen(viewModel: GNRegistryViewModel, onAddWelfare: () -> Unit) 
                                                         FilterChipDefaults.filterChipColors(
                                                                 selectedContainerColor =
                                                                         BlueGradientStart,
-                                                                selectedLabelColor = Color.White,
+                                                                selectedLabelColor =
+                                                                        MaterialTheme.colorScheme
+                                                                                .onPrimary,
                                                                 containerColor = Color.Transparent,
                                                                 labelColor =
                                                                         MaterialTheme.colorScheme

@@ -45,7 +45,7 @@ fun AppDrawer(
                 )
 
         ModalDrawerSheet(
-                drawerContainerColor = Color.White,
+                drawerContainerColor = MaterialTheme.colorScheme.surface,
                 drawerShape = RoundedCornerShape(topEnd = 32.dp, bottomEnd = 32.dp)
         ) {
                 // Header
@@ -112,8 +112,13 @@ fun AppDrawer(
                                                                 contentDescription = screen.title,
                                                                 tint =
                                                                         if (isSelected)
-                                                                                Color(0xFF0014A8)
-                                                                        else Color(0xFF94A3B8)
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .primary
+                                                                        else
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .onSurfaceVariant
                                                         )
                                                 },
                                                 label = {
@@ -125,8 +130,13 @@ fun AppDrawer(
                                                                         else FontWeight.Medium,
                                                                 color =
                                                                         if (isSelected)
-                                                                                Color(0xFF0014A8)
-                                                                        else Color(0xFF1E293B)
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .primary
+                                                                        else
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .onSurface
                                                         )
                                                 },
                                                 selected = isSelected,
@@ -137,8 +147,10 @@ fun AppDrawer(
                                                 colors =
                                                         NavigationDrawerItemDefaults.colors(
                                                                 selectedContainerColor =
-                                                                        Color(0xFF0014A8)
-                                                                                .copy(alpha = 0.1f),
+                                                                        MaterialTheme.colorScheme
+                                                                                .primary.copy(
+                                                                                alpha = 0.1f
+                                                                        ),
                                                                 unselectedContainerColor =
                                                                         Color.Transparent
                                                         ),
@@ -156,7 +168,7 @@ fun AppDrawer(
                         // Footer with Logout
                         HorizontalDivider(
                                 modifier = Modifier.padding(horizontal = 24.dp),
-                                color = Color(0xFFF1F5F9)
+                                color = MaterialTheme.colorScheme.outlineVariant
                         )
                         NavigationDrawerItem(
                                 icon = {
